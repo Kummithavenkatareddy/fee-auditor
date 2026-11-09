@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"error":"#ba1a1a","on-secondary-fixed":"#00201a","on-surface":"#161c22","surface-variant":"#dde3eb","secondary-container":"#bee8dc","on-surface-variant":"#44474e","on-secondary-container":"#436a60","outline-variant":"#c5c6cf","surface-container-highest":"#dde3eb","inverse-on-surface":"#ecf1f9","tertiary-fixed-dim":"#edbe8a","secondary":"#3f665c","on-primary-container":"#8093bb","primary":"#001637","on-error":"#ffffff","on-tertiary-container":"#b48b5b","on-secondary-fixed-variant":"#274e45","surface-bright":"#f7f9ff","on-tertiary-fixed-variant":"#604017","surface-dim":"#d5dae2","background":"#f7f9ff","surface-container":"#e9eef6","on-primary":"#ffffff","outline":"#75777f","on-tertiary-fixed":"#2b1700","surface":"#f7f9ff","primary-container":"#172b4d","on-tertiary":"#ffffff","on-primary-fixed-variant":"#34476a","error-container":"#ffdad6","tertiary":"#241300","surface-container-lowest":"#ffffff","surface-container-high":"#e3e9f0","secondary-fixed-dim":"#a6cfc3","tertiary-fixed":"#ffddb9","on-error-container":"#93000a","on-background":"#161c22","secondary-fixed":"#c1ebdf","primary-fixed":"#d7e2ff","surface-tint":"#4c5e83","primary-fixed-dim":"#b4c7f1","on-primary-fixed":"#041b3c","tertiary-container":"#402500","on-secondary":"#ffffff","surface-container-low":"#eff4fc","inverse-surface":"#2b3137","inverse-primary":"#b4c7f1"},borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},spacing:{"margin":"1.5rem","space-lg":"1rem","space-xl":"1.5rem","margin-panel":"2rem","space-xs":"0.25rem","space-md":"0.75rem","space-sm":"0.5rem","gutter":"1rem","gutter-compact":"0.5rem"},fontFamily:{"body-lg":["Inter"],"title-md":["Inter"],"headline-lg":["Inter"],"data-mono":["Inter"],"display-lg":["Inter"],"body-sm":["Inter"],"headline-sm":["Inter"],"label-xs":["Inter"],"label-md":["Inter"],"data-cell":["Inter"],"body-md":["Inter"]},fontSize:{"body-lg":["14px",{lineHeight:"20px",fontWeight:"400"}],"title-md":["15px",{lineHeight:"20px",letterSpacing:"-0.005em",fontWeight:"600"}],"headline-lg":["24px",{lineHeight:"32px",letterSpacing:"-0.015em",fontWeight:"600"}],"data-mono":["13px",{lineHeight:"16px",fontWeight:"500"}],"display-lg":["32px",{lineHeight:"40px",letterSpacing:"-0.02em",fontWeight:"600"}],"body-sm":["12px",{lineHeight:"16px",fontWeight:"400"}],"headline-sm":["18px",{lineHeight:"24px",letterSpacing:"-0.01em",fontWeight:"600"}],"label-xs":["11px",{lineHeight:"14px",letterSpacing:"0.04em",fontWeight:"600"}],"label-md":["12px",{lineHeight:"16px",letterSpacing:"0.02em",fontWeight:"600"}],"data-cell":["13px",{lineHeight:"16px",fontWeight:"500"}],"body-md":["13px",{lineHeight:"18px",fontWeight:"400"}]}}}}</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><aside class="fixed top-0 left-0 h-full w-[248px] bg-surface-container-lowest border-r border-surface-container-highest z-50 flex flex-col justify-between select-none"><div class="flex flex-col"><div class="h-16 px-space-md flex items-center gap-space-sm border-b border-surface-container-highest"><img alt="Fee Auditor Institutional Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1WQWeqeC8spQRkmGVegjnLgb9bFoW8wCvP7XS0S6JxDv_UG5fYFD-etxy1qcj96bI9hc3O6PWB6aDrGP_f7HtoG7A9BDdEyvLO9BOp5kUaWsezSuxxkt4-nO2O38snrO5c-XDj75xlAsZpS_p4lMoM2vWwtAnbN8rDSC-7ZIj0NPF5YjDPhqyCcmRFPM9njXJqc5ursT7eDsCi-xZY1xM6nVRpofE5owu8j7sTLz6E"/><div class="flex flex-col min-w-0"><span class="font-title-md text-title-md text-primary tracking-tight leading-tight truncate">Fee Auditor</span><span class="font-label-xs text-label-xs text-on-surface-variant truncate uppercase">Accounts &amp; Audit Dept</span></div></div><nav class="flex flex-col p-space-xs space-y-0.5" data-active-classes="bg-primary-container text-on-primary font-title-md border-l-4 border-secondary"><a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded-DEFAULT transition-colors duration-150" data-path="overview" href="#"><span class="material-symbols-outlined text-[18px]">dashboard</span><span class="font-body-md text-body-md">Overview</span></a><a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded-DEFAULT transition-colors duration-150" data-path="documents" href="#"><span class="material-symbols-outlined text-[18px]">folder</span><span class="font-body-md text-body-md">Documents</span></a><a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded-DEFAULT transition-colors duration-150" data-path="upload-documents" href="#"><span class="material-symbols-outlined text-[18px]">cloud_upload</span><span class="font-body-md text-body-md">Upload Documents</span></a><a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded-DEFAULT transition-colors duration-150" data-path="audit-results" href="#"><span class="material-symbols-outlined text-[18px]">policy</span><span class="font-body-md text-body-md">Audit Results</span></a><a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded-DEFAULT transition-colors duration-150" data-path="manual-review" href="#"><span class="material-symbols-outlined text-[18px]">rule</span><span class="font-body-md text-body-md">Manual Review</span></a><a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded-DEFAULT transition-colors duration-150" data-path="reports-export" href="#"><span class="material-symbols-outlined text-[18px]">table_chart</span><span class="font-body-md text-body-md">Reports &amp; Export</span></a><a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded-DEFAULT transition-colors duration-150" data-path="settings" href="#"><span class="material-symbols-outlined text-[18px]">tune</span><span class="font-body-md text-body-md">Settings</span></a></nav></div><div class="flex flex-col border-t border-surface-container-highest p-space-sm space-y-space-sm bg-surface-container-low"><a class="flex items-center gap-space-sm px-space-sm py-1.5 text-on-surface-variant hover:text-on-surface text-body-sm font-body-sm transition-colors" data-path="documentation" href="#"><span class="material-symbols-outlined text-[16px]">help_center</span><span>Help &amp; Documentation</span></a><div class="flex items-center justify-between px-space-sm py-1 bg-surface-container-lowest border border-surface-container-highest rounded-DEFAULT"><div class="flex items-center gap-1.5 min-w-0"><span class="h-2 w-2 rounded-full bg-secondary shrink-0"></span><span class="font-label-xs text-label-xs text-on-surface truncate">Deterministic Engine</span></div><span class="font-label-xs text-label-xs text-secondary font-semibold uppercase tracking-wider">Active</span></div><div class="flex items-center gap-space-sm p-space-xs rounded-DEFAULT border border-surface-container-highest bg-surface-container-lowest"><img alt="Profile" class="w-8 h-8 rounded-full object-cover shrink-0 border border-outline-variant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAm3IPwEXFCstla-QeT-9itpMog7-GTYueVJMHTFW1Rto37DSroIZhaLu_qGOkRPRU4zm1SI0K-Ic50YsJYz7KU7EGJZ6wq14FkBRGOdIuUewbhajle6P9St5Mq6N2R--Fy6FluYQ0Q_RBr1DB00YT4o1uLX3WdotJaDJ8Qv_GFP_zsD0TbsFGRbJAPTy_Yog90tYpVO7Z9jpj58xRWa4-cyzrBffYMDXE-193UWw"/><div class="flex flex-col min-w-0"><div class="font-title-md text-[13px] text-on-surface truncate font-semibold leading-tight">R. K. Sharma</div><div class="font-label-xs text-label-xs text-on-surface-variant truncate">Sr. Accounts Admin</div><div class="font-label-xs text-[10px] text-outline truncate">Apex Inst. of Tech</div></div></div></div></aside><div class="pl-[248px]"><header class="fixed top-0 left-[248px] right-0 h-16 bg-surface-container-lowest border-b border-surface-container-highest z-40 px-space-lg flex items-center justify-between shadow-[0_1px_2px_rgba(23,43,77,0.04)]"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-xs text-body-sm font-body-sm text-on-surface-variant"><span class="material-symbols-outlined text-[16px]">account_balance</span><span>Audit Console</span><span class="material-symbols-outlined text-[14px]">chevron_right</span><span class="text-on-surface font-medium">Fee Verification Ledger</span></div><div class="h-4 w-px bg-surface-container-highest mx-space-xs hidden md:block"></div><div class="relative hidden sm:flex items-center"><select class="appearance-none bg-surface-container-low border border-surface-container-highest text-on-surface font-label-md text-label-md py-1.5 pl-3 pr-8 rounded-DEFAULT focus:outline-none focus:border-primary-container cursor-pointer"><option>AY 2024-25 • Term II (Spring)</option><option>AY 2024-25 • Term I (Fall)</option><option>AY 2023-24 • Annual Audit</option></select><span class="material-symbols-outlined absolute right-2 text-[16px] text-on-surface-variant pointer-events-none">expand_more</span></div></div><div class="flex items-center gap-space-md"><div class="relative w-64 lg:w-80"><span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-[16px] text-outline">search</span><input class="w-full h-8.5 bg-surface-container-low border border-surface-container-highest rounded-DEFAULT pl-8 pr-3 text-data-mono font-data-mono text-on-surface placeholder:text-outline focus:outline-none focus:border-primary-container transition-colors" placeholder="Search invoice ID, receipt, vendor..." type="text"/></div><div class="hidden xl:flex items-center gap-space-sm pl-space-xs border-l border-surface-container-highest text-body-sm font-body-sm text-on-surface-variant"><span class="font-data-mono text-data-mono text-on-surface-variant">24 Oct 2024</span><div class="flex items-center gap-1 px-2 py-0.5 bg-secondary-container text-on-secondary-container border border-secondary-fixed-dim rounded-DEFAULT font-label-xs text-label-xs"><span class="material-symbols-outlined text-[12px]">verified</span><span>Run #1094 Completed</span></div></div><div class="flex items-center gap-space-xs text-on-surface-variant"><button class="h-8 w-8 flex items-center justify-center rounded-DEFAULT hover:bg-surface-container transition-colors relative"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-error"></span></button><button class="h-8 w-8 flex items-center justify-center rounded-DEFAULT hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-[20px]">settings</span></button></div></div></header><main class="w-full pt-16 bg-surface px-space-lg min-h-screen"><div class="flex flex-col w-full">
+<!-- Top Context Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between py-space-lg gap-space-md">
+<div class="flex flex-col space-y-1">
+<div class="flex items-center gap-space-sm">
+<span class="font-headline-lg text-headline-lg text-primary tracking-tight">Document Results</span>
+<span class="px-2 py-0.5 rounded-DEFAULT bg-surface-container-high text-on-surface-variant font-label-xs text-label-xs">Azure AI Di-v3.1</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+        Detailed financial field extraction, tax schedule verification, and confidence validation from Azure AI Document Intelligence.
+      </p>
+</div>
+<!-- Quick Telemetry & Summary Badges -->
+<div class="flex items-center gap-space-sm flex-wrap">
+<div class="flex items-center gap-2 bg-surface-container-lowest px-space-md py-2 rounded-lg shadow-sm">
+<span class="font-label-xs text-label-xs text-on-surface-variant uppercase">Extracted Inflow</span>
+<span class="font-title-md text-title-md text-primary font-semibold">₹5,31,490.00</span>
+</div>
+<button class="flex items-center gap-1.5 bg-primary text-on-primary hover:bg-primary-container px-space-md py-2 rounded-lg text-body-sm font-label-md transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[16px]">file_download</span>
+<span>Export Filtered Table</span>
+</button>
+</div>
+</div>
+<!-- Legend & Extraction Engine Confidence Benchmarks -->
+<div class="mb-space-lg p-space-md rounded-xl bg-surface-container-lowest shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<div class="flex items-center gap-space-sm text-body-sm font-label-md text-on-surface">
+<span class="material-symbols-outlined text-[18px] text-secondary">verified_user</span>
+<span class="font-title-md text-title-md">Confidence Calibration Model</span>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 lg:gap-6">
+<div class="flex items-center gap-2">
+<span class="h-2.5 w-2.5 rounded-full bg-secondary shrink-0"></span>
+<div class="flex flex-col">
+<span class="font-label-xs text-label-xs text-on-surface font-semibold">High Confidence</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">≥ 90% (Direct Match)</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="h-2.5 w-2.5 rounded-full bg-primary-container shrink-0"></span>
+<div class="flex flex-col">
+<span class="font-label-xs text-label-xs text-on-surface font-semibold">Acceptable</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">85% – 89% (Verified)</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="h-2.5 w-2.5 rounded-full bg-tertiary-fixed-dim shrink-0"></span>
+<div class="flex flex-col">
+<span class="font-label-xs text-label-xs text-on-surface font-semibold">Low Confidence</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">&lt; 85% (Needs Review)</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="h-2.5 w-2.5 rounded-full bg-error shrink-0"></span>
+<div class="flex flex-col">
+<span class="font-label-xs text-label-xs text-on-surface font-semibold">Rule Discrepancy</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Math / Tax / Duplicate</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Operational Filter Strip -->
+<div class="mb-space-md p-space-sm bg-surface-container-lowest rounded-lg shadow-sm flex flex-col xl:flex-row xl:items-center justify-between gap-space-sm">
+<div class="flex flex-wrap items-center gap-space-sm flex-1">
+<!-- Search Input -->
+<div class="relative min-w-[240px] flex-1 max-w-sm">
+<span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-[16px] text-outline">search</span>
+<input class="w-full h-8.5 bg-surface-container-low rounded-lg pl-8 pr-3 font-body-sm text-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:bg-surface-container transition-colors" id="table-search" placeholder="Search by Vendor, Invoice #, GSTIN..." type="text"/>
+</div>
+<!-- Filters -->
+<div class="flex items-center gap-2 flex-wrap">
+<div class="relative">
+<select class="appearance-none bg-surface-container-low text-on-surface font-body-sm text-body-sm py-1.5 pl-3 pr-7 rounded-lg focus:outline-none cursor-pointer">
+<option>Status: All (6)</option>
+<option>Status: Clean (3)</option>
+<option>Status: Flagged (2)</option>
+<option>Status: Manual Review (1)</option>
+</select>
+<span class="material-symbols-outlined absolute right-1.5 top-1/2 -translate-y-1/2 text-[16px] text-on-surface-variant pointer-events-none">expand_more</span>
+</div>
+<div class="relative">
+<select class="appearance-none bg-surface-container-low text-on-surface font-body-sm text-body-sm py-1.5 pl-3 pr-7 rounded-lg focus:outline-none cursor-pointer">
+<option>Confidence: All</option>
+<option>High (≥90%)</option>
+<option>Acceptable (85-89%)</option>
+<option>Low (&lt;85%)</option>
+</select>
+<span class="material-symbols-outlined absolute right-1.5 top-1/2 -translate-y-1/2 text-[16px] text-on-surface-variant pointer-events-none">expand_more</span>
+</div>
+<div class="relative">
+<select class="appearance-none bg-surface-container-low text-on-surface font-body-sm text-body-sm py-1.5 pl-3 pr-7 rounded-lg focus:outline-none cursor-pointer">
+<option>Date Range: AY 2024-25</option>
+<option>January 2025</option>
+<option>February 2025</option>
+<option>Custom Window...</option>
+</select>
+<span class="material-symbols-outlined absolute right-1.5 top-1/2 -translate-y-1/2 text-[16px] text-on-surface-variant pointer-events-none">expand_more</span>
+</div>
+<div class="relative">
+<select class="appearance-none bg-surface-container-low text-on-surface font-body-sm text-body-sm py-1.5 pl-3 pr-7 rounded-lg focus:outline-none cursor-pointer">
+<option>Doc Type: All</option>
+<option>Tax Invoice</option>
+<option>Tuition Challan</option>
+<option>Purchase Order Bill</option>
+</select>
+<span class="material-symbols-outlined absolute right-1.5 top-1/2 -translate-y-1/2 text-[16px] text-on-surface-variant pointer-events-none">expand_more</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-sm shrink-0 self-end xl:self-auto">
+<button class="flex items-center gap-1 text-on-surface-variant hover:text-on-surface font-label-xs text-label-xs px-2.5 py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[14px]">refresh</span>
+<span>Clear Filters</span>
+</button>
+<div class="h-4 w-px bg-surface-container-highest"></div>
+<span class="font-data-mono text-data-mono text-on-surface-variant">6 matching</span>
+</div>
+</div>
+<!-- Primary Auditing Ledger View -->
+<div class="w-full bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col">
+<div class="overflow-x-auto w-full">
+<table class="w-full text-left border-collapse min-w-[1100px]">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant font-label-xs text-label-xs uppercase tracking-wider select-none">
+<th class="py-2.5 px-space-md w-12 text-center">
+<input class="rounded bg-surface-container-lowest text-primary focus:ring-0 cursor-pointer" type="checkbox"/>
+</th>
+<th class="py-2.5 px-space-md">Doc</th>
+<th class="py-2.5 px-space-md">Vendor Name</th>
+<th class="py-2.5 px-space-md">Invoice No.</th>
+<th class="py-2.5 px-space-md">Invoice Date</th>
+<th class="py-2.5 px-space-md">GSTIN / Tax ID</th>
+<th class="py-2.5 px-space-md text-right">Subtotal (INR)</th>
+<th class="py-2.5 px-space-md text-right">Tax / GST (INR)</th>
+<th class="py-2.5 px-space-md text-right">Total (INR)</th>
+<th class="py-2.5 px-space-md text-center">Confidence</th>
+<th class="py-2.5 px-space-md">Audit Status</th>
+<th class="py-2.5 px-space-md text-right">Action</th>
+</tr>
+</thead>
+<tbody class="font-body-md text-body-md divide-y-0" id="ledger-body">
+<!-- Row 1: Apex Lab Instruments (Clean) -->
+<tr class="hover:bg-surface-container-low transition-colors duration-150">
+<td class="py-2 px-space-md text-center">
+<input class="rounded bg-surface-container-low text-primary focus:ring-0 cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-2 px-space-md">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">picture_as_pdf</span>
+<span class="font-data-mono text-data-mono text-primary font-semibold">PDF</span>
+</div>
+</td>
+<td class="py-2 px-space-md">
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface leading-snug">Apex Lab Instruments</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Scientific Hardware &amp; Consumables</span>
+</div>
+</td>
+<td class="py-2 px-space-md font-data-mono text-data-mono text-on-surface">INV-2024-0891</td>
+<td class="py-2 px-space-md font-data-mono text-data-mono text-on-surface-variant">14 Jan 2025</td>
+<td class="py-2 px-space-md">
+<span class="font-data-mono text-data-mono bg-surface-container px-1.5 py-0.5 rounded-DEFAULT text-on-surface">27AABCA1234F1Z5</span>
+</td>
+<td class="py-2 px-space-md text-right font-data-mono text-data-mono text-on-surface" style="font-feature-settings: 'tnum' 1;">
+              ₹1,23,050.85
+            </td>
+<td class="py-2 px-space-md text-right font-data-mono text-data-mono text-on-surface-variant" style="font-feature-settings: 'tnum' 1;">
+              ₹22,149.15 <span class="font-label-xs text-[10px] text-on-surface-variant">(18%)</span>
+</td>
+<td class="py-2 px-space-md text-right font-data-mono text-data-mono font-bold text-primary" style="font-feature-settings: 'tnum' 1;">
+              ₹1,45,200.00
+            </td>
+<td class="py-2 px-space-md text-center">
+<div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-DEFAULT bg-secondary-container text-on-secondary-container">
+<span class="h-1.5 w-1.5 rounded-full bg-secondary"></span>
+<span class="font-data-mono text-label-xs font-semibold">96.4%</span>
+</div>
+</td>
+<td class="py-2 px-space-md">
+<span class="inline-flex items-center px-2 py-0.5 rounded-DEFAULT text-label-xs font-semibold bg-secondary-container text-on-secondary-container">
+                Clean
+              </span>
+</td>
+<td class="py-2 px-space-md text-right">
+<button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-DEFAULT bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors font-label-md text-label-md">
+<span>View Detail</span>
+<span class="material-symbols-outlined text-[14px]">open_in_new</span>
+</button>
+</td>
+</tr>
+<!-- Row 2: State Bank Collect (Clean Tuition) -->
+<tr class="hover:bg-surface-container-low transition-colors duration-150">
+<td class="py-2 px-space-md text-center">
+<input class="rounded bg-surface-container-low text-primary focus:ring-0 cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-2 px-space-md">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">receipt_long</span>
+<span class="font-data-mono text-data-mono text-primary font-semibold">REC</span>
+</div>
+</td>
+<td class="py-2 px-space-md">
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface leading-snug">State Bank Collect / Tuition</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Hostel &amp; Semester Fee Inflow</span>
+</div>
+</td>
+<td class="py-2 px-space-md font-data-mono text-data-mono text-on-surface">DU-FEES-2025-99</td>
+<td class="py-2 px-space-md font-data-mono text-data-mono text-on-surface-variant">18 Jan 2025</td>
+<td class="py-2 px-space-md">
+<span class="font-data-mono text-data-mono bg-surface-container px-1.5 py-0.5 rounded-DEFAULT text-on-surface">07AAACS0000A1Z1</span>
+</td>
+<td class="py-2 px-space-md text-right font-data-mono text-data-mono text-on-surface" style="font-feature-settings: 'tnum' 1;">
+              ₹65,000.00
+            </td>
+<td class="py-2 px-space-md text-right font-data-mono text-data-mono text-on-surface-variant" style="font-feature-settings: 'tnum' 1;">
+              ₹0.00 <span class="font-label-xs text-[10px] text-secondary font-semibold">(Exempt)</span>
+</td>
+<td class="py-2 px-space-md text-right font-data-mono text-data-mono font-bold text-primary" style="font-feature-settings: 'tnum' 1;">
+              ₹65,000.00
+            </td>
+<td class="py-2 px-space-md text-center">
+<div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-DEFAULT bg-secondary-container text-on-secondary-container">
+<span class="h-1.5 w-1.5 rounded-full bg-secondary"></span>
+<span class="font-data-mono text-label-xs font-semibold">98.1%</span>
+</div>
+</td>
+<td class="py-2 px-space-md">
+<span class="inline-flex items-center px-2 py-0.5 rounded-DEFAULT text-label-xs font-semibold bg-secondary-container text-on-secondary-container">
+                Clean
+              </span>
+</td>
+<td class="py-2 px-space-md text-right">
+<button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-DEFAULT bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors font-label-md text-label-md">
+<span>View Detail</span>
+<span class="material-symbols-outlined text-[14px]">open_in_new</span>
+</button>
+</td>
+</tr>
+<!-- Row 3: Sigma Scientific Chemicals (Flagged V01 Mismatch) -->
+<tr class="hover:bg-error-container/20 transition-colors duration-150 bg-error-container/10">
+<td class="py-2 px-space-md text-center">
+<input class="rounded bg-surface-container-low text-primary focus:ring-0 cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-2 px-space-md">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-error">picture_as_pdf</span>
+<span class="font-data-mono text-data-mono text-error font-semibold">PDF</span>
+</div>
+</td>
+<td class="py-2 px-space-md">
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface leading-snug">Sigma Scientific Chemicals</span>
+<span class="font-body-sm text-body-sm text-error">Math verification mismatch detected</span>
+</div>
+</td>
+<td class="py-2 px-space-md font-data-mono text-data-mono text-on-surface">SIG/DEL/8821</td>
+<td class="py-2 px-space-md font-data-mono text-data-mono text-on-surface-variant">22 Jan 2025</td>
+<td class="py-2 px-space-md">
+<span class="font-data-mono text-data-mono bg-surface-container px-1.5 py-0.5 rounded-DEFAULT text-on-surface">06AAAAA0000A1Z5</span>
+</td>
+<td class="py-2 px-space-md text-right font-data-mono text-data-mono text-on-surface" style="font-feature-settings: 'tnum' 1;">
+              ₹32,584.75
+            </td>
+<td class="py-2 px-space-md text-right font-data-mono text-data-mono text-on-surface-variant" style="font-feature-settings: 'tnum' 1;">
+              ₹5,865.25 <span class="font-label-xs text-[10px] text-error">(18.00%)</span>
+</td>
+<td class="py-2 px-space-md text-right font-data-mono text-data-mono font-bold text-error" style="font-feature-settings: 'tnum' 1;">
+<span class="px-1 py-0.5 rounded bg-error-container text-on-error-container">₹38,450.00</span>
+</td>
+<td class="py-2 px-space-md text-center">
+<div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-DEFAULT bg-primary-fixed text-on-primary-fixed">
+<span class="h-1.5 w-1.5 rounded-full bg-primary-container"></span>
+<span class="font-data-mono text-label-xs font-semibold">89.4%</span>
+</div>
+</td>
+<td class="py-2 px-space-md">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-DEFAULT text-label-xs font-semibold bg-error-container text-on-error-container">
+<span class="material-symbols-outlined text-[12px]">error</span>
+<span>Flagged (V01)</span>
+</span>
+</td>
+<td class="py-2 px-space-md text-right">
+<button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-DEFAULT bg-error text-on-error hover:bg-on-error-container transition-colors font-label-md text-label-md shadow-sm">
+<span>Inspect Audit</span>
+<span class="material-symbols-outlined text-[14px]">policy</span>
+</button>
+</td>
+</tr>
+<!-- Row 4: Godrej Interio Educational (Flagged V03 Duplicate) -->
+<tr class="hover:bg-surface-container-low transition-colors duration-150">
+<td class="py-2 px-space-md text-center">
+<input class="rounded bg-surface-container-low text-primary focus:ring-0 cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-2 px-space-md">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">description</span>
+<span class="font-data-mono text-data-mono text-primary font-semibold">DOC</span>
+</div>
+</td>
+<td class="py-2 px-space-md">
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface leading-snug">Godrej Interio Educational</span>
+<span class="font-body-sm text-body-sm text-error">Duplicate PO reference across Term I ledger</span>
+</div>
+</td>
+<td class="py-2 px-space-md font-data-mono text-data-mono text-on-surface">GI-INST-2024-410</td>
+<td class="py-2 px-space-md font-data-mono text-data-mono text-on-surface-variant">03 Feb 2025</td>
+<td class="py-2 px-space-md">
+<span class="font-data-mono text-data-mono bg-surface-container px-1.5 py-0.5 rounded-DEFAULT text-on-surface">27AAACG0582F1Z8</span>
+</td>
+<td class="py-2 px-space-md text-right font-data-mono text-data-mono text-on-surface" style="font-feature-settings: 'tnum' 1;">
+              ₹1,77,966.10
+            </td>
+<td class="py-2 px-space-md text-right font-data-mono text-data-mono text-on-surface-variant" style="font-feature-settings: 'tnum' 1;">
+              ₹32,033.90 <span class="font-label-xs text-[10px] text-on-surface-variant">(18%)</span>
+</td>
+<td class="py-2 px-space-md text-right font-data-mono text-data-mono font-bold text-primary" style="font-feature-settings: 'tnum' 1;">
+              ₹2,10,000.00
+            </td>
+<td class="py-2 px-space-md text-center">
+<div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-DEFAULT bg-secondary-container text-on-secondary-container">
+<span class="h-1.5 w-1.5 rounded-full bg-secondary"></span>
+<span class="font-data-mono text-label-xs font-semibold">92.5%</span>
+</div>
+</td>
+<td class="py-2 px-space-md">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-DEFAULT text-label-xs font-semibold bg-error-container text-on-error-container">
+<span class="material-symbols-outlined text-[12px]">warning</span>
+<span>Flagged (V03 Dup)</span>
+</span>
+</td>
+<td class="py-2 px-space-md text-right">
+<button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-DEFAULT bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors font-label-md text-label-md">
+<span>Inspect Audit</span>
+<span class="material-symbols-outlined text-[14px]">policy</span>
+</button>
+</td>
+</tr>
+<!-- Row 5: Oxford University Press India (Manual Review Low Confidence) -->
+<tr class="hover:bg-tertiary-fixed-dim/20 transition-colors duration-150 bg-tertiary-fixed/20">
+<td class="py-2 px-space-md text-center">
+<input class="rounded bg-surface-container-low text-primary focus:ring-0 cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-2 px-space-md">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-tertiary-container">image</span>
+<span class="font-data-mono text-data-mono text-tertiary-container font-semibold">SCAN</span>
+</div>
+</td>
+<td class="py-2 px-space-md">
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface leading-snug">Oxford University Press India</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Library Central Procurement</span>
+</div>
+</td>
+<td class="py-2 px-space-md font-data-mono text-data-mono text-on-surface">OUP/EDU/19284</td>
+<td class="py-2 px-space-md font-data-mono text-data-mono text-on-surface-variant">10 Feb 2025</td>
+<td class="py-2 px-space-md">
+<span class="font-data-mono text-data-mono bg-tertiary-fixed px-2 py-0.5 rounded-DEFAULT text-tertiary font-semibold flex items-center gap-1 w-fit">
+<span class="material-symbols-outlined text-[12px]">report_problem</span>
+                Missing GSTIN
+              </span>
+</td>
+<td class="py-2 px-space-md text-right font-data-mono text-data-mono text-on-surface" style="font-feature-settings: 'tnum' 1;">
+              ₹18,240.00
+            </td>
+<td class="py-2 px-space-md text-right font-data-mono text-data-mono text-on-surface-variant" style="font-feature-settings: 'tnum' 1;">
+              ₹0.00 <span class="font-label-xs text-[10px] text-on-surface-variant">(0%)</span>
+</td>
+<td class="py-2 px-space-md text-right font-data-mono text-data-mono font-bold text-primary" style="font-feature-settings: 'tnum' 1;">
+              ₹18,240.00
+            </td>
+<td class="py-2 px-space-md text-center">
+<div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-DEFAULT bg-tertiary-fixed text-on-tertiary-fixed">
+<span class="h-1.5 w-1.5 rounded-full bg-tertiary-fixed-dim"></span>
+<span class="font-data-mono text-label-xs font-semibold">72.1%</span>
+</div>
+</td>
+<td class="py-2 px-space-md">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-DEFAULT text-label-xs font-semibold bg-tertiary-fixed text-tertiary-container">
+<span class="material-symbols-outlined text-[12px]">edit_document</span>
+<span>Manual Review (V05)</span>
+</span>
+</td>
+<td class="py-2 px-space-md text-right">
+<button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-DEFAULT bg-tertiary-container text-on-tertiary hover:bg-tertiary transition-colors font-label-md text-label-md shadow-sm">
+<span>Verify Field</span>
+<span class="material-symbols-outlined text-[14px]">draw</span>
+</button>
+</td>
+</tr>
+<!-- Row 6: Voltas Commercial Aircon (Clean) -->
+<tr class="hover:bg-surface-container-low transition-colors duration-150">
+<td class="py-2 px-space-md text-center">
+<input class="rounded bg-surface-container-low text-primary focus:ring-0 cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-2 px-space-md">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">picture_as_pdf</span>
+<span class="font-data-mono text-data-mono text-primary font-semibold">PDF</span>
+</div>
+</td>
+<td class="py-2 px-space-md">
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface leading-snug">Voltas Commercial Aircon</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">HVAC AMC &amp; Server Chiller Maintenance</span>
+</div>
+</td>
+<td class="py-2 px-space-md font-data-mono text-data-mono text-on-surface">VOL/FAC/7710</td>
+<td class="py-2 px-space-md font-data-mono text-data-mono text-on-surface-variant">15 Feb 2025</td>
+<td class="py-2 px-space-md">
+<span class="font-data-mono text-data-mono bg-surface-container px-1.5 py-0.5 rounded-DEFAULT text-on-surface">27AAACV1234D1Z2</span>
+</td>
+<td class="py-2 px-space-md text-right font-data-mono text-data-mono text-on-surface" style="font-feature-settings: 'tnum' 1;">
+              ₹46,271.19
+            </td>
+<td class="py-2 px-space-md text-right font-data-mono text-data-mono text-on-surface-variant" style="font-feature-settings: 'tnum' 1;">
+              ₹8,328.81 <span class="font-label-xs text-[10px] text-on-surface-variant">(18%)</span>
+</td>
+<td class="py-2 px-space-md text-right font-data-mono text-data-mono font-bold text-primary" style="font-feature-settings: 'tnum' 1;">
+              ₹54,600.00
+            </td>
+<td class="py-2 px-space-md text-center">
+<div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-DEFAULT bg-secondary-container text-on-secondary-container">
+<span class="h-1.5 w-1.5 rounded-full bg-secondary"></span>
+<span class="font-data-mono text-label-xs font-semibold">94.7%</span>
+</div>
+</td>
+<td class="py-2 px-space-md">
+<span class="inline-flex items-center px-2 py-0.5 rounded-DEFAULT text-label-xs font-semibold bg-secondary-container text-on-secondary-container">
+                Clean
+              </span>
+</td>
+<td class="py-2 px-space-md text-right">
+<button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-DEFAULT bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors font-label-md text-label-md">
+<span>View Detail</span>
+<span class="material-symbols-outlined text-[14px]">open_in_new</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Institutional Pagination Strip -->
+<div class="px-space-md py-3 bg-surface-container-low flex flex-col sm:flex-row items-center justify-between gap-space-sm">
+<div class="flex items-center gap-2 text-body-sm font-body-sm text-on-surface-variant">
+<span>Showing <strong class="text-on-surface font-semibold">1–6</strong> of <strong class="text-on-surface font-semibold">6</strong> documents</span>
+<span>•</span>
+<span>Total Value: <strong class="text-primary font-semibold font-data-mono">₹5,31,490.00</strong></span>
+<span>•</span>
+<span>1 page</span>
+</div>
+<div class="flex items-center gap-1">
+<button class="h-8 w-8 flex items-center justify-center rounded-DEFAULT bg-surface-container-lowest text-outline-variant cursor-not-allowed" disabled="">
+<span class="material-symbols-outlined text-[18px]">first_page</span>
+</button>
+<button class="h-8 w-8 flex items-center justify-center rounded-DEFAULT bg-surface-container-lowest text-outline-variant cursor-not-allowed" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="h-8 px-3 rounded-DEFAULT bg-primary text-on-primary font-label-md text-label-md shadow-sm">
+          1
+        </button>
+<button class="h-8 w-8 flex items-center justify-center rounded-DEFAULT bg-surface-container-lowest text-outline-variant cursor-not-allowed" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+<button class="h-8 w-8 flex items-center justify-center rounded-DEFAULT bg-surface-container-lowest text-outline-variant cursor-not-allowed" disabled="">
+<span class="material-symbols-outlined text-[18px]">last_page</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Real-time Audit Context Inspector Drawer (collapsible auxiliary pane) -->
+<div class="mt-space-lg grid grid-cols-1 md:grid-cols-3 gap-space-md">
+<!-- Audit Ingestion Metrics -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col">
+<div class="flex items-center justify-between pb-space-sm">
+<span class="font-title-md text-title-md text-primary">Ingestion Engine Telemetry</span>
+<span class="material-symbols-outlined text-[18px] text-secondary">memory</span>
+</div>
+<div class="space-y-2 text-body-sm font-body-sm text-on-surface-variant">
+<div class="flex justify-between items-center py-1">
+<span>OCR Processing Speed</span>
+<span class="font-data-mono text-on-surface font-semibold">1.42s / page</span>
+</div>
+<div class="flex justify-between items-center py-1">
+<span>Model Endpoint</span>
+<span class="font-data-mono text-on-surface">prebuilt-invoice:2024</span>
+</div>
+<div class="flex justify-between items-center py-1">
+<span>Target Accuracy Rate</span>
+<span class="font-data-mono text-secondary font-semibold">99.2% F1-Score</span>
+</div>
+</div>
+</div>
+<!-- Active Compliance Rules Applied -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col">
+<div class="flex items-center justify-between pb-space-sm">
+<span class="font-title-md text-title-md text-primary">Deterministic Validation</span>
+<span class="material-symbols-outlined text-[18px] text-primary-container">rule</span>
+</div>
+<div class="space-y-2 text-body-sm font-body-sm text-on-surface-variant">
+<div class="flex items-center gap-2 py-1">
+<span class="material-symbols-outlined text-[16px] text-secondary">check_circle</span>
+<span>Rule V01: Line Subtotal + GST = Total</span>
+</div>
+<div class="flex items-center gap-2 py-1">
+<span class="material-symbols-outlined text-[16px] text-secondary">check_circle</span>
+<span>Rule V02: 15-digit GSTIN Regex Verification</span>
+</div>
+<div class="flex items-center gap-2 py-1">
+<span class="material-symbols-outlined text-[16px] text-error">cancel</span>
+<span class="text-error font-medium">Rule V03: Cross-FY Duplicate Detection</span>
+</div>
+</div>
+</div>
+<!-- Batch Audit Export Notice -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-space-sm">
+<span class="font-title-md text-title-md text-primary">Department Attestation</span>
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">verified</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant">
+          Extracted amounts are cross-checked with University Treasury Schedule 4B. Flagged items require Admin Sign-off prior to releasing vendor voucher payment.
+        </p>
+</div>
+<div class="pt-space-sm flex items-center justify-end">
+<button class="text-primary font-label-md text-label-md hover:underline flex items-center gap-1">
+<span>Download Audit Trail Log</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Interactive Search / Filter script -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const searchInput = document.getElementById('table-search');
+      const tableBody = document.getElementById('ledger-body');
+      if (!searchInput || !tableBody) return;
+
+      searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        const rows = tableBody.querySelectorAll('tr');
+
+        rows.forEach(row => {
+          const text = row.innerText.toLowerCase();
+          if (text.includes(query)) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+</div></main></div></body></html>

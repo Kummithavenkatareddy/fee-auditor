@@ -1,0 +1,350 @@
+import sqlite3
+import os
+from pathlib import Path
+from contextlib import contextmanager
+
+from app.config import settings
+
+DB_FILE = Path(settings.DATABASE_URL.replace("sqlite:///", ""))
+
+
+def get_db_path() -> Path:
+    raw_path = settings.DATABASE_URL.replace("sqlite:///", "")
+    p = Path(raw_path)
+    if not p.is_absolute():
+        # Anchor relative database path to repository root
+        project_root = Path(__file__).resolve().parent.parent.parent
+        return project_root / p.name
+    return p
+
+
+@contextmanager
+def get_db_connection():
+    """Context manager for SQLite database connection with foreign keys enabled."""
+    conn = sqlite3.connect(get_db_path(), timeout=30.0)
+    conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA foreign_keys = ON;")
+    try:
+        yield conn
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
+
+
+def init_db():
+    """Initialize database tables, foreign keys, and indexes using canonical decimal strings (TEXT) for money."""
+    db_path = get_db_path()
+    db_path.parent.mkdir(parents=True, exist_ok=True)
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+
+        # 1. Users table (Phase 2 canonical entity)
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS users (
+                id TEXT PRIMARY KEY,
+                email TEXT UNIQUE,
+                phone TEXT UNIQUE,
+                password_hash TEXT NOT NULL,
+                email_verified INTEGER DEFAULT 0,
+                phone_verified INTEGER DEFAULT 0,
+                display_name TEXT,
+                identifier TEXT UNIQUE,
+                full_name TEXT,
+                is_verified INTEGER DEFAULT 0,
+                created_at TEXT NOT NULL,
+                updated_at TEXT,
+                settings_json TEXT
+            );
+            """
+        )
+
+        # Seed system_default user row to satisfy foreign key constraints across documents and review_actions
+        cursor.execute(
+            """
+            INSERT OR IGNORE INTO users (id, identifier, email, phone, display_name, full_name, is_verified, password_hash, created_at)
+            VALUES (
+                'system_default',
+                'auditor@university.edu',
+                'auditor@university.edu',
+                '+91 98765 43210',
+                'System Auditor',
+                'Institutional Auditor',
+                1,
+                'pbkdf2:system_default_protected_hash',
+                '2026-08-01T00:00:00Z'
+            );
+            """
+        )
+
+        # 2. User sessions table (Phase 2 canonical entity)
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS user_sessions (
+                id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                token_hash TEXT UNIQUE NOT NULL,
+                created_at TEXT NOT NULL,
+                expires_at TEXT NOT NULL,
+                revoked_at TEXT,
+                FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+            );
+            """
+        )
+
+        # Legacy sessions alias / support
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS sessions (
+                id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                token TEXT UNIQUE NOT NULL,
+                expires_at TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+            );
+            """
+        )
+
+        # 3. Documents table (Phase 2 canonical entity)
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS documents (
+                id TEXT PRIMARY KEY,
+                owner_user_id TEXT NOT NULL,
+                original_filename TEXT NOT NULL,
+                storage_key TEXT NOT NULL,
+                content_type TEXT NOT NULL,
+                file_size INTEGER NOT NULL,
+                sha256_hash TEXT NOT NULL,
+                document_type TEXT NOT NULL,
+                uploaded_at TEXT NOT NULL,
+                processing_status TEXT DEFAULT 'completed',
+                audit_status TEXT DEFAULT 'clean',
+                file_name TEXT,
+                file_hash TEXT,
+                model_used TEXT DEFAULT 'prebuilt-invoice',
+                extraction_status TEXT DEFAULT 'succeeded',
+                vendor_name TEXT,
+                vendor_name_conf REAL,
+                invoice_id TEXT,
+                invoice_id_conf REAL,
+                invoice_date TEXT,
+                invoice_date_conf REAL,
+                vendor_tax_id TEXT,
+                vendor_tax_id_conf REAL,
+                subtotal TEXT,
+                subtotal_conf REAL,
+                tax TEXT,
+                tax_conf REAL,
+                total TEXT,
+                total_conf REAL,
+                is_duplicate INTEGER DEFAULT 0,
+                is_exact_duplicate INTEGER DEFAULT 0,
+                is_business_duplicate INTEGER DEFAULT 0,
+                manual_review_status TEXT DEFAULT 'pending',
+                manual_review_notes TEXT,
+                batch_id TEXT,
+                created_at TEXT,
+                audit_history TEXT,
+                normalized_vendor_name TEXT,
+                normalized_invoice_id TEXT,
+                highest_severity TEXT,
+                raw_azure_json TEXT,
+                normalized_json TEXT,
+                FOREIGN KEY (owner_user_id) REFERENCES users (id) ON DELETE CASCADE
+            );
+            """
+        )
+
+        # 4. Extractions table (Phase 2 canonical entity)
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS extractions (
+                id TEXT PRIMARY KEY,
+                document_id TEXT NOT NULL,
+                extracted_fields TEXT NOT NULL,
+                confidence_data TEXT NOT NULL,
+                raw_azure_json TEXT,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY (document_id) REFERENCES documents (id) ON DELETE CASCADE
+            );
+            """
+        )
+
+        # 5. Audit runs table (Phase 2 canonical entity)
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS audit_runs (
+                id TEXT PRIMARY KEY,
+                document_id TEXT NOT NULL,
+                academic_term_start TEXT,
+                academic_term_end TEXT,
+                rule_version TEXT NOT NULL DEFAULT 'V01-V05-v1.0',
+                audit_status TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY (document_id) REFERENCES documents (id) ON DELETE CASCADE
+            );
+            """
+        )
+
+        # 6. Validation flags table (Phase 2 canonical entity)
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS validation_flags (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                audit_run_id TEXT,
+                document_id TEXT NOT NULL,
+                rule_id TEXT NOT NULL,
+                severity TEXT NOT NULL,
+                target_field TEXT,
+                reason TEXT NOT NULL,
+                expected_value TEXT,
+                actual_value TEXT,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY (audit_run_id) REFERENCES audit_runs (id) ON DELETE CASCADE,
+                FOREIGN KEY (document_id) REFERENCES documents (id) ON DELETE CASCADE
+            );
+            """
+        )
+
+        # Legacy audit_flags table support
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS audit_flags (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                document_id TEXT NOT NULL,
+                rule_id TEXT NOT NULL,
+                rule_name TEXT NOT NULL,
+                severity TEXT NOT NULL,
+                field_name TEXT,
+                reason TEXT NOT NULL,
+                expected_value TEXT,
+                actual_value TEXT,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY (document_id) REFERENCES documents (id) ON DELETE CASCADE
+            );
+            """
+        )
+
+        # 7. Review actions table (Phase 2 canonical entity)
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS review_actions (
+                id TEXT PRIMARY KEY,
+                document_id TEXT NOT NULL,
+                reviewer_user_id TEXT NOT NULL,
+                decision TEXT NOT NULL,
+                justification TEXT,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY (document_id) REFERENCES documents (id) ON DELETE CASCADE,
+                FOREIGN KEY (reviewer_user_id) REFERENCES users (id) ON DELETE CASCADE
+            );
+            """
+        )
+
+        # 8. Line items table
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS line_items (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                document_id TEXT NOT NULL,
+                item_index INTEGER DEFAULT 0,
+                description TEXT,
+                quantity TEXT,
+                unit_price TEXT,
+                amount TEXT,
+                confidence REAL,
+                FOREIGN KEY (document_id) REFERENCES documents (id) ON DELETE CASCADE
+            );
+            """
+        )
+
+        # 9. Verification codes table
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS verification_codes (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                identifier TEXT NOT NULL,
+                code_hash TEXT NOT NULL,
+                purpose TEXT NOT NULL,
+                expires_at TEXT NOT NULL,
+                created_at TEXT NOT NULL
+            );
+            """
+        )
+
+        # Safe Column Migrations for Users Table
+        cursor.execute("PRAGMA table_info(users);")
+        user_cols = {row[1] for row in cursor.fetchall()}
+        if "email_verified" not in user_cols:
+            cursor.execute("ALTER TABLE users ADD COLUMN email_verified INTEGER DEFAULT 0;")
+        if "phone_verified" not in user_cols:
+            cursor.execute("ALTER TABLE users ADD COLUMN phone_verified INTEGER DEFAULT 0;")
+        if "display_name" not in user_cols:
+            cursor.execute("ALTER TABLE users ADD COLUMN display_name TEXT;")
+        if "identifier" not in user_cols:
+            cursor.execute("ALTER TABLE users ADD COLUMN identifier TEXT;")
+        if "full_name" not in user_cols:
+            cursor.execute("ALTER TABLE users ADD COLUMN full_name TEXT;")
+        if "is_verified" not in user_cols:
+            cursor.execute("ALTER TABLE users ADD COLUMN is_verified INTEGER DEFAULT 0;")
+        if "settings_json" not in user_cols:
+            cursor.execute("ALTER TABLE users ADD COLUMN settings_json TEXT;")
+
+        # Safe Column Migrations for Documents Table
+        cursor.execute("PRAGMA table_info(documents);")
+        doc_cols = {row[1] for row in cursor.fetchall()}
+        if "owner_user_id" not in doc_cols:
+            cursor.execute("ALTER TABLE documents ADD COLUMN owner_user_id TEXT;")
+        if "original_filename" not in doc_cols:
+            cursor.execute("ALTER TABLE documents ADD COLUMN original_filename TEXT;")
+        if "storage_key" not in doc_cols:
+            cursor.execute("ALTER TABLE documents ADD COLUMN storage_key TEXT;")
+        if "content_type" not in doc_cols:
+            cursor.execute("ALTER TABLE documents ADD COLUMN content_type TEXT;")
+        if "file_size" not in doc_cols:
+            cursor.execute("ALTER TABLE documents ADD COLUMN file_size INTEGER;")
+        if "sha256_hash" not in doc_cols:
+            cursor.execute("ALTER TABLE documents ADD COLUMN sha256_hash TEXT;")
+        if "uploaded_at" not in doc_cols:
+            cursor.execute("ALTER TABLE documents ADD COLUMN uploaded_at TEXT;")
+        if "processing_status" not in doc_cols:
+            cursor.execute("ALTER TABLE documents ADD COLUMN processing_status TEXT DEFAULT 'completed';")
+        if "extraction_status" not in doc_cols:
+            cursor.execute("ALTER TABLE documents ADD COLUMN extraction_status TEXT DEFAULT 'succeeded';")
+        if "audit_history" not in doc_cols:
+            cursor.execute("ALTER TABLE documents ADD COLUMN audit_history TEXT;")
+        if "normalized_vendor_name" not in doc_cols:
+            cursor.execute("ALTER TABLE documents ADD COLUMN normalized_vendor_name TEXT;")
+        if "normalized_invoice_id" not in doc_cols:
+            cursor.execute("ALTER TABLE documents ADD COLUMN normalized_invoice_id TEXT;")
+        if "highest_severity" not in doc_cols:
+            cursor.execute("ALTER TABLE documents ADD COLUMN highest_severity TEXT;")
+
+        cursor.execute("PRAGMA table_info(audit_flags);")
+        existing_flag_cols = {row[1] for row in cursor.fetchall()}
+        if "created_at" not in existing_flag_cols:
+            cursor.execute("ALTER TABLE audit_flags ADD COLUMN created_at TEXT;")
+
+        # Indexes for fast lookup, deduplication, and strict multi-user isolation
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_users_email ON users (email);")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_users_phone ON users (phone);")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_users_identifier ON users (identifier);")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_user_sessions_token ON user_sessions (token_hash);")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_user_sessions_user ON user_sessions (user_id);")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_doc_owner ON documents (owner_user_id);")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_doc_hash ON documents (sha256_hash);")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_doc_business ON documents (vendor_name, invoice_id);")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_doc_status ON documents (audit_status);")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_extractions_doc ON extractions (document_id);")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_audit_runs_doc ON audit_runs (document_id);")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_flags_run ON validation_flags (audit_run_id);")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_flags_doc ON validation_flags (document_id);")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_review_doc ON review_actions (document_id);")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_items_doc ON line_items (document_id);")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_legacy_flags_doc ON audit_flags (document_id);")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_legacy_session_token ON sessions (token);")

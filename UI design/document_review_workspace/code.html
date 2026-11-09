@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"error":"#ba1a1a","on-secondary-fixed":"#00201a","on-surface":"#161c22","surface-variant":"#dde3eb","secondary-container":"#bee8dc","on-surface-variant":"#44474e","on-secondary-container":"#436a60","outline-variant":"#c5c6cf","surface-container-highest":"#dde3eb","inverse-on-surface":"#ecf1f9","tertiary-fixed-dim":"#edbe8a","secondary":"#3f665c","on-primary-container":"#8093bb","primary":"#001637","on-error":"#ffffff","on-tertiary-container":"#b48b5b","on-secondary-fixed-variant":"#274e45","surface-bright":"#f7f9ff","on-tertiary-fixed-variant":"#604017","surface-dim":"#d5dae2","background":"#f7f9ff","surface-container":"#e9eef6","on-primary":"#ffffff","outline":"#75777f","on-tertiary-fixed":"#2b1700","surface":"#f7f9ff","primary-container":"#172b4d","on-tertiary":"#ffffff","on-primary-fixed-variant":"#34476a","error-container":"#ffdad6","tertiary":"#241300","surface-container-lowest":"#ffffff","surface-container-high":"#e3e9f0","secondary-fixed-dim":"#a6cfc3","tertiary-fixed":"#ffddb9","on-error-container":"#93000a","on-background":"#161c22","secondary-fixed":"#c1ebdf","primary-fixed":"#d7e2ff","surface-tint":"#4c5e83","primary-fixed-dim":"#b4c7f1","on-primary-fixed":"#041b3c","tertiary-container":"#402500","on-secondary":"#ffffff","surface-container-low":"#eff4fc","inverse-surface":"#2b3137","inverse-primary":"#b4c7f1"},borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},spacing:{"margin":"1.5rem","space-lg":"1rem","space-xl":"1.5rem","margin-panel":"2rem","space-xs":"0.25rem","space-md":"0.75rem","space-sm":"0.5rem","gutter":"1rem","gutter-compact":"0.5rem"},fontFamily:{"body-lg":["Inter"],"title-md":["Inter"],"headline-lg":["Inter"],"data-mono":["Inter"],"display-lg":["Inter"],"body-sm":["Inter"],"headline-sm":["Inter"],"label-xs":["Inter"],"label-md":["Inter"],"data-cell":["Inter"],"body-md":["Inter"]},fontSize:{"body-lg":["14px",{lineHeight:"20px",fontWeight:"400"}],"title-md":["15px",{lineHeight:"20px",letterSpacing:"-0.005em",fontWeight:"600"}],"headline-lg":["24px",{lineHeight:"32px",letterSpacing:"-0.015em",fontWeight:"600"}],"data-mono":["13px",{lineHeight:"16px",fontWeight:"500"}],"display-lg":["32px",{lineHeight:"40px",letterSpacing:"-0.02em",fontWeight:"600"}],"body-sm":["12px",{lineHeight:"16px",fontWeight:"400"}],"headline-sm":["18px",{lineHeight:"24px",letterSpacing:"-0.01em",fontWeight:"600"}],"label-xs":["11px",{lineHeight:"14px",letterSpacing:"0.04em",fontWeight:"600"}],"label-md":["12px",{lineHeight:"16px",letterSpacing:"0.02em",fontWeight:"600"}],"data-cell":["13px",{lineHeight:"16px",fontWeight:"500"}],"body-md":["13px",{lineHeight:"18px",fontWeight:"400"}]}}}}</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><aside class="fixed top-0 left-0 h-full w-[248px] bg-surface-container-lowest border-r border-surface-container-highest z-50 flex flex-col justify-between select-none"><div class="flex flex-col"><div class="h-16 px-space-md flex items-center gap-space-sm border-b border-surface-container-highest"><img alt="Fee Auditor Institutional Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1WQWeqeC8spQRkmGVegjnLgb9bFoW8wCvP7XS0S6JxDv_UG5fYFD-etxy1qcj96bI9hc3O6PWB6aDrGP_f7HtoG7A9BDdEyvLO9BOp5kUaWsezSuxxkt4-nO2O38snrO5c-XDj75xlAsZpS_p4lMoM2vWwtAnbN8rDSC-7ZIj0NPF5YjDPhqyCcmRFPM9njXJqc5ursT7eDsCi-xZY1xM6nVRpofE5owu8j7sTLz6E"/><div class="flex flex-col min-w-0"><span class="font-title-md text-title-md text-primary tracking-tight leading-tight truncate">Fee Auditor</span><span class="font-label-xs text-label-xs text-on-surface-variant truncate uppercase">Accounts &amp; Audit Dept</span></div></div><nav class="flex flex-col p-space-xs space-y-0.5" data-active-classes="bg-primary-container text-on-primary font-title-md border-l-4 border-secondary"><a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded-DEFAULT transition-colors duration-150" data-path="overview" href="#"><span class="material-symbols-outlined text-[18px]">dashboard</span><span class="font-body-md text-body-md">Overview</span></a><a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded-DEFAULT transition-colors duration-150" data-path="documents" href="#"><span class="material-symbols-outlined text-[18px]">folder</span><span class="font-body-md text-body-md">Documents</span></a><a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded-DEFAULT transition-colors duration-150" data-path="upload-documents" href="#"><span class="material-symbols-outlined text-[18px]">cloud_upload</span><span class="font-body-md text-body-md">Upload Documents</span></a><a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded-DEFAULT transition-colors duration-150" data-path="audit-results" href="#"><span class="material-symbols-outlined text-[18px]">policy</span><span class="font-body-md text-body-md">Audit Results</span></a><a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded-DEFAULT transition-colors duration-150" data-path="manual-review" href="#"><span class="material-symbols-outlined text-[18px]">rule</span><span class="font-body-md text-body-md">Manual Review</span></a><a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded-DEFAULT transition-colors duration-150" data-path="reports-export" href="#"><span class="material-symbols-outlined text-[18px]">table_chart</span><span class="font-body-md text-body-md">Reports &amp; Export</span></a><a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded-DEFAULT transition-colors duration-150" data-path="settings" href="#"><span class="material-symbols-outlined text-[18px]">tune</span><span class="font-body-md text-body-md">Settings</span></a></nav></div><div class="flex flex-col border-t border-surface-container-highest p-space-sm space-y-space-sm bg-surface-container-low"><a class="flex items-center gap-space-sm px-space-sm py-1.5 text-on-surface-variant hover:text-on-surface text-body-sm font-body-sm transition-colors" data-path="documentation" href="#"><span class="material-symbols-outlined text-[16px]">help_center</span><span>Help &amp; Documentation</span></a><div class="flex items-center justify-between px-space-sm py-1 bg-surface-container-lowest border border-surface-container-highest rounded-DEFAULT"><div class="flex items-center gap-1.5 min-w-0"><span class="h-2 w-2 rounded-full bg-secondary shrink-0"></span><span class="font-label-xs text-label-xs text-on-surface truncate">Deterministic Engine</span></div><span class="font-label-xs text-label-xs text-secondary font-semibold uppercase tracking-wider">Active</span></div><div class="flex items-center gap-space-sm p-space-xs rounded-DEFAULT border border-surface-container-highest bg-surface-container-lowest"><img alt="Profile" class="w-8 h-8 rounded-full object-cover shrink-0 border border-outline-variant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAm3IPwEXFCstla-QeT-9itpMog7-GTYueVJMHTFW1Rto37DSroIZhaLu_qGOkRPRU4zm1SI0K-Ic50YsJYz7KU7EGJZ6wq14FkBRGOdIuUewbhajle6P9St5Mq6N2R--Fy6FluYQ0Q_RBr1DB00YT4o1uLX3WdotJaDJ8Qv_GFP_zsD0TbsFGRbJAPTy_Yog90tYpVO7Z9jpj58xRWa4-cyzrBffYMDXE-193UWw"/><div class="flex flex-col min-w-0"><div class="font-title-md text-[13px] text-on-surface truncate font-semibold leading-tight">R. K. Sharma</div><div class="font-label-xs text-label-xs text-on-surface-variant truncate">Sr. Accounts Admin</div><div class="font-label-xs text-[10px] text-outline truncate">Apex Inst. of Tech</div></div></div></div></aside><div class="pl-[248px]"><header class="fixed top-0 left-[248px] right-0 h-16 bg-surface-container-lowest border-b border-surface-container-highest z-40 px-space-lg flex items-center justify-between shadow-[0_1px_2px_rgba(23,43,77,0.04)]"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-xs text-body-sm font-body-sm text-on-surface-variant"><span class="material-symbols-outlined text-[16px]">account_balance</span><span>Audit Console</span><span class="material-symbols-outlined text-[14px]">chevron_right</span><span class="text-on-surface font-medium">Fee Verification Ledger</span></div><div class="h-4 w-px bg-surface-container-highest mx-space-xs hidden md:block"></div><div class="relative hidden sm:flex items-center"><select class="appearance-none bg-surface-container-low border border-surface-container-highest text-on-surface font-label-md text-label-md py-1.5 pl-3 pr-8 rounded-DEFAULT focus:outline-none focus:border-primary-container cursor-pointer"><option>AY 2024-25 • Term II (Spring)</option><option>AY 2024-25 • Term I (Fall)</option><option>AY 2023-24 • Annual Audit</option></select><span class="material-symbols-outlined absolute right-2 text-[16px] text-on-surface-variant pointer-events-none">expand_more</span></div></div><div class="flex items-center gap-space-md"><div class="relative w-64 lg:w-80"><span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-[16px] text-outline">search</span><input class="w-full h-8.5 bg-surface-container-low border border-surface-container-highest rounded-DEFAULT pl-8 pr-3 text-data-mono font-data-mono text-on-surface placeholder:text-outline focus:outline-none focus:border-primary-container transition-colors" placeholder="Search invoice ID, receipt, vendor..." type="text"/></div><div class="hidden xl:flex items-center gap-space-sm pl-space-xs border-l border-surface-container-highest text-body-sm font-body-sm text-on-surface-variant"><span class="font-data-mono text-data-mono text-on-surface-variant">24 Oct 2024</span><div class="flex items-center gap-1 px-2 py-0.5 bg-secondary-container text-on-secondary-container border border-secondary-fixed-dim rounded-DEFAULT font-label-xs text-label-xs"><span class="material-symbols-outlined text-[12px]">verified</span><span>Run #1094 Completed</span></div></div><div class="flex items-center gap-space-xs text-on-surface-variant"><button class="h-8 w-8 flex items-center justify-center rounded-DEFAULT hover:bg-surface-container transition-colors relative"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-error"></span></button><button class="h-8 w-8 flex items-center justify-center rounded-DEFAULT hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-[20px]">settings</span></button></div></div></header><main class="w-full pt-16 bg-surface px-space-lg min-h-screen"><div class="flex flex-col w-full">
+<!-- Top Context & Action Banner -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md py-space-md mb-space-md">
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-xs font-body-sm text-body-sm text-on-surface-variant mb-1">
+<span class="hover:text-primary cursor-pointer transition-colors">Documents</span>
+<span class="material-symbols-outlined text-[13px] text-outline">chevron_right</span>
+<span class="font-data-mono text-data-mono text-on-surface">INV-2024-0891.pdf</span>
+<span class="material-symbols-outlined text-[13px] text-outline">chevron_right</span>
+<span class="text-secondary font-semibold">Inspection &amp; Verification</span>
+</div>
+<div class="flex items-center gap-space-sm flex-wrap">
+<h1 class="font-headline-lg text-headline-lg text-primary tracking-tight">
+          Document Inspection: Apex Lab Instruments <span class="text-on-surface-variant font-data-mono font-normal text-headline-sm">(INV-2024-0891)</span>
+</h1>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-DEFAULT bg-secondary-container text-on-secondary-container font-label-xs text-label-xs font-semibold">
+<span class="material-symbols-outlined text-[12px]">verified_user</span> OCR Confidence 97.4%
+        </span>
+</div>
+</div>
+<!-- Header Action Bar -->
+<div class="flex items-center gap-space-xs sm:gap-space-sm flex-wrap shrink-0">
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-DEFAULT bg-surface-container-lowest text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all shadow-sm font-label-md text-label-md" title="Download Source File">
+<span class="material-symbols-outlined text-[16px]">file_download</span>
+<span class="hidden sm:inline">Download PDF</span>
+</button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-DEFAULT bg-surface-container-lowest text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all shadow-sm font-label-md text-label-md" id="toggleJsonBtn">
+<span class="material-symbols-outlined text-[16px]">code</span>
+<span class="hidden sm:inline">Raw JSON</span>
+</button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-DEFAULT bg-secondary-container text-on-secondary-container hover:bg-secondary hover:text-on-secondary transition-all font-label-md text-label-md" id="markReviewedBtn">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span>Mark as Reviewed</span>
+</button>
+<button class="flex items-center gap-1.5 px-4 py-1.5 rounded-DEFAULT bg-primary-container text-on-primary hover:bg-primary transition-all shadow-sm font-label-md text-label-md" id="saveCorrectionsBtn">
+<span class="material-symbols-outlined text-[16px]">save</span>
+<span>Save Corrections</span>
+</button>
+</div>
+</div>
+<!-- Raw JSON Extraction Drawer / Modal (Initially Hidden) -->
+<div class="hidden fixed inset-0 z-50 bg-primary/40 backdrop-blur-sm flex items-center justify-center p-space-lg" id="jsonModal">
+<div class="bg-surface-container-lowest rounded-xl max-w-2xl w-full max-h-[870px] flex flex-col shadow-xl overflow-hidden">
+<div class="px-space-lg py-space-md bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]">data_object</span>
+<span class="font-title-md text-title-md text-primary">Azure Form Recognizer: Raw Extraction Payload</span>
+</div>
+<button class="text-on-surface-variant hover:text-on-surface" id="closeJsonBtn">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<div class="p-space-lg overflow-y-auto font-data-mono text-data-mono bg-primary text-primary-fixed text-xs leading-relaxed max-h-[614px]">
+<pre>{
+  "modelId": "prebuilt-invoice",
+  "apiVersion": "2024-02-29-preview",
+  "docType": "invoice:tax_invoice",
+  "fields": {
+    "VendorName": { "value": "Apex Lab Instruments Pvt Ltd", "confidence": 0.9782 },
+    "VendorTaxId": { "value": "27AABCA1234F1Z5", "confidence": 0.9821 },
+    "InvoiceId": { "value": "INV-2024-0891", "confidence": 0.9914 },
+    "InvoiceDate": { "value": "2025-01-14", "confidence": 0.9602 },
+    "SubTotal": { "value": 123050.85, "currency": "INR", "confidence": 0.9423 },
+    "TotalTax": { "value": 22149.15, "confidence": 0.9890 },
+    "InvoiceTotal": { "value": 145200.00, "currency": "INR", "confidence": 0.9950 }
+  }
+}</pre>
+</div>
+<div class="px-space-lg py-space-sm bg-surface-container-low flex justify-end">
+<button class="px-3 py-1.5 bg-primary-container text-on-primary rounded-DEFAULT text-label-md font-label-md" id="copyJsonBtn">
+          Copy Payload
+        </button>
+</div>
+</div>
+</div>
+<!-- Dual Workspace Grid -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-md items-start pb-space-xl">
+<!-- LEFT COLUMN: PDF Viewport (5 / 12 on XL) -->
+<div class="xl:col-span-6 flex flex-col bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden sticky top-20">
+<!-- Viewer Control Bar -->
+<div class="h-11 px-space-md bg-surface-container-low flex items-center justify-between select-none">
+<div class="flex items-center gap-space-sm">
+<span class="inline-flex items-center gap-1 font-data-mono text-data-mono text-on-surface">
+<span class="material-symbols-outlined text-[15px] text-secondary">description</span>
+            Page 1 / 1
+          </span>
+<span class="h-3 w-px bg-surface-container-highest"></span>
+<span class="font-label-xs text-label-xs text-on-surface-variant uppercase tracking-wider">300 DPI • Azure Raw</span>
+</div>
+<!-- Zoom & View Tools -->
+<div class="flex items-center gap-1">
+<button class="h-7 w-7 rounded-DEFAULT hover:bg-surface-container flex items-center justify-center text-on-surface-variant transition-colors" id="zoomOut" title="Zoom Out">
+<span class="material-symbols-outlined text-[16px]">remove</span>
+</button>
+<span class="font-data-mono text-data-mono text-xs px-1.5 py-0.5 bg-surface-container-lowest rounded text-on-surface font-semibold" id="zoomLevel">100%</span>
+<button class="h-7 w-7 rounded-DEFAULT hover:bg-surface-container flex items-center justify-center text-on-surface-variant transition-colors" id="zoomIn" title="Zoom In">
+<span class="material-symbols-outlined text-[16px]">add</span>
+</button>
+<span class="h-3 w-px bg-surface-container-highest mx-0.5"></span>
+<button class="h-7 px-2 rounded-DEFAULT hover:bg-surface-container flex items-center gap-1 text-on-surface-variant text-label-xs font-label-xs transition-colors" id="fitWidth" title="Fit to width">
+<span class="material-symbols-outlined text-[15px]">fit_screen</span>
+<span class="hidden sm:inline">Fit</span>
+</button>
+<button class="h-7 w-7 rounded-DEFAULT hover:bg-surface-container flex items-center justify-center text-on-surface-variant transition-colors" id="rotateDoc" title="Rotate 90°">
+<span class="material-symbols-outlined text-[16px]">rotate_right</span>
+</button>
+</div>
+</div>
+<!-- PDF Canvas Viewport Container -->
+<div class="p-space-lg bg-surface-container overflow-auto max-h-[calc(100vh-170px)] min-h-[640px] flex justify-center" id="pdfViewport">
+<!-- Rendered Institutional Paper Invoice with Azure OCR Bounding Box Annotations -->
+<div class="w-full max-w-[620px] bg-surface-container-lowest shadow-md rounded p-space-xl relative transition-transform duration-200 origin-top text-on-surface font-body-md" id="paperCanvas">
+<!-- Stamp of Receipt -->
+<div class="absolute top-4 right-4 border-2 border-secondary/30 rounded-DEFAULT px-3 py-1 rotate-6 pointer-events-none select-none">
+<div class="text-[9px] font-bold text-secondary tracking-widest uppercase text-center">APEX INST TECH</div>
+<div class="text-[8px] font-mono text-secondary text-center">ACCOUNTS RECD • 16-JAN-2025</div>
+</div>
+<!-- Document Header -->
+<div class="flex items-start justify-between pb-space-md mb-space-md">
+<div>
+<div class="inline-block relative group cursor-pointer" data-target-field="vendor-field">
+<span class="font-headline-sm text-headline-sm text-primary uppercase font-bold tracking-tight">Apex Lab Instruments Pvt Ltd</span>
+<!-- Bounding Box Overlay -->
+<span class="absolute -inset-1 border border-secondary/80 bg-secondary/10 rounded pointer-events-none transition-opacity"></span>
+<span class="absolute -top-3.5 left-0 px-1 bg-secondary text-on-secondary rounded text-[9px] font-mono leading-none py-0.5 pointer-events-none">OCR: 97.8%</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Plot 42, Phase III, Okhla Industrial Area, New Delhi - 110020</p>
+<p class="font-data-mono text-data-mono text-xs text-on-surface-variant">GSTIN: <span class="font-bold text-on-surface">27AABCA1234F1Z5</span> • State: 07 (Delhi)</p>
+</div>
+<div class="text-right">
+<span class="font-title-md text-title-md text-primary font-bold tracking-wider uppercase block">Tax Invoice</span>
+<span class="font-label-xs text-label-xs text-on-surface-variant font-medium uppercase">Original for Recipient</span>
+</div>
+</div>
+<!-- Invoice Details Bar -->
+<div class="grid grid-cols-2 gap-space-md p-space-md bg-surface-container-low rounded-DEFAULT mb-space-md text-xs">
+<div>
+<span class="text-on-surface-variant block font-label-xs text-label-xs uppercase">Billed To:</span>
+<span class="font-semibold text-primary block mt-0.5">Apex Institute of Technology</span>
+<span class="text-on-surface-variant block">Accounts &amp; Audit Division</span>
+<span class="text-on-surface-variant block">Sector 62, Institutional Area, Noida - 201309</span>
+<span class="font-data-mono text-on-surface-variant text-[11px] block mt-1">GSTIN: 09AAACA9988G1Z1</span>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between items-center relative group cursor-pointer" data-target-field="inv-number-field">
+<span class="text-on-surface-variant">Invoice No:</span>
+<span class="font-data-mono font-bold text-primary">INV-2024-0891</span>
+<span class="absolute -inset-0.5 border border-secondary/80 bg-secondary/10 rounded pointer-events-none"></span>
+</div>
+<div class="flex justify-between items-center relative group cursor-pointer" data-target-field="inv-date-field">
+<span class="text-on-surface-variant">Invoice Date:</span>
+<span class="font-data-mono font-semibold text-on-surface">14/01/2025</span>
+<span class="absolute -inset-0.5 border border-secondary/80 bg-secondary/10 rounded pointer-events-none"></span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant">PO Reference:</span>
+<span class="font-data-mono text-on-surface">AIT/PUR/2024/0912</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant">Payment Terms:</span>
+<span class="font-semibold text-on-surface">Net 30 Days</span>
+</div>
+</div>
+</div>
+<!-- Line Items Table Inside Invoice -->
+<div class="mb-space-md overflow-hidden rounded">
+<table class="w-full text-left text-xs">
+<thead class="bg-surface-container text-on-surface-variant font-label-xs uppercase">
+<tr>
+<th class="py-1.5 px-2">#</th>
+<th class="py-1.5 px-2">Description of Goods</th>
+<th class="py-1.5 px-2 text-right">Qty</th>
+<th class="py-1.5 px-2 text-right">Rate (₹)</th>
+<th class="py-1.5 px-2 text-right">Amount (₹)</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container font-data-mono text-[12px]">
+<tr class="hover:bg-surface-container-low transition-colors group cursor-pointer relative" data-target-line="1">
+<td class="py-2 px-2 text-on-surface-variant">1</td>
+<td class="py-2 px-2 font-medium text-on-surface">Digital Analytical Balance 0.1mg (HSN 9016)</td>
+<td class="py-2 px-2 text-right font-semibold">2</td>
+<td class="py-2 px-2 text-right">35,000.00</td>
+<td class="py-2 px-2 text-right font-bold text-primary">70,000.00</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors group cursor-pointer relative" data-target-line="2">
+<td class="py-2 px-2 text-on-surface-variant">2</td>
+<td class="py-2 px-2 font-medium text-on-surface">Magnetic Stirrer with Hot Plate (HSN 8479)</td>
+<td class="py-2 px-2 text-right font-semibold">4</td>
+<td class="py-2 px-2 text-right">8,500.00</td>
+<td class="py-2 px-2 text-right font-bold text-primary">34,000.00</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors group cursor-pointer relative" data-target-line="3">
+<td class="py-2 px-2 text-on-surface-variant">3</td>
+<td class="py-2 px-2 font-medium text-on-surface">Calibration Certificate &amp; 1-Yr AMC (SAC 9987)</td>
+<td class="py-2 px-2 text-right font-semibold">1</td>
+<td class="py-2 px-2 text-right">19,050.85</td>
+<td class="py-2 px-2 text-right font-bold text-primary">19,050.85</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Total Calculation Table Inside Canvas -->
+<div class="flex justify-end pt-space-xs">
+<div class="w-64 space-y-1.5 text-xs font-data-mono">
+<div class="flex justify-between text-on-surface-variant">
+<span>Subtotal (Assessable):</span>
+<span class="font-medium text-on-surface">₹1,23,050.85</span>
+</div>
+<div class="flex justify-between text-on-surface-variant">
+<span>CGST @ 9.0%:</span>
+<span class="font-medium text-on-surface">₹11,074.58</span>
+</div>
+<div class="flex justify-between text-on-surface-variant">
+<span>SGST @ 9.0%:</span>
+<span class="font-medium text-on-surface">₹11,074.57</span>
+</div>
+<div class="flex justify-between items-center pt-2 border-t border-surface-container-highest text-primary font-bold text-sm bg-surface-container-low p-1.5 rounded">
+<span>Total Payable:</span>
+<span>₹1,45,200.00</span>
+</div>
+</div>
+</div>
+<!-- Signatory Footnote -->
+<div class="mt-8 pt-4 border-t border-surface-container text-[10px] text-on-surface-variant flex justify-between items-end">
+<div>
+<p>Certified that particulars given above are true and correct.</p>
+<p class="font-mono">Computer Generated Invoice • E-Way Bill Not Required</p>
+</div>
+<div class="text-right">
+<p class="font-semibold text-primary">For Apex Lab Instruments Pvt Ltd</p>
+<div class="h-6"></div>
+<p class="border-t border-dotted border-outline pt-0.5">Authorised Signatory</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Viewport Footer Status -->
+<div class="px-space-md py-2 bg-surface-container-low flex items-center justify-between text-xs text-on-surface-variant font-data-mono">
+<span class="flex items-center gap-1.5">
+<span class="h-2 w-2 rounded-full bg-secondary"></span>
+          Direct Optical Alignment: Verified
+        </span>
+<span>Bounding Box Overlays: 3 Selected</span>
+</div>
+</div>
+<!-- RIGHT COLUMN: Extracted Data & Human Verification Forms (7 / 12 on XL) -->
+<div class="xl:col-span-6 flex flex-col space-y-space-md">
+<!-- Section 1: Vendor Information Card -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm">
+<div class="flex items-center justify-between pb-space-sm mb-space-sm border-b border-surface-container-highest">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">storefront</span>
+<h2 class="font-title-md text-title-md text-primary font-bold">1. Vendor Information</h2>
+</div>
+<span class="px-2 py-0.5 rounded-DEFAULT bg-secondary-container text-on-secondary-container font-label-xs text-label-xs font-semibold">
+            Entity Verified
+          </span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+<!-- Vendor Name Input -->
+<div class="flex flex-col space-y-1" id="vendor-field">
+<div class="flex items-center justify-between">
+<label class="font-label-xs text-label-xs uppercase text-on-surface-variant font-semibold">Vendor Legal Name</label>
+<span class="text-secondary font-data-mono text-[11px] font-semibold">Conf: 97.8% • High</span>
+</div>
+<div class="relative">
+<input class="w-full h-9 bg-surface-container-low text-on-surface font-title-md text-title-md px-3 rounded-DEFAULT focus:outline-none focus:ring-1 focus:ring-primary font-medium" type="text" value="Apex Lab Instruments Pvt Ltd"/>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-[16px] text-secondary">check</span>
+</div>
+</div>
+<!-- GSTIN Input -->
+<div class="flex flex-col space-y-1">
+<div class="flex items-center justify-between">
+<label class="font-label-xs text-label-xs uppercase text-on-surface-variant font-semibold">Vendor GSTIN</label>
+<span class="text-secondary font-data-mono text-[11px] font-semibold">Conf: 98.2% • High</span>
+</div>
+<div class="relative">
+<input class="w-full h-9 bg-surface-container-low text-on-surface font-data-mono text-data-mono px-3 rounded-DEFAULT focus:outline-none focus:ring-1 focus:ring-primary font-semibold" type="text" value="27AABCA1234F1Z5"/>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-[16px] text-secondary">verified</span>
+</div>
+<div class="flex items-center gap-1.5 pt-0.5">
+<span class="h-1.5 w-1.5 rounded-full bg-secondary"></span>
+<span class="text-[11px] font-medium text-secondary">Active Status on GSTN Portal (Matched PAN: AABCA1234F)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 2: Invoice Metadata Card -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm">
+<div class="flex items-center justify-between pb-space-sm mb-space-sm border-b border-surface-container-highest">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">receipt_long</span>
+<h2 class="font-title-md text-title-md text-primary font-bold">2. Invoice Metadata</h2>
+</div>
+<span class="font-label-xs text-label-xs text-on-surface-variant bg-surface-container-low px-2 py-0.5 rounded font-mono">prebuilt-invoice v2.1</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+<!-- Invoice Number -->
+<div class="flex flex-col space-y-1" id="inv-number-field">
+<div class="flex items-center justify-between">
+<label class="font-label-xs text-label-xs uppercase text-on-surface-variant font-semibold">Invoice Number</label>
+<span class="text-secondary font-data-mono text-[11px] font-semibold">99.1%</span>
+</div>
+<input class="h-9 bg-surface-container-low text-on-surface font-data-mono text-data-mono px-3 rounded-DEFAULT focus:outline-none focus:ring-1 focus:ring-primary font-semibold" type="text" value="INV-2024-0891"/>
+</div>
+<!-- Invoice Date -->
+<div class="flex flex-col space-y-1" id="inv-date-field">
+<div class="flex items-center justify-between">
+<label class="font-label-xs text-label-xs uppercase text-on-surface-variant font-semibold">Invoice Date</label>
+<span class="text-secondary font-data-mono text-[11px] font-semibold">96.0%</span>
+</div>
+<div class="relative">
+<input class="w-full h-9 bg-surface-container-low text-on-surface font-data-mono text-data-mono px-3 rounded-DEFAULT focus:outline-none focus:ring-1 focus:ring-primary" type="text" value="14 Jan 2025"/>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-[16px] text-on-surface-variant pointer-events-none">calendar_today</span>
+</div>
+</div>
+<!-- Document Classification -->
+<div class="flex flex-col space-y-1">
+<label class="font-label-xs text-label-xs uppercase text-on-surface-variant font-semibold">Doc Classification</label>
+<div class="h-9 flex items-center px-3 bg-surface-container-low rounded-DEFAULT text-on-surface font-label-md text-label-md truncate">
+<span class="truncate">Vendor Tax Invoice</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 3: Financial Breakdown & Verification Logic -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm">
+<div class="flex items-center justify-between pb-space-sm mb-space-sm border-b border-surface-container-highest">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">calculate</span>
+<h2 class="font-title-md text-title-md text-primary font-bold">3. Financial Breakdown &amp; Tax Reconciler</h2>
+</div>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-DEFAULT bg-secondary-container text-on-secondary-container font-label-xs text-label-xs font-semibold">
+<span class="material-symbols-outlined text-[13px]">check_circle</span> V01 PASSED
+          </span>
+</div>
+<!-- Metric Grid -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-space-sm mb-space-md">
+<div class="p-space-sm bg-surface-container-low rounded-DEFAULT">
+<div class="font-label-xs text-label-xs uppercase text-on-surface-variant">Subtotal</div>
+<div class="font-data-mono font-bold text-title-md text-on-surface mt-0.5">₹1,23,050.85</div>
+<span class="text-[10px] font-mono text-secondary font-medium">Conf: 94.2%</span>
+</div>
+<div class="p-space-sm bg-surface-container-low rounded-DEFAULT">
+<div class="font-label-xs text-label-xs uppercase text-on-surface-variant">CGST (9%)</div>
+<div class="font-data-mono font-bold text-title-md text-on-surface mt-0.5">₹11,074.58</div>
+<span class="text-[10px] font-mono text-secondary font-medium">Calculated Exact</span>
+</div>
+<div class="p-space-sm bg-surface-container-low rounded-DEFAULT">
+<div class="font-label-xs text-label-xs uppercase text-on-surface-variant">SGST (9%)</div>
+<div class="font-data-mono font-bold text-title-md text-on-surface mt-0.5">₹11,074.57</div>
+<span class="text-[10px] font-mono text-secondary font-medium">Calculated Exact</span>
+</div>
+<div class="p-space-sm bg-primary-container text-on-primary rounded-DEFAULT">
+<div class="font-label-xs text-label-xs uppercase text-primary-fixed">Grand Total</div>
+<div class="font-data-mono font-bold text-title-md text-on-primary mt-0.5">₹1,45,200.00</div>
+<span class="text-[10px] font-mono text-secondary-fixed font-medium">Conf: 99.5%</span>
+</div>
+</div>
+<!-- Audit Rule Diagnostic Status -->
+<div class="flex items-center gap-space-sm p-space-sm bg-surface-container rounded-DEFAULT text-on-surface font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-secondary text-[18px] shrink-0">task_alt</span>
+<div class="flex-1">
+<span class="font-semibold text-primary">Deterministic Ledger Equation:</span>
+            Sum of lines (₹1,23,050.85) + SGST (₹11,074.57) + CGST (₹11,074.58) = ₹1,45,200.00.
+            <span class="font-bold text-secondary">Zero Variance detected (₹0.00).</span>
+</div>
+</div>
+</div>
+<!-- Section 4: Extracted Line Items Table -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm">
+<div class="flex items-center justify-between pb-space-sm mb-space-sm border-b border-surface-container-highest">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">list_alt</span>
+<h2 class="font-title-md text-title-md text-primary font-bold">4. Extracted Line Items (3 Items)</h2>
+</div>
+<button class="flex items-center gap-1 text-primary hover:text-primary-container text-label-xs font-label-xs font-semibold">
+<span class="material-symbols-outlined text-[14px]">add</span> Add Line Manually
+          </button>
+</div>
+<!-- Compact Dense Data Table -->
+<div class="overflow-x-auto rounded">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container text-on-surface-variant font-label-xs text-label-xs uppercase">
+<th class="py-2 px-3">Item Description</th>
+<th class="py-2 px-2 text-right">Qty</th>
+<th class="py-2 px-3 text-right">Unit Price (₹)</th>
+<th class="py-2 px-3 text-right">Total Amount (₹)</th>
+<th class="py-2 px-2 text-center">Confidence</th>
+<th class="py-2 px-2 text-center">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-highest font-body-md text-body-md">
+<!-- Item 1 -->
+<tr class="hover:bg-surface-container-low transition-colors group" data-line-id="1">
+<td class="py-2.5 px-3">
+<input class="w-full bg-transparent border-0 font-medium text-on-surface focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary rounded px-1 -mx-1" type="text" value="Digital Analytical Balance 0.1mg"/>
+<span class="text-[10px] text-on-surface-variant font-mono block">HSN: 9016</span>
+</td>
+<td class="py-2.5 px-2 text-right">
+<input class="w-12 bg-transparent text-right font-data-mono text-on-surface font-semibold focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary rounded px-1" type="number" value="2"/>
+</td>
+<td class="py-2.5 px-3 text-right font-data-mono text-on-surface">35,000.00</td>
+<td class="py-2.5 px-3 text-right font-data-mono font-bold text-primary">70,000.00</td>
+<td class="py-2.5 px-2 text-center">
+<span class="px-1.5 py-0.5 rounded bg-secondary-container text-on-secondary-container font-mono text-[10px] font-bold">98%</span>
+</td>
+<td class="py-2.5 px-2 text-center">
+<button class="h-6 w-6 rounded hover:bg-surface-container inline-flex items-center justify-center text-outline hover:text-on-surface">
+<span class="material-symbols-outlined text-[15px]">edit</span>
+</button>
+</td>
+</tr>
+<!-- Item 2 -->
+<tr class="hover:bg-surface-container-low transition-colors group" data-line-id="2">
+<td class="py-2.5 px-3">
+<input class="w-full bg-transparent border-0 font-medium text-on-surface focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary rounded px-1 -mx-1" type="text" value="Magnetic Stirrer with Hot Plate"/>
+<span class="text-[10px] text-on-surface-variant font-mono block">HSN: 8479</span>
+</td>
+<td class="py-2.5 px-2 text-right">
+<input class="w-12 bg-transparent text-right font-data-mono text-on-surface font-semibold focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary rounded px-1" type="number" value="4"/>
+</td>
+<td class="py-2.5 px-3 text-right font-data-mono text-on-surface">8,500.00</td>
+<td class="py-2.5 px-3 text-right font-data-mono font-bold text-primary">34,000.00</td>
+<td class="py-2.5 px-2 text-center">
+<span class="px-1.5 py-0.5 rounded bg-secondary-container text-on-secondary-container font-mono text-[10px] font-bold">95%</span>
+</td>
+<td class="py-2.5 px-2 text-center">
+<button class="h-6 w-6 rounded hover:bg-surface-container inline-flex items-center justify-center text-outline hover:text-on-surface">
+<span class="material-symbols-outlined text-[15px]">edit</span>
+</button>
+</td>
+</tr>
+<!-- Item 3 -->
+<tr class="hover:bg-surface-container-low transition-colors group" data-line-id="3">
+<td class="py-2.5 px-3">
+<input class="w-full bg-transparent border-0 font-medium text-on-surface focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary rounded px-1 -mx-1" type="text" value="Calibration Certificate &amp; AMC"/>
+<span class="text-[10px] text-on-surface-variant font-mono block">SAC: 9987</span>
+</td>
+<td class="py-2.5 px-2 text-right">
+<input class="w-12 bg-transparent text-right font-data-mono text-on-surface font-semibold focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary rounded px-1" type="number" value="1"/>
+</td>
+<td class="py-2.5 px-3 text-right font-data-mono text-on-surface">19,050.85</td>
+<td class="py-2.5 px-3 text-right font-data-mono font-bold text-primary">19,050.85</td>
+<td class="py-2.5 px-2 text-center">
+<span class="px-1.5 py-0.5 rounded bg-secondary-container text-on-secondary-container font-mono text-[10px] font-bold">92%</span>
+</td>
+<td class="py-2.5 px-2 text-center">
+<button class="h-6 w-6 rounded hover:bg-surface-container inline-flex items-center justify-center text-outline hover:text-on-surface">
+<span class="material-symbols-outlined text-[15px]">edit</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Section 5: Institutional Audit Integrity Notice -->
+<div class="rounded-xl p-space-md bg-surface-container-low flex items-start gap-space-sm text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-outline text-[18px] shrink-0 mt-0.5">policy</span>
+<div class="leading-relaxed">
+<span class="font-semibold text-primary">Audit Integrity Notice:</span>
+          Human corrections are stored in the institutional audit ledger separately from the Azure AI Document Intelligence raw OCR payload. Original extraction remains tamper-evident and timestamped under Run #1094.
+        </div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function () {
+    // Zoom Canvas Controller
+    let currentZoom = 100;
+    const paperCanvas = document.getElementById('paperCanvas');
+    const zoomLevelEl = document.getElementById('zoomLevel');
+    const zoomInBtn = document.getElementById('zoomIn');
+    const zoomOutBtn = document.getElementById('zoomOut');
+    const fitWidthBtn = document.getElementById('fitWidth');
+    const rotateBtn = document.getElementById('rotateDoc');
+
+    let currentRotation = 0;
+
+    function applyTransform() {
+      if (paperCanvas) {
+        paperCanvas.style.transform = `scale(${currentZoom / 100}) rotate(${currentRotation}deg)`;
+        zoomLevelEl.textContent = `${currentZoom}%`;
+      }
+    }
+
+    if (zoomInBtn) {
+      zoomInBtn.addEventListener('click', () => {
+        if (currentZoom < 180) {
+          currentZoom += 15;
+          applyTransform();
+        }
+      });
+    }
+
+    if (zoomOutBtn) {
+      zoomOutBtn.addEventListener('click', () => {
+        if (currentZoom > 60) {
+          currentZoom -= 15;
+          applyTransform();
+        }
+      });
+    }
+
+    if (fitWidthBtn) {
+      fitWidthBtn.addEventListener('click', () => {
+        currentZoom = 100;
+        currentRotation = 0;
+        applyTransform();
+      });
+    }
+
+    if (rotateBtn) {
+      rotateBtn.addEventListener('click', () => {
+        currentRotation = (currentRotation + 90) % 360;
+        applyTransform();
+      });
+    }
+
+    // Modal Raw JSON Controls
+    const toggleJsonBtn = document.getElementById('toggleJsonBtn');
+    const jsonModal = document.getElementById('jsonModal');
+    const closeJsonBtn = document.getElementById('closeJsonBtn');
+    const copyJsonBtn = document.getElementById('copyJsonBtn');
+
+    if (toggleJsonBtn && jsonModal) {
+      toggleJsonBtn.addEventListener('click', () => jsonModal.classList.remove('hidden'));
+    }
+    if (closeJsonBtn && jsonModal) {
+      closeJsonBtn.addEventListener('click', () => jsonModal.classList.add('hidden'));
+    }
+    if (copyJsonBtn) {
+      copyJsonBtn.addEventListener('click', () => {
+        copyJsonBtn.textContent = 'Copied to Clipboard!';
+        setTimeout(() => {
+          copyJsonBtn.textContent = 'Copy Payload';
+        }, 1800);
+      });
+    }
+
+    // Save & Verification Visual Action Handlers
+    const saveBtn = document.getElementById('saveCorrectionsBtn');
+    if (saveBtn) {
+      saveBtn.addEventListener('click', () => {
+        const originalText = saveBtn.innerHTML;
+        saveBtn.innerHTML = '<span class="material-symbols-outlined text-[16px]">check</span> Saved to Ledger';
+        saveBtn.classList.remove('bg-primary-container');
+        saveBtn.classList.add('bg-secondary');
+        setTimeout(() => {
+          saveBtn.innerHTML = originalText;
+          saveBtn.classList.remove('bg-secondary');
+          saveBtn.classList.add('bg-primary-container');
+        }, 2200);
+      });
+    }
+
+    const markReviewedBtn = document.getElementById('markReviewedBtn');
+    if (markReviewedBtn) {
+      markReviewedBtn.addEventListener('click', () => {
+        markReviewedBtn.innerHTML = '<span class="material-symbols-outlined text-[16px]">verified</span> Audit Confirmed';
+        markReviewedBtn.classList.add('bg-secondary', 'text-on-secondary');
+      });
+    }
+
+    // Cross-highlighting between Preview Box & Form Fields
+    document.querySelectorAll('[data-target-field]').forEach(el => {
+      el.addEventListener('click', () => {
+        const targetId = el.getAttribute('data-target-field');
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+          targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          targetElement.classList.add('ring-2', 'ring-secondary', 'p-1', 'rounded');
+          setTimeout(() => {
+            targetElement.classList.remove('ring-2', 'ring-secondary', 'p-1', 'rounded');
+          }, 1500);
+        }
+      });
+    });
+  })();
+</script></main></div></body></html>

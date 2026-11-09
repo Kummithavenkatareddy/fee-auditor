@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"error":"#ba1a1a","on-secondary-fixed":"#00201a","on-surface":"#161c22","surface-variant":"#dde3eb","secondary-container":"#bee8dc","on-surface-variant":"#44474e","on-secondary-container":"#436a60","outline-variant":"#c5c6cf","surface-container-highest":"#dde3eb","inverse-on-surface":"#ecf1f9","tertiary-fixed-dim":"#edbe8a","secondary":"#3f665c","on-primary-container":"#8093bb","primary":"#001637","on-error":"#ffffff","on-tertiary-container":"#b48b5b","on-secondary-fixed-variant":"#274e45","surface-bright":"#f7f9ff","on-tertiary-fixed-variant":"#604017","surface-dim":"#d5dae2","background":"#f7f9ff","surface-container":"#e9eef6","on-primary":"#ffffff","outline":"#75777f","on-tertiary-fixed":"#2b1700","surface":"#f7f9ff","primary-container":"#172b4d","on-tertiary":"#ffffff","on-primary-fixed-variant":"#34476a","error-container":"#ffdad6","tertiary":"#241300","surface-container-lowest":"#ffffff","surface-container-high":"#e3e9f0","secondary-fixed-dim":"#a6cfc3","tertiary-fixed":"#ffddb9","on-error-container":"#93000a","on-background":"#161c22","secondary-fixed":"#c1ebdf","primary-fixed":"#d7e2ff","surface-tint":"#4c5e83","primary-fixed-dim":"#b4c7f1","on-primary-fixed":"#041b3c","tertiary-container":"#402500","on-secondary":"#ffffff","surface-container-low":"#eff4fc","inverse-surface":"#2b3137","inverse-primary":"#b4c7f1"},borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},spacing:{"margin":"1.5rem","space-lg":"1rem","space-xl":"1.5rem","margin-panel":"2rem","space-xs":"0.25rem","space-md":"0.75rem","space-sm":"0.5rem","gutter":"1rem","gutter-compact":"0.5rem"},fontFamily:{"body-lg":["Inter"],"title-md":["Inter"],"headline-lg":["Inter"],"data-mono":["Inter"],"display-lg":["Inter"],"body-sm":["Inter"],"headline-sm":["Inter"],"label-xs":["Inter"],"label-md":["Inter"],"data-cell":["Inter"],"body-md":["Inter"]},fontSize:{"body-lg":["14px",{lineHeight:"20px",fontWeight:"400"}],"title-md":["15px",{lineHeight:"20px",letterSpacing:"-0.005em",fontWeight:"600"}],"headline-lg":["24px",{lineHeight:"32px",letterSpacing:"-0.015em",fontWeight:"600"}],"data-mono":["13px",{lineHeight:"16px",fontWeight:"500"}],"display-lg":["32px",{lineHeight:"40px",letterSpacing:"-0.02em",fontWeight:"600"}],"body-sm":["12px",{lineHeight:"16px",fontWeight:"400"}],"headline-sm":["18px",{lineHeight:"24px",letterSpacing:"-0.01em",fontWeight:"600"}],"label-xs":["11px",{lineHeight:"14px",letterSpacing:"0.04em",fontWeight:"600"}],"label-md":["12px",{lineHeight:"16px",letterSpacing:"0.02em",fontWeight:"600"}],"data-cell":["13px",{lineHeight:"16px",fontWeight:"500"}],"body-md":["13px",{lineHeight:"18px",fontWeight:"400"}]}}}}</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><aside class="fixed top-0 left-0 h-full w-[248px] bg-surface-container-lowest border-r border-surface-container-highest z-50 flex flex-col justify-between select-none"><div class="flex flex-col"><div class="h-16 px-space-md flex items-center gap-space-sm border-b border-surface-container-highest"><img alt="Fee Auditor Institutional Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1WQWeqeC8spQRkmGVegjnLgb9bFoW8wCvP7XS0S6JxDv_UG5fYFD-etxy1qcj96bI9hc3O6PWB6aDrGP_f7HtoG7A9BDdEyvLO9BOp5kUaWsezSuxxkt4-nO2O38snrO5c-XDj75xlAsZpS_p4lMoM2vWwtAnbN8rDSC-7ZIj0NPF5YjDPhqyCcmRFPM9njXJqc5ursT7eDsCi-xZY1xM6nVRpofE5owu8j7sTLz6E"/><div class="flex flex-col min-w-0"><span class="font-title-md text-title-md text-primary tracking-tight leading-tight truncate">Fee Auditor</span><span class="font-label-xs text-label-xs text-on-surface-variant truncate uppercase">Accounts &amp; Audit Dept</span></div></div><nav class="flex flex-col p-space-xs space-y-0.5" data-active-classes="bg-primary-container text-on-primary font-title-md border-l-4 border-secondary"><a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded-DEFAULT transition-colors duration-150" data-path="overview" href="#"><span class="material-symbols-outlined text-[18px]">dashboard</span><span class="font-body-md text-body-md">Overview</span></a><a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded-DEFAULT transition-colors duration-150" data-path="documents" href="#"><span class="material-symbols-outlined text-[18px]">folder</span><span class="font-body-md text-body-md">Documents</span></a><a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded-DEFAULT transition-colors duration-150" data-path="upload-documents" href="#"><span class="material-symbols-outlined text-[18px]">cloud_upload</span><span class="font-body-md text-body-md">Upload Documents</span></a><a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded-DEFAULT transition-colors duration-150" data-path="audit-results" href="#"><span class="material-symbols-outlined text-[18px]">policy</span><span class="font-body-md text-body-md">Audit Results</span></a><a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded-DEFAULT transition-colors duration-150" data-path="manual-review" href="#"><span class="material-symbols-outlined text-[18px]">rule</span><span class="font-body-md text-body-md">Manual Review</span></a><a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded-DEFAULT transition-colors duration-150" data-path="reports-export" href="#"><span class="material-symbols-outlined text-[18px]">table_chart</span><span class="font-body-md text-body-md">Reports &amp; Export</span></a><a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded-DEFAULT transition-colors duration-150" data-path="settings" href="#"><span class="material-symbols-outlined text-[18px]">tune</span><span class="font-body-md text-body-md">Settings</span></a></nav></div><div class="flex flex-col border-t border-surface-container-highest p-space-sm space-y-space-sm bg-surface-container-low"><a class="flex items-center gap-space-sm px-space-sm py-1.5 text-on-surface-variant hover:text-on-surface text-body-sm font-body-sm transition-colors" data-path="documentation" href="#"><span class="material-symbols-outlined text-[16px]">help_center</span><span>Help &amp; Documentation</span></a><div class="flex items-center justify-between px-space-sm py-1 bg-surface-container-lowest border border-surface-container-highest rounded-DEFAULT"><div class="flex items-center gap-1.5 min-w-0"><span class="h-2 w-2 rounded-full bg-secondary shrink-0"></span><span class="font-label-xs text-label-xs text-on-surface truncate">Deterministic Engine</span></div><span class="font-label-xs text-label-xs text-secondary font-semibold uppercase tracking-wider">Active</span></div><div class="flex items-center gap-space-sm p-space-xs rounded-DEFAULT border border-surface-container-highest bg-surface-container-lowest"><img alt="Profile" class="w-8 h-8 rounded-full object-cover shrink-0 border border-outline-variant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAm3IPwEXFCstla-QeT-9itpMog7-GTYueVJMHTFW1Rto37DSroIZhaLu_qGOkRPRU4zm1SI0K-Ic50YsJYz7KU7EGJZ6wq14FkBRGOdIuUewbhajle6P9St5Mq6N2R--Fy6FluYQ0Q_RBr1DB00YT4o1uLX3WdotJaDJ8Qv_GFP_zsD0TbsFGRbJAPTy_Yog90tYpVO7Z9jpj58xRWa4-cyzrBffYMDXE-193UWw"/><div class="flex flex-col min-w-0"><div class="font-title-md text-[13px] text-on-surface truncate font-semibold leading-tight">R. K. Sharma</div><div class="font-label-xs text-label-xs text-on-surface-variant truncate">Sr. Accounts Admin</div><div class="font-label-xs text-[10px] text-outline truncate">Apex Inst. of Tech</div></div></div></div></aside><div class="pl-[248px]"><header class="fixed top-0 left-[248px] right-0 h-16 bg-surface-container-lowest border-b border-surface-container-highest z-40 px-space-lg flex items-center justify-between shadow-[0_1px_2px_rgba(23,43,77,0.04)]"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-xs text-body-sm font-body-sm text-on-surface-variant"><span class="material-symbols-outlined text-[16px]">account_balance</span><span>Audit Console</span><span class="material-symbols-outlined text-[14px]">chevron_right</span><span class="text-on-surface font-medium">Fee Verification Ledger</span></div><div class="h-4 w-px bg-surface-container-highest mx-space-xs hidden md:block"></div><div class="relative hidden sm:flex items-center"><select class="appearance-none bg-surface-container-low border border-surface-container-highest text-on-surface font-label-md text-label-md py-1.5 pl-3 pr-8 rounded-DEFAULT focus:outline-none focus:border-primary-container cursor-pointer"><option>AY 2024-25 • Term II (Spring)</option><option>AY 2024-25 • Term I (Fall)</option><option>AY 2023-24 • Annual Audit</option></select><span class="material-symbols-outlined absolute right-2 text-[16px] text-on-surface-variant pointer-events-none">expand_more</span></div></div><div class="flex items-center gap-space-md"><div class="relative w-64 lg:w-80"><span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-[16px] text-outline">search</span><input class="w-full h-8.5 bg-surface-container-low border border-surface-container-highest rounded-DEFAULT pl-8 pr-3 text-data-mono font-data-mono text-on-surface placeholder:text-outline focus:outline-none focus:border-primary-container transition-colors" placeholder="Search invoice ID, receipt, vendor..." type="text"/></div><div class="hidden xl:flex items-center gap-space-sm pl-space-xs border-l border-surface-container-highest text-body-sm font-body-sm text-on-surface-variant"><span class="font-data-mono text-data-mono text-on-surface-variant">24 Oct 2024</span><div class="flex items-center gap-1 px-2 py-0.5 bg-secondary-container text-on-secondary-container border border-secondary-fixed-dim rounded-DEFAULT font-label-xs text-label-xs"><span class="material-symbols-outlined text-[12px]">verified</span><span>Run #1094 Completed</span></div></div><div class="flex items-center gap-space-xs text-on-surface-variant"><button class="h-8 w-8 flex items-center justify-center rounded-DEFAULT hover:bg-surface-container transition-colors relative"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-error"></span></button><button class="h-8 w-8 flex items-center justify-center rounded-DEFAULT hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-[20px]">settings</span></button></div></div></header><main class="w-full pt-16 bg-surface px-space-lg min-h-screen"><div class="flex flex-col w-full pb-16">
+<!-- Top Meta Breadcrumb and Status Ribbon -->
+<div class="flex flex-wrap items-center justify-between gap-space-md py-space-md">
+<div class="flex items-center gap-space-sm text-body-sm font-body-sm text-on-surface-variant">
+<span class="font-data-mono text-data-mono text-outline">REF: REP-EXPT-2025-Q1</span>
+<span class="text-surface-container-highest">•</span>
+<span class="flex items-center gap-1 text-secondary font-medium">
+<span class="material-symbols-outlined text-[16px]">verified_user</span>
+        Statutory Compliance Format ISO-27001
+      </span>
+</div>
+<div class="inline-flex items-center gap-1.5 px-3 py-1 bg-secondary-container text-on-secondary-container rounded-DEFAULT font-label-xs text-label-xs font-semibold shadow-sm">
+<span class="h-2 w-2 rounded-full bg-secondary"></span>
+      Academic Term AY 2024-25 • Term II Active
+    </div>
+</div>
+<!-- Header Section with Distinct Spatial Scale -->
+<div class="bg-surface-container-lowest p-space-xl rounded-lg shadow-sm mb-space-lg flex flex-col md:flex-row md:items-end justify-between gap-space-lg">
+<div class="space-y-space-xs max-w-2xl">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 bg-surface-container text-on-surface font-label-xs text-label-xs uppercase tracking-wider rounded-DEFAULT">Fiduciary Module</span>
+<span class="text-outline text-label-xs font-label-xs">Engine v4.12-Deterministic</span>
+</div>
+<h1 class="text-headline-lg font-headline-lg text-primary tracking-tight">Reports &amp; CSV Export</h1>
+<p class="text-body-md font-body-md text-on-surface-variant leading-relaxed">
+        Generate and export deterministic audit ledger data, compliance reports, and CSV extracts with authenticated immutable hash timestamps.
+      </p>
+</div>
+<!-- Quick Ledger Stat Counters -->
+<div class="flex items-center gap-3 shrink-0">
+<div class="bg-surface-container-low px-4 py-2.5 rounded-DEFAULT text-left">
+<div class="text-label-xs font-label-xs text-on-surface-variant uppercase">Exportable Batch</div>
+<div class="text-title-md font-title-md text-primary font-bold">6 Records</div>
+</div>
+<div class="bg-surface-container-low px-4 py-2.5 rounded-DEFAULT text-left">
+<div class="text-label-xs font-label-xs text-on-surface-variant uppercase">Audited Value</div>
+<div class="text-title-md font-title-md text-primary font-bold font-data-mono">₹2,01,890.00</div>
+</div>
+</div>
+</div>
+<!-- Success Notification Preview Banner -->
+<div class="bg-secondary-container p-space-md rounded-DEFAULT shadow-sm mb-space-lg flex items-center justify-between transition-all" id="toast-banner">
+<div class="flex items-center gap-space-md">
+<div class="w-8 h-8 rounded-DEFAULT bg-secondary text-on-secondary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">cloud_done</span>
+</div>
+<div>
+<div class="text-body-md font-body-md text-on-secondary-container font-semibold">
+          Ready to download: <span class="font-data-mono text-data-mono font-bold">fee_auditor_ledger_ay2425_t2.csv</span>
+</div>
+<div class="text-body-sm font-body-sm text-on-secondary-container opacity-90">
+          Schema verified: 14 validated columns, 6 audited records, size: 4.2 KB • SHA-256 Checksum: <code class="font-data-mono text-label-xs">8f92b...a34e</code>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-1 hover:bg-surface-container-lowest/40 rounded-DEFAULT text-on-secondary-container transition-colors" onclick="document.getElementById('toast-banner').style.display='none'">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+</div>
+<!-- Main Grid Layout (Asymmetric Bento 55% / 45%) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
+<!-- LEFT: Configuration & Filter Workspace (7 cols) -->
+<div class="lg:col-span-7 space-y-space-lg">
+<!-- Panel 1: Filter Scope -->
+<div class="bg-surface-container-lowest p-space-lg rounded-lg shadow-sm">
+<div class="flex items-center justify-between pb-space-md mb-space-md">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-primary">tune</span>
+<h2 class="text-title-md font-title-md text-primary">1. Report Scope &amp; Target Filters</h2>
+</div>
+<span class="text-label-xs font-label-xs text-on-surface-variant uppercase tracking-wider">Parameters</span>
+</div>
+<div class="space-y-space-md">
+<!-- Two-column inputs -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+<div>
+<label class="block text-label-xs font-label-xs uppercase text-on-surface-variant mb-1.5 font-semibold">Date Range Window</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-[18px] text-outline pointer-events-none">calendar_month</span>
+<input class="w-full h-[38px] bg-surface-container-low text-on-surface pl-10 pr-3 rounded-DEFAULT text-data-mono font-data-mono text-body-md focus:bg-surface-container-lowest focus:outline-none focus:ring-1 focus:ring-primary-container" type="text" value="01 Jan 2025 to 28 Feb 2025"/>
+</div>
+</div>
+<div>
+<label class="block text-label-xs font-label-xs uppercase text-on-surface-variant mb-1.5 font-semibold">Academic Term</label>
+<div class="relative flex items-center">
+<select class="w-full h-[38px] appearance-none bg-surface-container-low text-on-surface px-3 pr-8 rounded-DEFAULT text-body-md font-body-md focus:bg-surface-container-lowest focus:outline-none focus:ring-1 focus:ring-primary-container cursor-pointer">
+<option selected="">AY 2024-25 — Term II (Spring)</option>
+<option>AY 2024-25 — Term I (Fall)</option>
+<option>AY 2023-24 — Annual Consolidation</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 text-[18px] text-on-surface-variant pointer-events-none">unfold_more</span>
+</div>
+</div>
+</div>
+<!-- Document Type Filter -->
+<div>
+<label class="block text-label-xs font-label-xs uppercase text-on-surface-variant mb-1.5 font-semibold">Target Document Taxonomy</label>
+<div class="relative flex items-center">
+<select class="w-full h-[38px] appearance-none bg-surface-container-low text-on-surface px-3 pr-8 rounded-DEFAULT text-body-md font-body-md focus:bg-surface-container-lowest focus:outline-none focus:ring-1 focus:ring-primary-container cursor-pointer">
+<option selected="">All Types (Invoices, Receipts, Lab Vouchers &amp; Consumables)</option>
+<option>Vendors &amp; Laboratory Invoices Only</option>
+<option>Institutional Student Receipts Only</option>
+<option>Department Petty Cash Vouchers Only</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 text-[18px] text-on-surface-variant pointer-events-none">unfold_more</span>
+</div>
+</div>
+<!-- Audit Status Filter Pills -->
+<div class="pt-2">
+<label class="block text-label-xs font-label-xs uppercase text-on-surface-variant mb-2 font-semibold">Filter by Verification State</label>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2" id="status-filter-group">
+<label class="flex items-center gap-3 p-3 rounded-DEFAULT bg-surface-container cursor-pointer hover:bg-surface-container-high transition-colors">
+<input checked="" class="h-4 w-4 accent-primary" name="audit_status" type="radio" value="all"/>
+<div class="flex flex-col min-w-0">
+<span class="text-body-md font-body-md font-semibold text-on-surface leading-none">Export All Documents</span>
+<span class="text-label-xs font-label-xs text-on-surface-variant mt-1">Full dataset reconciliation (6 records)</span>
+</div>
+</label>
+<label class="flex items-center gap-3 p-3 rounded-DEFAULT bg-surface-container-low cursor-pointer hover:bg-surface-container transition-colors">
+<input class="h-4 w-4 accent-primary" name="audit_status" type="radio" value="clean"/>
+<div class="flex flex-col min-w-0">
+<span class="text-body-md font-body-md font-semibold text-secondary leading-none flex items-center gap-1.5">
+<span class="h-2 w-2 rounded-full bg-secondary"></span> Clean Documents Only
+                  </span>
+<span class="text-label-xs font-label-xs text-on-surface-variant mt-1">Zero rule deviations (3 records)</span>
+</div>
+</label>
+<label class="flex items-center gap-3 p-3 rounded-DEFAULT bg-surface-container-low cursor-pointer hover:bg-surface-container transition-colors">
+<input class="h-4 w-4 accent-primary" name="audit_status" type="radio" value="flagged"/>
+<div class="flex flex-col min-w-0">
+<span class="text-body-md font-body-md font-semibold text-error leading-none flex items-center gap-1.5">
+<span class="h-2 w-2 rounded-full bg-error"></span> Flagged Documents Only
+                  </span>
+<span class="text-label-xs font-label-xs text-on-surface-variant mt-1">Rule mismatch V01-V04 (3 records)</span>
+</div>
+</label>
+<label class="flex items-center gap-3 p-3 rounded-DEFAULT bg-surface-container-low cursor-pointer hover:bg-surface-container transition-colors">
+<input class="h-4 w-4 accent-primary" name="audit_status" type="radio" value="review"/>
+<div class="flex flex-col min-w-0">
+<span class="text-body-md font-body-md font-semibold text-tertiary-fixed-dim leading-none flex items-center gap-1.5">
+<span class="h-2 w-2 rounded-full bg-tertiary-container"></span> Manual Review Queue
+                  </span>
+<span class="text-label-xs font-label-xs text-on-surface-variant mt-1">Pending examiner sign-off (1 record)</span>
+</div>
+</label>
+</div>
+</div>
+</div>
+</div>
+<!-- Panel 2: Columns Schema Preview Checklist -->
+<div class="bg-surface-container-lowest p-space-lg rounded-lg shadow-sm">
+<div class="flex items-center justify-between pb-space-md mb-space-md">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-primary">view_column</span>
+<h2 class="text-title-md font-title-md text-primary">2. Export Columns Schema Preview</h2>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-label-xs font-label-xs bg-surface-container px-2 py-0.5 rounded-DEFAULT font-semibold text-on-surface">14/14 Selected</span>
+<button class="text-label-xs font-label-xs text-on-surface-variant hover:text-primary transition-colors underline font-medium">Reset Default</button>
+</div>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant mb-4">
+          All exported fields adhere to institutional audit requirements and deterministic extraction validation guidelines.
+        </p>
+<!-- 14 Standardized CSV Columns Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+<label class="flex items-center gap-2.5 p-2 bg-surface-container-low rounded-DEFAULT hover:bg-surface-container transition-colors cursor-pointer select-none">
+<input checked="" class="h-4 w-4 rounded-DEFAULT accent-primary" type="checkbox"/>
+<div class="flex flex-col min-w-0">
+<span class="text-body-sm font-body-sm font-medium text-on-surface truncate">Document ID</span>
+<span class="font-data-mono text-label-xs text-outline leading-tight">doc_identifier</span>
+</div>
+</label>
+<label class="flex items-center gap-2.5 p-2 bg-surface-container-low rounded-DEFAULT hover:bg-surface-container transition-colors cursor-pointer select-none">
+<input checked="" class="h-4 w-4 rounded-DEFAULT accent-primary" type="checkbox"/>
+<div class="flex flex-col min-w-0">
+<span class="text-body-sm font-body-sm font-medium text-on-surface truncate">Filename</span>
+<span class="font-data-mono text-label-xs text-outline leading-tight">source_filename</span>
+</div>
+</label>
+<label class="flex items-center gap-2.5 p-2 bg-surface-container-low rounded-DEFAULT hover:bg-surface-container transition-colors cursor-pointer select-none">
+<input checked="" class="h-4 w-4 rounded-DEFAULT accent-primary" type="checkbox"/>
+<div class="flex flex-col min-w-0">
+<span class="text-body-sm font-body-sm font-medium text-on-surface truncate">Vendor / Payee</span>
+<span class="font-data-mono text-label-xs text-outline leading-tight">vendor_entity_name</span>
+</div>
+</label>
+<label class="flex items-center gap-2.5 p-2 bg-surface-container-low rounded-DEFAULT hover:bg-surface-container transition-colors cursor-pointer select-none">
+<input checked="" class="h-4 w-4 rounded-DEFAULT accent-primary" type="checkbox"/>
+<div class="flex flex-col min-w-0">
+<span class="text-body-sm font-body-sm font-medium text-on-surface truncate">Invoice Number</span>
+<span class="font-data-mono text-label-xs text-outline leading-tight">invoice_num_str</span>
+</div>
+</label>
+<label class="flex items-center gap-2.5 p-2 bg-surface-container-low rounded-DEFAULT hover:bg-surface-container transition-colors cursor-pointer select-none">
+<input checked="" class="h-4 w-4 rounded-DEFAULT accent-primary" type="checkbox"/>
+<div class="flex flex-col min-w-0">
+<span class="text-body-sm font-body-sm font-medium text-on-surface truncate">Invoice Date</span>
+<span class="font-data-mono text-label-xs text-outline leading-tight">doc_issue_date</span>
+</div>
+</label>
+<label class="flex items-center gap-2.5 p-2 bg-surface-container-low rounded-DEFAULT hover:bg-surface-container transition-colors cursor-pointer select-none">
+<input checked="" class="h-4 w-4 rounded-DEFAULT accent-primary" type="checkbox"/>
+<div class="flex flex-col min-w-0">
+<span class="text-body-sm font-body-sm font-medium text-on-surface truncate">GSTIN Tax ID</span>
+<span class="font-data-mono text-label-xs text-outline leading-tight">gstin_tax_id</span>
+</div>
+</label>
+<label class="flex items-center gap-2.5 p-2 bg-surface-container-low rounded-DEFAULT hover:bg-surface-container transition-colors cursor-pointer select-none">
+<input checked="" class="h-4 w-4 rounded-DEFAULT accent-primary" type="checkbox"/>
+<div class="flex flex-col min-w-0">
+<span class="text-body-sm font-body-sm font-medium text-on-surface truncate">Subtotal (INR)</span>
+<span class="font-data-mono text-label-xs text-outline leading-tight">amount_subtotal</span>
+</div>
+</label>
+<label class="flex items-center gap-2.5 p-2 bg-surface-container-low rounded-DEFAULT hover:bg-surface-container transition-colors cursor-pointer select-none">
+<input checked="" class="h-4 w-4 rounded-DEFAULT accent-primary" type="checkbox"/>
+<div class="flex flex-col min-w-0">
+<span class="text-body-sm font-body-sm font-medium text-on-surface truncate">Tax / GST (INR)</span>
+<span class="font-data-mono text-label-xs text-outline leading-tight">tax_amount_inr</span>
+</div>
+</label>
+<label class="flex items-center gap-2.5 p-2 bg-surface-container-low rounded-DEFAULT hover:bg-surface-container transition-colors cursor-pointer select-none">
+<input checked="" class="h-4 w-4 rounded-DEFAULT accent-primary" type="checkbox"/>
+<div class="flex flex-col min-w-0">
+<span class="text-body-sm font-body-sm font-medium text-on-surface truncate">Total Amount (INR)</span>
+<span class="font-data-mono text-label-xs text-outline leading-tight">total_inr_gross</span>
+</div>
+</label>
+<label class="flex items-center gap-2.5 p-2 bg-surface-container-low rounded-DEFAULT hover:bg-surface-container transition-colors cursor-pointer select-none">
+<input checked="" class="h-4 w-4 rounded-DEFAULT accent-primary" type="checkbox"/>
+<div class="flex flex-col min-w-0">
+<span class="text-body-sm font-body-sm font-medium text-on-surface truncate">Confidence Scores</span>
+<span class="font-data-mono text-label-xs text-outline leading-tight">ocr_confidence_pct</span>
+</div>
+</label>
+<label class="flex items-center gap-2.5 p-2 bg-surface-container-low rounded-DEFAULT hover:bg-surface-container transition-colors cursor-pointer select-none">
+<input checked="" class="h-4 w-4 rounded-DEFAULT accent-primary" type="checkbox"/>
+<div class="flex flex-col min-w-0">
+<span class="text-body-sm font-body-sm font-medium text-on-surface truncate">Audit Status</span>
+<span class="font-data-mono text-label-xs text-outline leading-tight">reconciliation_state</span>
+</div>
+</label>
+<label class="flex items-center gap-2.5 p-2 bg-surface-container-low rounded-DEFAULT hover:bg-surface-container transition-colors cursor-pointer select-none">
+<input checked="" class="h-4 w-4 rounded-DEFAULT accent-primary" type="checkbox"/>
+<div class="flex flex-col min-w-0">
+<span class="text-body-sm font-body-sm font-medium text-on-surface truncate">Rule IDs (V01-V05)</span>
+<span class="font-data-mono text-label-xs text-outline leading-tight">violation_rule_codes</span>
+</div>
+</label>
+<label class="flex items-center gap-2.5 p-2 bg-surface-container-low rounded-DEFAULT hover:bg-surface-container transition-colors cursor-pointer select-none">
+<input checked="" class="h-4 w-4 rounded-DEFAULT accent-primary" type="checkbox"/>
+<div class="flex flex-col min-w-0">
+<span class="text-body-sm font-body-sm font-medium text-on-surface truncate">Audit Findings</span>
+<span class="font-data-mono text-label-xs text-outline leading-tight">plain_findings_narrative</span>
+</div>
+</label>
+<label class="flex items-center gap-2.5 p-2 bg-surface-container-low rounded-DEFAULT hover:bg-surface-container transition-colors cursor-pointer select-none">
+<input checked="" class="h-4 w-4 rounded-DEFAULT accent-primary" type="checkbox"/>
+<div class="flex flex-col min-w-0">
+<span class="text-body-sm font-body-sm font-medium text-on-surface truncate">Reviewer Sign-off</span>
+<span class="font-data-mono text-label-xs text-outline leading-tight">auditor_signature_hash</span>
+</div>
+</label>
+</div>
+</div>
+</div>
+<!-- RIGHT: Actions & Live Preview Table (5 cols) -->
+<div class="lg:col-span-5 space-y-space-lg">
+<!-- Panel 3: Action Execution Dock -->
+<div class="bg-surface-container-lowest p-space-lg rounded-lg shadow-sm">
+<div class="pb-space-md mb-space-md flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-primary">download</span>
+<h2 class="text-title-md font-title-md text-primary">3. Export Actions &amp; Manifest</h2>
+</div>
+<span class="px-2 py-0.5 bg-surface-container-high rounded-DEFAULT text-label-xs font-label-xs font-semibold text-on-surface">UTF-8 Encoded</span>
+</div>
+<div class="flex flex-col gap-3">
+<!-- Primary Action -->
+<button class="w-full h-11 bg-primary text-on-primary font-body-md font-medium rounded-lg flex items-center justify-center gap-2 hover:bg-primary-container active:bg-primary shadow-sm transition-all duration-150 group">
+<span class="material-symbols-outlined text-[20px] group-hover:translate-y-0.5 transition-transform">download</span>
+<span>Download CSV Ledger (.csv)</span>
+<span class="font-data-mono text-label-xs opacity-75 ml-1">(4.2 KB)</span>
+</button>
+<!-- Secondary Actions -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+<button class="h-10 bg-surface-container text-on-surface font-body-md font-medium rounded-DEFAULT flex items-center justify-center gap-2 hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[18px] text-error">picture_as_pdf</span>
+<span class="truncate">Export PDF Summary</span>
+</button>
+<button class="h-10 bg-surface-container text-on-surface font-body-md font-medium rounded-DEFAULT flex items-center justify-center gap-2 hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">schedule_send</span>
+<span class="truncate">Schedule Recurring</span>
+</button>
+</div>
+</div>
+<div class="mt-4 pt-4 bg-surface-container-low p-3 rounded-DEFAULT flex items-start gap-2.5 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px] text-secondary shrink-0 mt-0.5">verified</span>
+<div class="text-body-sm font-body-sm leading-tight">
+            All generated ledgers incorporate HMAC-SHA256 signatures for official institutional CAG / statutory submission.
+          </div>
+</div>
+</div>
+<!-- Panel 4: Real-time Export Preview Table (First 3 rows) -->
+<div class="bg-surface-container-lowest p-space-lg rounded-lg shadow-sm">
+<div class="flex items-center justify-between pb-space-sm mb-space-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-primary">table_rows</span>
+<h2 class="text-title-md font-title-md text-primary">Live Data Sample</h2>
+</div>
+<span class="text-label-xs font-label-xs text-outline font-data-mono">TOP 3 OF 6 ROWS</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant mb-space-md">
+          Live stream schema verification before finalizing download.
+        </p>
+<!-- Preview Ledger Container -->
+<div class="overflow-x-auto rounded-DEFAULT bg-surface-container-low p-1">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container text-on-surface-variant text-label-xs font-label-xs uppercase">
+<th class="py-2 px-2.5 font-semibold">Doc ID</th>
+<th class="py-2 px-2.5 font-semibold">Filename</th>
+<th class="py-2 px-2.5 font-semibold">Vendor</th>
+<th class="py-2 px-2.5 font-semibold text-right">Total (INR)</th>
+<th class="py-2 px-2.5 font-semibold text-center">Status</th>
+<th class="py-2 px-2.5 font-semibold">Rule ID</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-lowest font-body-sm text-body-sm text-on-surface">
+<!-- Row 1: Clean -->
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="py-2.5 px-2.5 font-data-mono text-data-mono text-primary font-semibold">DOC-0891</td>
+<td class="py-2.5 px-2.5 font-data-mono text-data-mono text-on-surface-variant truncate max-w-[110px]" title="INV-2024-0891.pdf">
+                  INV-2024-0891.pdf
+                </td>
+<td class="py-2.5 px-2.5 truncate max-w-[120px] font-medium" title="Apex Lab Instruments">
+                  Apex Lab Instruments
+                </td>
+<td class="py-2.5 px-2.5 font-data-mono text-data-mono text-right font-semibold text-primary">
+                  ₹1,45,200.00
+                </td>
+<td class="py-2.5 px-2.5 text-center">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded-DEFAULT text-label-xs font-label-xs font-semibold bg-secondary-container text-on-secondary-container">
+                    Clean
+                  </span>
+</td>
+<td class="py-2.5 px-2.5 font-data-mono text-label-xs text-outline">
+                  NONE
+                </td>
+</tr>
+<!-- Row 2: Flagged -->
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="py-2.5 px-2.5 font-data-mono text-data-mono text-primary font-semibold">DOC-0992</td>
+<td class="py-2.5 px-2.5 font-data-mono text-data-mono text-on-surface-variant truncate max-w-[110px]" title="LAB-CHEM-992.pdf">
+                  LAB-CHEM-992.pdf
+                </td>
+<td class="py-2.5 px-2.5 truncate max-w-[120px] font-medium" title="Sigma Scientific Chem">
+                  Sigma Scientific Chem
+                </td>
+<td class="py-2.5 px-2.5 font-data-mono text-data-mono text-right font-semibold text-primary">
+                  ₹38,450.00
+                </td>
+<td class="py-2.5 px-2.5 text-center">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded-DEFAULT text-label-xs font-label-xs font-semibold bg-error-container text-on-error-container">
+                    Flagged
+                  </span>
+</td>
+<td class="py-2.5 px-2.5 font-data-mono text-label-xs text-error font-medium">
+                  V01 (Mismatch)
+                </td>
+</tr>
+<!-- Row 3: Review -->
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="py-2.5 px-2.5 font-data-mono text-data-mono text-primary font-semibold">DOC-5520</td>
+<td class="py-2.5 px-2.5 font-data-mono text-data-mono text-on-surface-variant truncate max-w-[110px]" title="LIB-BOOK-5520.pdf">
+                  LIB-BOOK-5520.pdf
+                </td>
+<td class="py-2.5 px-2.5 truncate max-w-[120px] font-medium" title="Oxford University Press">
+                  Oxford University Press
+                </td>
+<td class="py-2.5 px-2.5 font-data-mono text-data-mono text-right font-semibold text-primary">
+                  ₹18,240.00
+                </td>
+<td class="py-2.5 px-2.5 text-center">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded-DEFAULT text-label-xs font-label-xs font-semibold bg-surface-container-highest text-on-surface">
+                    Review
+                  </span>
+</td>
+<td class="py-2.5 px-2.5 font-data-mono text-label-xs text-tertiary-container font-medium">
+                  V05 (Confidence)
+                </td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Audit Ledger Export Integrity Graphic -->
+<div class="mt-4 pt-4 flex items-center justify-between text-body-sm font-body-sm text-on-surface-variant">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-secondary">database</span>
+<span>Ledger Store: Encrypted PostgreSQL</span>
+</div>
+<span class="font-data-mono text-label-xs text-outline">Engine Sync: 100% OK</span>
+</div>
+</div>
+<!-- Institutional Sign-off Footer Stamp -->
+<div class="p-space-md bg-surface-container-low rounded-lg flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-DEFAULT bg-surface-container-highest flex items-center justify-center text-primary font-bold">
+<span class="material-symbols-outlined text-[20px]">assignment_turned_in</span>
+</div>
+<div>
+<div class="text-body-md font-body-md font-semibold text-primary">Sign-off Authority: R. K. Sharma</div>
+<div class="text-body-sm font-body-sm text-on-surface-variant">Chief Auditor • Apex Institute of Technology</div>
+</div>
+</div>
+<span class="px-2.5 py-1 bg-surface-container-lowest text-secondary font-data-mono text-label-xs font-bold rounded-DEFAULT shadow-sm">
+          TOKEN VALID
+        </span>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // Simple micro-interaction for status filter radio clicks
+  document.querySelectorAll('input[name="audit_status"]').forEach(radio => {
+    radio.addEventListener('change', (e) => {
+      document.querySelectorAll('#status-filter-group label').forEach(lbl => {
+        lbl.classList.remove('bg-surface-container');
+        lbl.classList.add('bg-surface-container-low');
+      });
+      e.target.closest('label').classList.remove('bg-surface-container-low');
+      e.target.closest('label').classList.add('bg-surface-container');
+    });
+  });
+</script></main></div></body></html>

@@ -1,0 +1,284 @@
+[
+  {
+    "filename": "INV-001.pdf",
+    "model_used": "prebuilt-invoice",
+    "document_type": "invoice",
+    "vendor": "Aster Office Supplies Pvt. Ltd.",
+    "date": "2026-09-12",
+    "subtotal": "8300.00",
+    "tax": "1494.00",
+    "total": "9794.00",
+    "tax_id": "FAKE-GST-000001",
+    "tax_id_status": "FieldStatus.LOW_CONFIDENCE",
+    "confidences": {
+      "vendor_name": 0.885,
+      "invoice_date": 0.926,
+      "total": 0.939,
+      "tax_id": 0.789
+    },
+    "line_items_count": 3,
+    "line_items": [
+      {
+        "desc": "A4 Copier Paper (75 GSM, 500 Sheets/Ream)",
+        "amount": "2500.00",
+        "confidence": 0.9125
+      },
+      {
+        "desc": "Printer Toner Cartridge (Black, High Yield)",
+        "amount": "4800.00",
+        "confidence": 0.9128
+      },
+      {
+        "desc": "Office Files & Document Folders (Box Pack)",
+        "amount": "1000.00",
+        "confidence": 0.9125
+      }
+    ],
+    "flags": [
+      {
+        "rule_id": "V05",
+        "name": "Low Extraction Confidence",
+        "severity": "WARNING",
+        "reason": "Extraction confidence for Vendor Tax ID is 78.9%, which is below the required accuracy threshold of 85.0%. Manual verification recommended."
+      }
+    ],
+    "audit_status": "flagged",
+    "highest_severity": "WARNING"
+  },
+  {
+    "filename": "INV-002.pdf",
+    "model_used": "prebuilt-invoice",
+    "document_type": "invoice",
+    "vendor": "BluePeak IT Solutions",
+    "date": "2026-10-20",
+    "subtotal": "7500.00",
+    "tax": "1350.00",
+    "total": "8850.00",
+    "tax_id": "FAKE-GST-000002",
+    "tax_id_status": "FieldStatus.LOW_CONFIDENCE",
+    "confidences": {
+      "vendor_name": 0.659,
+      "invoice_date": 0.926,
+      "total": 0.941,
+      "tax_id": 0.819
+    },
+    "line_items_count": 3,
+    "line_items": [
+      {
+        "desc": "Computer Keyboard (USB Standard Wired, Spill Resistant)",
+        "amount": "4000.00",
+        "confidence": 0.8878
+      },
+      {
+        "desc": "Computer Mouse (Optical USB, 1200 DPI)",
+        "amount": "2000.00",
+        "confidence": 0.891
+      },
+      {
+        "desc": "HDMI Cable (High Speed 4K, 2.0m Gold Plated)",
+        "amount": "1500.00",
+        "confidence": 0.8918
+      }
+    ],
+    "flags": [
+      {
+        "rule_id": "V05",
+        "name": "Low Extraction Confidence",
+        "severity": "WARNING",
+        "reason": "Extraction confidence for Vendor Name is 65.9%, which is below the required accuracy threshold of 85.0%. Manual verification recommended."
+      },
+      {
+        "rule_id": "V05",
+        "name": "Low Extraction Confidence",
+        "severity": "WARNING",
+        "reason": "Extraction confidence for Vendor Tax ID is 81.9%, which is below the required accuracy threshold of 85.0%. Manual verification recommended."
+      }
+    ],
+    "audit_status": "flagged",
+    "highest_severity": "WARNING"
+  },
+  {
+    "filename": "REC-003.pdf",
+    "model_used": "prebuilt-receipt",
+    "document_type": "receipt",
+    "vendor": "GREENFIELD TECHNICAL INSTITUTE",
+    "date": "2026-11-15",
+    "subtotal": "29000.00",
+    "tax": "0.00",
+    "total": "29000.00",
+    "tax_id": "NOT_APPLICABLE",
+    "tax_id_status": "FieldStatus.NOT_APPLICABLE",
+    "confidences": {
+      "vendor_name": 0.955,
+      "invoice_date": 0.994,
+      "total": 0.995,
+      "tax_id": null
+    },
+    "line_items_count": 3,
+    "line_items": [
+      {
+        "desc": "Tuition Fee (Instruction & Academic Delivery)",
+        "amount": "25000.00",
+        "confidence": 0.9825
+      },
+      {
+        "desc": "Laboratory Fee (Computing & Network Systems)",
+        "amount": "3000.00",
+        "confidence": 0.9825
+      },
+      {
+        "desc": "Library Fee (Digital Subscriptions & Catalog)",
+        "amount": "1000.00",
+        "confidence": 0.9825
+      }
+    ],
+    "flags": [],
+    "audit_status": "clean",
+    "highest_severity": null
+  },
+  {
+    "filename": "INV-004.pdf",
+    "model_used": "prebuilt-invoice",
+    "document_type": "invoice",
+    "vendor": "Crestline Equipment Traders",
+    "date": "2026-09-18",
+    "subtotal": "44000.00",
+    "tax": "7920.00",
+    "total": "55920.00",
+    "tax_id": "FAKE-GST-000004",
+    "tax_id_status": "FieldStatus.EXTRACTED",
+    "confidences": {
+      "vendor_name": 0.711,
+      "invoice_date": 0.926,
+      "total": 0.941,
+      "tax_id": 0.915
+    },
+    "line_items_count": 3,
+    "line_items": [
+      {
+        "desc": "Projector (High Lumen Classroom Series, Full HD)",
+        "amount": "36000.00",
+        "confidence": 0.8982
+      },
+      {
+        "desc": "Projector Screen (Motorized Wall Mount 100-inch)",
+        "amount": "6000.00",
+        "confidence": 0.8985
+      },
+      {
+        "desc": "HDMI Adapter (Multi-Port Display Conversion)",
+        "amount": "2000.00",
+        "confidence": 0.898
+      }
+    ],
+    "flags": [
+      {
+        "rule_id": "V01",
+        "name": "Total Mismatch (Tax-Exclusive)",
+        "severity": "CRITICAL",
+        "reason": "Line items represent tax-exclusive charges (Sum: $44000.00, Subtotal: $44000.00). Expected total ($51920.00 = Base $44000.00 + Tax $7920.00) does not match stated total ($55920.00). Discrepancy: $4000.00."
+      },
+      {
+        "rule_id": "V05",
+        "name": "Low Extraction Confidence",
+        "severity": "WARNING",
+        "reason": "Extraction confidence for Vendor Name is 71.1%, which is below the required accuracy threshold of 85.0%. Manual verification recommended."
+      }
+    ],
+    "audit_status": "flagged",
+    "highest_severity": "CRITICAL"
+  },
+  {
+    "filename": "INV-005.pdf",
+    "model_used": "prebuilt-invoice",
+    "document_type": "invoice",
+    "vendor": "Meridian Educational Technologies",
+    "date": "2026-10-10",
+    "subtotal": "12000.00",
+    "tax": "2160.00",
+    "total": "14160.00",
+    "tax_id": null,
+    "tax_id_status": "FieldStatus.MISSING",
+    "confidences": {
+      "vendor_name": 0.644,
+      "invoice_date": 0.924,
+      "total": 0.939,
+      "tax_id": null
+    },
+    "line_items_count": 2,
+    "line_items": [
+      {
+        "desc": "Science Lab Equipment (Optics & Laser Bench Kit)",
+        "amount": "10000.00",
+        "confidence": 0.8968
+      },
+      {
+        "desc": "Safety Materials (Chemical Splash Goggles & Nitrile\nPacks)",
+        "amount": "2000.00",
+        "confidence": 0.8938
+      }
+    ],
+    "flags": [
+      {
+        "rule_id": "V02",
+        "name": "Missing Tax Number",
+        "severity": "MEDIUM",
+        "reason": "Vendor tax registration identifier (Tax ID, EIN, VAT, or GST) is missing from the invoice."
+      },
+      {
+        "rule_id": "V05",
+        "name": "Low Extraction Confidence",
+        "severity": "WARNING",
+        "reason": "Extraction confidence for Vendor Name is 64.4%, which is below the required accuracy threshold of 85.0%. Manual verification recommended."
+      }
+    ],
+    "audit_status": "flagged",
+    "highest_severity": "MEDIUM"
+  },
+  {
+    "filename": "REC-006.pdf",
+    "model_used": "prebuilt-receipt",
+    "document_type": "receipt",
+    "vendor": "GREENFIELD TECHNICAL INSTITUTE",
+    "date": "2027-01-15",
+    "subtotal": "22500.00",
+    "tax": "0.00",
+    "total": "22500.00",
+    "tax_id": "NOT_APPLICABLE",
+    "tax_id_status": "FieldStatus.NOT_APPLICABLE",
+    "confidences": {
+      "vendor_name": 0.952,
+      "invoice_date": 0.989,
+      "total": 0.994,
+      "tax_id": null
+    },
+    "line_items_count": 3,
+    "line_items": [
+      {
+        "desc": "Tuition Fee (Instruction & Course Delivery)",
+        "amount": "20000.00",
+        "confidence": 0.9825
+      },
+      {
+        "desc": "Examination Fee (End Semester Assessment)",
+        "amount": "2000.00",
+        "confidence": 0.9825
+      },
+      {
+        "desc": "Library Fee (Book Bank & Institutional Access)",
+        "amount": "500.00",
+        "confidence": 0.9825
+      }
+    ],
+    "flags": [
+      {
+        "rule_id": "V04",
+        "name": "Outside Academic Term",
+        "severity": "MEDIUM",
+        "reason": "Document date (2027-01-15) falls outside the designated academic term (2026-08-01 to 2026-12-31)."
+      }
+    ],
+    "audit_status": "flagged",
+    "highest_severity": "MEDIUM"
+  }
+]

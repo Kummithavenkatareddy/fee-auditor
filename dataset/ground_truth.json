@@ -1,0 +1,271 @@
+{
+  "dataset_metadata": {
+    "project_name": "P05 \u2014 Fee Receipt & Invoice Auditor",
+    "version": "1.0.0",
+    "target_platform": "Microsoft Azure AI Document Intelligence",
+    "prebuilt_models": [
+      "prebuilt-invoice",
+      "prebuilt-receipt"
+    ],
+    "academic_term": {
+      "term_id": "FALL-2026",
+      "start_date": "2026-08-01",
+      "end_date": "2026-12-31"
+    },
+    "currency": "INR",
+    "total_documents": 6
+  },
+  "documents": [
+    {
+      "filename": "INV-001.pdf",
+      "document_type": "Vendor Invoice",
+      "vendor_or_institution": "Aster Office Supplies Pvt. Ltd.",
+      "invoice_or_receipt_number": "INV-2026-001",
+      "document_date": "2026-09-12",
+      "due_date": "2026-09-27",
+      "tax_identifier": "FAKE-GST-000001",
+      "student_reference": null,
+      "payment_method": "Net 15 Days / Bank Transfer",
+      "transaction_reference": null,
+      "line_items": [
+        {
+          "item_number": 1,
+          "description": "A4 Copier Paper",
+          "quantity": 10,
+          "unit_price": 250.0,
+          "amount": 2500.0
+        },
+        {
+          "item_number": 2,
+          "description": "Printer Toner",
+          "quantity": 4,
+          "unit_price": 1200.0,
+          "amount": 4800.0
+        },
+        {
+          "item_number": 3,
+          "description": "Office Files",
+          "quantity": 20,
+          "unit_price": 50.0,
+          "amount": 1000.0
+        }
+      ],
+      "subtotal": 8300.0,
+      "tax": 1494.0,
+      "correct_mathematical_total": 9794.0,
+      "printed_total": 9794.0,
+      "total_discrepancy": 0.0,
+      "expected_validation_rules": [],
+      "expected_audit_status": "CLEAN"
+    },
+    {
+      "filename": "INV-002.pdf",
+      "document_type": "Vendor Invoice",
+      "vendor_or_institution": "BluePeak IT Solutions",
+      "invoice_or_receipt_number": "INV-2026-002",
+      "document_date": "2026-10-20",
+      "due_date": "2026-11-04",
+      "tax_identifier": "FAKE-GST-000002",
+      "student_reference": null,
+      "payment_method": "NEFT/RTGS",
+      "transaction_reference": null,
+      "line_items": [
+        {
+          "item_number": 1,
+          "description": "Computer Keyboard",
+          "quantity": 5,
+          "unit_price": 800.0,
+          "amount": 4000.0
+        },
+        {
+          "item_number": 2,
+          "description": "Computer Mouse",
+          "quantity": 5,
+          "unit_price": 400.0,
+          "amount": 2000.0
+        },
+        {
+          "item_number": 3,
+          "description": "HDMI Cable",
+          "quantity": 10,
+          "unit_price": 150.0,
+          "amount": 1500.0
+        }
+      ],
+      "subtotal": 7500.0,
+      "tax": 1350.0,
+      "correct_mathematical_total": 8850.0,
+      "printed_total": 8850.0,
+      "total_discrepancy": 0.0,
+      "expected_validation_rules": [],
+      "expected_audit_status": "CLEAN"
+    },
+    {
+      "filename": "REC-003.pdf",
+      "document_type": "Educational Fee Receipt",
+      "vendor_or_institution": "Greenfield Technical Institute",
+      "invoice_or_receipt_number": "REC-2026-003",
+      "document_date": "2026-11-15",
+      "due_date": null,
+      "tax_identifier": null,
+      "student_reference": "STU-TEST-003",
+      "payment_method": "Bank Transfer",
+      "transaction_reference": "TEST-TXN-000003",
+      "line_items": [
+        {
+          "item_number": 1,
+          "description": "Tuition Fee",
+          "quantity": 1,
+          "unit_price": 25000.0,
+          "amount": 25000.0
+        },
+        {
+          "item_number": 2,
+          "description": "Laboratory Fee",
+          "quantity": 1,
+          "unit_price": 3000.0,
+          "amount": 3000.0
+        },
+        {
+          "item_number": 3,
+          "description": "Library Fee",
+          "quantity": 1,
+          "unit_price": 1000.0,
+          "amount": 1000.0
+        }
+      ],
+      "subtotal": 29000.0,
+      "tax": 0.0,
+      "correct_mathematical_total": 29000.0,
+      "printed_total": 29000.0,
+      "total_discrepancy": 0.0,
+      "expected_validation_rules": [],
+      "expected_audit_status": "CLEAN"
+    },
+    {
+      "filename": "INV-004.pdf",
+      "document_type": "Vendor Invoice",
+      "vendor_or_institution": "Crestline Equipment Traders",
+      "invoice_or_receipt_number": "INV-2026-004",
+      "document_date": "2026-09-18",
+      "due_date": "2026-10-03",
+      "tax_identifier": "FAKE-GST-000004",
+      "student_reference": null,
+      "payment_method": "Electronic Transfer",
+      "transaction_reference": null,
+      "line_items": [
+        {
+          "item_number": 1,
+          "description": "Projector",
+          "quantity": 2,
+          "unit_price": 18000.0,
+          "amount": 36000.0
+        },
+        {
+          "item_number": 2,
+          "description": "Projector Screen",
+          "quantity": 2,
+          "unit_price": 3000.0,
+          "amount": 6000.0
+        },
+        {
+          "item_number": 3,
+          "description": "HDMI Adapter",
+          "quantity": 4,
+          "unit_price": 500.0,
+          "amount": 2000.0
+        }
+      ],
+      "subtotal": 44000.0,
+      "tax": 7920.0,
+      "correct_mathematical_total": 51920.0,
+      "printed_total": 55920.0,
+      "total_discrepancy": 4000.0,
+      "expected_validation_rules": [
+        "FLAG V01 \u2014 TOTAL MISMATCH"
+      ],
+      "expected_audit_status": "FLAGGED"
+    },
+    {
+      "filename": "INV-005.pdf",
+      "document_type": "Vendor Invoice",
+      "vendor_or_institution": "Meridian Educational Technologies",
+      "invoice_or_receipt_number": "INV-2026-005",
+      "document_date": "2026-10-10",
+      "due_date": "2026-10-25",
+      "tax_identifier": null,
+      "student_reference": null,
+      "payment_method": "Bank Transfer",
+      "transaction_reference": null,
+      "line_items": [
+        {
+          "item_number": 1,
+          "description": "Science Lab Equipment",
+          "quantity": 2,
+          "unit_price": 5000.0,
+          "amount": 10000.0
+        },
+        {
+          "item_number": 2,
+          "description": "Safety Materials",
+          "quantity": 5,
+          "unit_price": 400.0,
+          "amount": 2000.0
+        }
+      ],
+      "subtotal": 12000.0,
+      "tax": 2160.0,
+      "correct_mathematical_total": 14160.0,
+      "printed_total": 14160.0,
+      "total_discrepancy": 0.0,
+      "expected_validation_rules": [
+        "FLAG V02 \u2014 MISSING TAX NUMBER"
+      ],
+      "expected_audit_status": "FLAGGED"
+    },
+    {
+      "filename": "REC-006.pdf",
+      "document_type": "Educational Fee Receipt",
+      "vendor_or_institution": "Greenfield Technical Institute",
+      "invoice_or_receipt_number": "REC-2027-006",
+      "document_date": "2027-01-15",
+      "due_date": null,
+      "tax_identifier": null,
+      "student_reference": "STU-TEST-006",
+      "payment_method": "Bank Transfer",
+      "transaction_reference": "TEST-TXN-000006",
+      "line_items": [
+        {
+          "item_number": 1,
+          "description": "Tuition Fee",
+          "quantity": 1,
+          "unit_price": 20000.0,
+          "amount": 20000.0
+        },
+        {
+          "item_number": 2,
+          "description": "Examination Fee",
+          "quantity": 1,
+          "unit_price": 2000.0,
+          "amount": 2000.0
+        },
+        {
+          "item_number": 3,
+          "description": "Library Fee",
+          "quantity": 1,
+          "unit_price": 500.0,
+          "amount": 500.0
+        }
+      ],
+      "subtotal": 22500.0,
+      "tax": 0.0,
+      "correct_mathematical_total": 22500.0,
+      "printed_total": 22500.0,
+      "total_discrepancy": 0.0,
+      "expected_validation_rules": [
+        "FLAG V04 \u2014 DATE OUTSIDE ACADEMIC TERM"
+      ],
+      "expected_audit_status": "FLAGGED"
+    }
+  ]
+}

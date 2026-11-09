@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"error":"#ba1a1a","on-secondary-fixed":"#00201a","on-surface":"#161c22","surface-variant":"#dde3eb","secondary-container":"#bee8dc","on-surface-variant":"#44474e","on-secondary-container":"#436a60","outline-variant":"#c5c6cf","surface-container-highest":"#dde3eb","inverse-on-surface":"#ecf1f9","tertiary-fixed-dim":"#edbe8a","secondary":"#3f665c","on-primary-container":"#8093bb","primary":"#001637","on-error":"#ffffff","on-tertiary-container":"#b48b5b","on-secondary-fixed-variant":"#274e45","surface-bright":"#f7f9ff","on-tertiary-fixed-variant":"#604017","surface-dim":"#d5dae2","background":"#f7f9ff","surface-container":"#e9eef6","on-primary":"#ffffff","outline":"#75777f","on-tertiary-fixed":"#2b1700","surface":"#f7f9ff","primary-container":"#172b4d","on-tertiary":"#ffffff","on-primary-fixed-variant":"#34476a","error-container":"#ffdad6","tertiary":"#241300","surface-container-lowest":"#ffffff","surface-container-high":"#e3e9f0","secondary-fixed-dim":"#a6cfc3","tertiary-fixed":"#ffddb9","on-error-container":"#93000a","on-background":"#161c22","secondary-fixed":"#c1ebdf","primary-fixed":"#d7e2ff","surface-tint":"#4c5e83","primary-fixed-dim":"#b4c7f1","on-primary-fixed":"#041b3c","tertiary-container":"#402500","on-secondary":"#ffffff","surface-container-low":"#eff4fc","inverse-surface":"#2b3137","inverse-primary":"#b4c7f1"},borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},spacing:{"margin":"1.5rem","space-lg":"1rem","space-xl":"1.5rem","margin-panel":"2rem","space-xs":"0.25rem","space-md":"0.75rem","space-sm":"0.5rem","gutter":"1rem","gutter-compact":"0.5rem"},fontFamily:{"body-lg":["Inter"],"title-md":["Inter"],"headline-lg":["Inter"],"data-mono":["Inter"],"display-lg":["Inter"],"body-sm":["Inter"],"headline-sm":["Inter"],"label-xs":["Inter"],"label-md":["Inter"],"data-cell":["Inter"],"body-md":["Inter"]},fontSize:{"body-lg":["14px",{lineHeight:"20px",fontWeight:"400"}],"title-md":["15px",{lineHeight:"20px",letterSpacing:"-0.005em",fontWeight:"600"}],"headline-lg":["24px",{lineHeight:"32px",letterSpacing:"-0.015em",fontWeight:"600"}],"data-mono":["13px",{lineHeight:"16px",fontWeight:"500"}],"display-lg":["32px",{lineHeight:"40px",letterSpacing:"-0.02em",fontWeight:"600"}],"body-sm":["12px",{lineHeight:"16px",fontWeight:"400"}],"headline-sm":["18px",{lineHeight:"24px",letterSpacing:"-0.01em",fontWeight:"600"}],"label-xs":["11px",{lineHeight:"14px",letterSpacing:"0.04em",fontWeight:"600"}],"label-md":["12px",{lineHeight:"16px",letterSpacing:"0.02em",fontWeight:"600"}],"data-cell":["13px",{lineHeight:"16px",fontWeight:"500"}],"body-md":["13px",{lineHeight:"18px",fontWeight:"400"}]}}}}</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><aside class="fixed top-0 left-0 h-full w-[248px] bg-surface-container-lowest border-r border-surface-container-highest z-50 flex flex-col justify-between select-none"><div class="flex flex-col"><div class="h-16 px-space-md flex items-center gap-space-sm border-b border-surface-container-highest"><img alt="Fee Auditor Institutional Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1WQWeqeC8spQRkmGVegjnLgb9bFoW8wCvP7XS0S6JxDv_UG5fYFD-etxy1qcj96bI9hc3O6PWB6aDrGP_f7HtoG7A9BDdEyvLO9BOp5kUaWsezSuxxkt4-nO2O38snrO5c-XDj75xlAsZpS_p4lMoM2vWwtAnbN8rDSC-7ZIj0NPF5YjDPhqyCcmRFPM9njXJqc5ursT7eDsCi-xZY1xM6nVRpofE5owu8j7sTLz6E"/><div class="flex flex-col min-w-0"><span class="font-title-md text-title-md text-primary tracking-tight leading-tight truncate">Fee Auditor</span><span class="font-label-xs text-label-xs text-on-surface-variant truncate uppercase">Accounts &amp; Audit Dept</span></div></div><nav class="flex flex-col p-space-xs space-y-0.5" data-active-classes="bg-primary-container text-on-primary font-title-md border-l-4 border-secondary"><a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded-DEFAULT transition-colors duration-150" data-path="overview" href="#"><span class="material-symbols-outlined text-[18px]">dashboard</span><span class="font-body-md text-body-md">Overview</span></a><a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded-DEFAULT transition-colors duration-150" data-path="documents" href="#"><span class="material-symbols-outlined text-[18px]">folder</span><span class="font-body-md text-body-md">Documents</span></a><a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded-DEFAULT transition-colors duration-150" data-path="upload-documents" href="#"><span class="material-symbols-outlined text-[18px]">cloud_upload</span><span class="font-body-md text-body-md">Upload Documents</span></a><a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded-DEFAULT transition-colors duration-150" data-path="audit-results" href="#"><span class="material-symbols-outlined text-[18px]">policy</span><span class="font-body-md text-body-md">Audit Results</span></a><a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded-DEFAULT transition-colors duration-150" data-path="manual-review" href="#"><span class="material-symbols-outlined text-[18px]">rule</span><span class="font-body-md text-body-md">Manual Review</span></a><a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded-DEFAULT transition-colors duration-150" data-path="reports-export" href="#"><span class="material-symbols-outlined text-[18px]">table_chart</span><span class="font-body-md text-body-md">Reports &amp; Export</span></a><a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded-DEFAULT transition-colors duration-150" data-path="settings" href="#"><span class="material-symbols-outlined text-[18px]">tune</span><span class="font-body-md text-body-md">Settings</span></a></nav></div><div class="flex flex-col border-t border-surface-container-highest p-space-sm space-y-space-sm bg-surface-container-low"><a class="flex items-center gap-space-sm px-space-sm py-1.5 text-on-surface-variant hover:text-on-surface text-body-sm font-body-sm transition-colors" data-path="documentation" href="#"><span class="material-symbols-outlined text-[16px]">help_center</span><span>Help &amp; Documentation</span></a><div class="flex items-center justify-between px-space-sm py-1 bg-surface-container-lowest border border-surface-container-highest rounded-DEFAULT"><div class="flex items-center gap-1.5 min-w-0"><span class="h-2 w-2 rounded-full bg-secondary shrink-0"></span><span class="font-label-xs text-label-xs text-on-surface truncate">Deterministic Engine</span></div><span class="font-label-xs text-label-xs text-secondary font-semibold uppercase tracking-wider">Active</span></div><div class="flex items-center gap-space-sm p-space-xs rounded-DEFAULT border border-surface-container-highest bg-surface-container-lowest"><img alt="Profile" class="w-8 h-8 rounded-full object-cover shrink-0 border border-outline-variant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAm3IPwEXFCstla-QeT-9itpMog7-GTYueVJMHTFW1Rto37DSroIZhaLu_qGOkRPRU4zm1SI0K-Ic50YsJYz7KU7EGJZ6wq14FkBRGOdIuUewbhajle6P9St5Mq6N2R--Fy6FluYQ0Q_RBr1DB00YT4o1uLX3WdotJaDJ8Qv_GFP_zsD0TbsFGRbJAPTy_Yog90tYpVO7Z9jpj58xRWa4-cyzrBffYMDXE-193UWw"/><div class="flex flex-col min-w-0"><div class="font-title-md text-[13px] text-on-surface truncate font-semibold leading-tight">R. K. Sharma</div><div class="font-label-xs text-label-xs text-on-surface-variant truncate">Sr. Accounts Admin</div><div class="font-label-xs text-[10px] text-outline truncate">Apex Inst. of Tech</div></div></div></div></aside><div class="pl-[248px]"><header class="fixed top-0 left-[248px] right-0 h-16 bg-surface-container-lowest border-b border-surface-container-highest z-40 px-space-lg flex items-center justify-between shadow-[0_1px_2px_rgba(23,43,77,0.04)]"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-xs text-body-sm font-body-sm text-on-surface-variant"><span class="material-symbols-outlined text-[16px]">account_balance</span><span>Audit Console</span><span class="material-symbols-outlined text-[14px]">chevron_right</span><span class="text-on-surface font-medium">Fee Verification Ledger</span></div><div class="h-4 w-px bg-surface-container-highest mx-space-xs hidden md:block"></div><div class="relative hidden sm:flex items-center"><select class="appearance-none bg-surface-container-low border border-surface-container-highest text-on-surface font-label-md text-label-md py-1.5 pl-3 pr-8 rounded-DEFAULT focus:outline-none focus:border-primary-container cursor-pointer"><option>AY 2024-25 • Term II (Spring)</option><option>AY 2024-25 • Term I (Fall)</option><option>AY 2023-24 • Annual Audit</option></select><span class="material-symbols-outlined absolute right-2 text-[16px] text-on-surface-variant pointer-events-none">expand_more</span></div></div><div class="flex items-center gap-space-md"><div class="relative w-64 lg:w-80"><span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-[16px] text-outline">search</span><input class="w-full h-8.5 bg-surface-container-low border border-surface-container-highest rounded-DEFAULT pl-8 pr-3 text-data-mono font-data-mono text-on-surface placeholder:text-outline focus:outline-none focus:border-primary-container transition-colors" placeholder="Search invoice ID, receipt, vendor..." type="text"/></div><div class="hidden xl:flex items-center gap-space-sm pl-space-xs border-l border-surface-container-highest text-body-sm font-body-sm text-on-surface-variant"><span class="font-data-mono text-data-mono text-on-surface-variant">24 Oct 2024</span><div class="flex items-center gap-1 px-2 py-0.5 bg-secondary-container text-on-secondary-container border border-secondary-fixed-dim rounded-DEFAULT font-label-xs text-label-xs"><span class="material-symbols-outlined text-[12px]">verified</span><span>Run #1094 Completed</span></div></div><div class="flex items-center gap-space-xs text-on-surface-variant"><button class="h-8 w-8 flex items-center justify-center rounded-DEFAULT hover:bg-surface-container transition-colors relative"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-error"></span></button><button class="h-8 w-8 flex items-center justify-center rounded-DEFAULT hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-[20px]">settings</span></button></div></div></header><main class="w-full pt-16 bg-surface px-space-lg min-h-screen"><div class="flex flex-col w-full pb-16 space-y-space-lg">
+<!-- Top Telemetry & Control Bar -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md pt-space-xs">
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs text-on-surface-variant font-label-xs text-label-xs uppercase tracking-wider mb-1">
+<span>Fiduciary Ingestion Queue</span>
+<span>/</span>
+<span class="text-secondary font-semibold">Ledger Pipeline Telemetry</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-primary tracking-tight">Document Processing Pipeline</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-0.5">Real-time extraction and deterministic validation telemetry.</p>
+</div>
+<div class="flex items-center gap-space-sm self-start md:self-auto">
+<div class="inline-flex items-center gap-2 px-3 py-1.5 bg-surface-container-low rounded-DEFAULT shadow-sm">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span>
+</span>
+<span class="font-data-mono text-data-mono text-primary font-semibold">Batch Run #1094</span>
+<span class="text-outline-variant">•</span>
+<span class="font-label-xs text-label-xs text-on-surface-variant uppercase">5 of 5 Files</span>
+</div>
+<button class="h-8 px-2.5 bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-on-surface rounded-DEFAULT flex items-center gap-1.5 transition-colors shadow-sm text-body-sm font-body-sm" onclick="simulateRefresh(this)" title="Re-sync deterministic ledger">
+<span class="material-symbols-outlined text-[16px]">sync</span>
+<span class="hidden sm:inline font-label-md text-label-md">Poll Now</span>
+</button>
+</div>
+</div>
+<!-- Header Metrics Grid (4 Columns) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md">
+<!-- 1. Total Submitted -->
+<div class="bg-surface-container-lowest p-space-lg rounded-DEFAULT shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-xs text-label-xs uppercase tracking-wider text-on-surface-variant">Total Ingested</span>
+<span class="material-symbols-outlined text-outline text-[20px]">folder_zip</span>
+</div>
+<div class="mt-4 flex items-baseline justify-between">
+<div class="font-display-lg text-display-lg text-primary leading-none">5</div>
+<div class="flex items-center gap-1 font-label-xs text-label-xs text-on-surface-variant">
+<span>Target Payload:</span>
+<span class="font-data-mono text-data-mono text-primary font-semibold">9.04 MB</span>
+</div>
+</div>
+<div class="w-full bg-surface-container-high h-1 rounded-full mt-3 overflow-hidden">
+<div class="bg-primary h-full w-full"></div>
+</div>
+</div>
+<!-- 2. Successfully Processed -->
+<div class="bg-surface-container-lowest p-space-lg rounded-DEFAULT shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-xs text-label-xs uppercase tracking-wider text-secondary">Verified &amp; Reconciled</span>
+<span class="material-symbols-outlined text-secondary text-[20px]">verified_user</span>
+</div>
+<div class="mt-4 flex items-baseline justify-between">
+<div class="font-display-lg text-display-lg text-secondary leading-none">3</div>
+<span class="px-2 py-0.5 bg-secondary-container text-on-secondary-container rounded-DEFAULT font-label-xs text-label-xs">
+          60% of Batch
+        </span>
+</div>
+<div class="w-full bg-surface-container-high h-1 rounded-full mt-3 overflow-hidden">
+<div class="bg-secondary h-full w-3/5 transition-all duration-500"></div>
+</div>
+</div>
+<!-- 3. Currently Processing -->
+<div class="bg-surface-container-lowest p-space-lg rounded-DEFAULT shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-xs text-label-xs uppercase tracking-wider text-on-primary-container">Currently Processing</span>
+<span class="material-symbols-outlined text-on-primary-container text-[20px] animate-spin">cyclone</span>
+</div>
+<div class="mt-4 flex items-baseline justify-between">
+<div class="font-display-lg text-display-lg text-primary-container leading-none">1</div>
+<span class="px-2 py-0.5 bg-surface-container-high text-primary-container rounded-DEFAULT font-label-xs text-label-xs flex items-center gap-1 font-semibold">
+<span class="h-1.5 w-1.5 rounded-full bg-primary-container animate-pulse"></span>
+          Step 3 (V01-V04)
+        </span>
+</div>
+<div class="w-full bg-surface-container-high h-1 rounded-full mt-3 overflow-hidden">
+<div class="bg-primary-container h-full w-4/5 animate-pulse"></div>
+</div>
+</div>
+<!-- 4. Flagged / Needs Review -->
+<div class="bg-surface-container-lowest p-space-lg rounded-DEFAULT shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-xs text-label-xs uppercase tracking-wider text-error">Discrepancy / Review</span>
+<span class="material-symbols-outlined text-error text-[20px]">warning</span>
+</div>
+<div class="mt-4 flex items-baseline justify-between">
+<div class="font-display-lg text-display-lg text-error leading-none">1</div>
+<span class="px-2 py-0.5 bg-error-container text-on-error-container rounded-DEFAULT font-label-xs text-label-xs font-semibold">
+          1 Variance Flag
+        </span>
+</div>
+<div class="w-full bg-surface-container-high h-1 rounded-full mt-3 overflow-hidden">
+<div class="bg-error h-full w-1/5"></div>
+</div>
+</div>
+</div>
+<!-- Detailed Pipeline Matrix Table -->
+<div class="bg-surface-container-lowest rounded-DEFAULT shadow-sm overflow-hidden flex flex-col">
+<!-- Table Header Utility Strip -->
+<div class="px-space-md py-3 bg-surface-container-low flex flex-wrap items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="font-title-md text-title-md text-primary">Pipeline Execution Matrix</span>
+<span class="text-outline-variant font-label-xs text-label-xs">|</span>
+<span class="font-label-xs text-label-xs text-on-surface-variant">RULESET: V1.4.2 (STRICT_FINANCIAL)</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<div class="flex items-center gap-1.5 text-body-sm font-body-sm text-on-surface-variant bg-surface-container-lowest px-2.5 py-1 rounded-DEFAULT">
+<span class="material-symbols-outlined text-[15px] text-secondary">memory</span>
+<span>Dual OCR Engines: Tesseract + Institutional Vision Model</span>
+</div>
+</div>
+</div>
+<!-- Scrollable Ledger Viewport -->
+<div class="overflow-x-auto w-full">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant font-label-xs text-label-xs uppercase tracking-wider h-9">
+<th class="py-2 px-space-md font-semibold">Document &amp; File Type</th>
+<th class="py-2 px-space-sm font-semibold">Payload</th>
+<th class="py-2 px-space-md font-semibold w-[360px]">Extraction Pipeline (4-Stage)</th>
+<th class="py-2 px-space-md font-semibold text-right">Confidence</th>
+<th class="py-2 px-space-md font-semibold">Engine Latency</th>
+<th class="py-2 px-space-md font-semibold">Audit Status</th>
+<th class="py-2 px-space-md font-semibold text-right pr-space-lg">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-high font-body-md text-body-md text-on-surface">
+<!-- Row 1: Apex Instruments -->
+<tr class="hover:bg-surface-container-low/60 transition-colors h-[52px]">
+<td class="py-2 px-space-md">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 bg-surface-container-high rounded-DEFAULT flex items-center justify-center shrink-0 text-primary">
+<span class="material-symbols-outlined text-[18px]">receipt_long</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-data-mono text-data-mono text-primary font-semibold truncate hover:underline cursor-pointer">INV-2024-0891_ApexInstruments.pdf</span>
+<span class="font-label-xs text-label-xs text-on-surface-variant">Procurement • Lab Equipment</span>
+</div>
+</div>
+</td>
+<td class="py-2 px-space-sm font-data-mono text-data-mono text-on-surface-variant">2.4 MB</td>
+<td class="py-2 px-space-md">
+<!-- 4-Stage Stepper: Completed -->
+<div class="flex items-center gap-1.5 w-full">
+<div class="flex items-center gap-1" title="Stage 1: Uploaded (Done)">
+<span class="w-3.5 h-3.5 rounded-full bg-secondary text-on-secondary flex items-center justify-center text-[9px] font-bold">✓</span>
+<span class="font-label-xs text-label-xs text-secondary font-medium hidden xl:inline">Uploaded</span>
+</div>
+<div class="h-0.5 w-3 bg-secondary"></div>
+<div class="flex items-center gap-1" title="Stage 2: Extracted (Done)">
+<span class="w-3.5 h-3.5 rounded-full bg-secondary text-on-secondary flex items-center justify-center text-[9px] font-bold">✓</span>
+<span class="font-label-xs text-label-xs text-secondary font-medium hidden xl:inline">Extracted</span>
+</div>
+<div class="h-0.5 w-3 bg-secondary"></div>
+<div class="flex items-center gap-1" title="Stage 3: Validated (Done)">
+<span class="w-3.5 h-3.5 rounded-full bg-secondary text-on-secondary flex items-center justify-center text-[9px] font-bold">✓</span>
+<span class="font-label-xs text-label-xs text-secondary font-medium hidden xl:inline">Rules</span>
+</div>
+<div class="h-0.5 w-3 bg-secondary"></div>
+<div class="flex items-center gap-1" title="Stage 4: Completed">
+<span class="w-3.5 h-3.5 rounded-full bg-secondary text-on-secondary flex items-center justify-center text-[9px] font-bold">✓</span>
+<span class="font-label-xs text-label-xs text-secondary font-semibold">Done</span>
+</div>
+</div>
+</td>
+<td class="py-2 px-space-md text-right">
+<span class="font-data-mono text-data-mono text-secondary font-bold">96.4%</span>
+</td>
+<td class="py-2 px-space-md font-data-mono text-data-mono text-on-surface-variant">
+<span>1.42s</span>
+<span class="text-outline text-label-xs block">14:22:04</span>
+</td>
+<td class="py-2 px-space-md">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-secondary-container text-on-secondary-container rounded-DEFAULT font-label-xs text-label-xs font-semibold">
+<span class="material-symbols-outlined text-[13px]">check_circle</span>
+                Clean (V01-V05 Passed)
+              </span>
+</td>
+<td class="py-2 px-space-md text-right pr-space-lg">
+<button class="h-7 px-2.5 bg-surface-container-high hover:bg-surface-container-highest text-primary rounded-DEFAULT font-label-xs text-label-xs font-semibold transition-colors inline-flex items-center gap-1">
+<span>View Results</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+</button>
+</td>
+</tr>
+<!-- Row 2: Tuition SBI Receipt -->
+<tr class="hover:bg-surface-container-low/60 transition-colors h-[52px]">
+<td class="py-2 px-space-md">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 bg-surface-container-high rounded-DEFAULT flex items-center justify-center shrink-0 text-primary">
+<span class="material-symbols-outlined text-[18px]">account_balance_wallet</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-data-mono text-data-mono text-primary font-semibold truncate hover:underline cursor-pointer">REC-TUITION-4421_SBIFee.pdf</span>
+<span class="font-label-xs text-label-xs text-on-surface-variant">Student Challan • AY 24-25</span>
+</div>
+</div>
+</td>
+<td class="py-2 px-space-sm font-data-mono text-data-mono text-on-surface-variant">840 KB</td>
+<td class="py-2 px-space-md">
+<!-- 4-Stage Stepper: Completed -->
+<div class="flex items-center gap-1.5 w-full">
+<div class="flex items-center gap-1">
+<span class="w-3.5 h-3.5 rounded-full bg-secondary text-on-secondary flex items-center justify-center text-[9px] font-bold">✓</span>
+<span class="font-label-xs text-label-xs text-secondary font-medium hidden xl:inline">Uploaded</span>
+</div>
+<div class="h-0.5 w-3 bg-secondary"></div>
+<div class="flex items-center gap-1">
+<span class="w-3.5 h-3.5 rounded-full bg-secondary text-on-secondary flex items-center justify-center text-[9px] font-bold">✓</span>
+<span class="font-label-xs text-label-xs text-secondary font-medium hidden xl:inline">Extracted</span>
+</div>
+<div class="h-0.5 w-3 bg-secondary"></div>
+<div class="flex items-center gap-1">
+<span class="w-3.5 h-3.5 rounded-full bg-secondary text-on-secondary flex items-center justify-center text-[9px] font-bold">✓</span>
+<span class="font-label-xs text-label-xs text-secondary font-medium hidden xl:inline">Rules</span>
+</div>
+<div class="h-0.5 w-3 bg-secondary"></div>
+<div class="flex items-center gap-1">
+<span class="w-3.5 h-3.5 rounded-full bg-secondary text-on-secondary flex items-center justify-center text-[9px] font-bold">✓</span>
+<span class="font-label-xs text-label-xs text-secondary font-semibold">Done</span>
+</div>
+</div>
+</td>
+<td class="py-2 px-space-md text-right">
+<span class="font-data-mono text-data-mono text-secondary font-bold">98.1%</span>
+</td>
+<td class="py-2 px-space-md font-data-mono text-data-mono text-on-surface-variant">
+<span>0.78s</span>
+<span class="text-outline text-label-xs block">14:22:06</span>
+</td>
+<td class="py-2 px-space-md">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-secondary-container text-on-secondary-container rounded-DEFAULT font-label-xs text-label-xs font-semibold">
+<span class="material-symbols-outlined text-[13px]">verified</span>
+                Clean (Receipt Verified)
+              </span>
+</td>
+<td class="py-2 px-space-md text-right pr-space-lg">
+<button class="h-7 px-2.5 bg-surface-container-high hover:bg-surface-container-highest text-primary rounded-DEFAULT font-label-xs text-label-xs font-semibold transition-colors inline-flex items-center gap-1">
+<span>View Results</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+</button>
+</td>
+</tr>
+<!-- Row 3: Sigma Chem (Error Violation) -->
+<tr class="bg-error-container/20 hover:bg-error-container/30 transition-colors h-[52px]">
+<td class="py-2 px-space-md">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 bg-error-container rounded-DEFAULT flex items-center justify-center shrink-0 text-error">
+<span class="material-symbols-outlined text-[18px]">report_problem</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-data-mono text-data-mono text-error font-semibold truncate hover:underline cursor-pointer">LAB-CHEM-992_SigmaChem.pdf</span>
+<span class="font-label-xs text-label-xs text-on-surface-variant">Vendor Invoice • Consumables</span>
+</div>
+</div>
+</td>
+<td class="py-2 px-space-sm font-data-mono text-data-mono text-on-surface-variant">1.1 MB</td>
+<td class="py-2 px-space-md">
+<!-- 4-Stage Stepper: Flagged on validation -->
+<div class="flex items-center gap-1.5 w-full">
+<div class="flex items-center gap-1">
+<span class="w-3.5 h-3.5 rounded-full bg-secondary text-on-secondary flex items-center justify-center text-[9px] font-bold">✓</span>
+<span class="font-label-xs text-label-xs text-secondary font-medium hidden xl:inline">Uploaded</span>
+</div>
+<div class="h-0.5 w-3 bg-secondary"></div>
+<div class="flex items-center gap-1">
+<span class="w-3.5 h-3.5 rounded-full bg-secondary text-on-secondary flex items-center justify-center text-[9px] font-bold">✓</span>
+<span class="font-label-xs text-label-xs text-secondary font-medium hidden xl:inline">Extracted</span>
+</div>
+<div class="h-0.5 w-3 bg-error"></div>
+<div class="flex items-center gap-1">
+<span class="w-3.5 h-3.5 rounded-full bg-error text-on-error flex items-center justify-center text-[9px] font-bold">✕</span>
+<span class="font-label-xs text-label-xs text-error font-semibold hidden xl:inline">Failed V01</span>
+</div>
+<div class="h-0.5 w-3 bg-surface-container-highest"></div>
+<div class="flex items-center gap-1 opacity-40">
+<span class="w-3.5 h-3.5 rounded-full bg-outline text-surface flex items-center justify-center text-[9px]">4</span>
+<span class="font-label-xs text-label-xs text-on-surface-variant">Halted</span>
+</div>
+</div>
+</td>
+<td class="py-2 px-space-md text-right">
+<span class="font-data-mono text-data-mono text-error font-bold">89.4%</span>
+</td>
+<td class="py-2 px-space-md font-data-mono text-data-mono text-on-surface-variant">
+<span>1.89s</span>
+<span class="text-outline text-label-xs block">14:22:08</span>
+</td>
+<td class="py-2 px-space-md">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-error-container text-on-error-container rounded-DEFAULT font-label-xs text-label-xs font-semibold">
+<span class="material-symbols-outlined text-[13px]">close</span>
+                Rule Violation: V01 Arithmetic Discrepancy
+              </span>
+</td>
+<td class="py-2 px-space-md text-right pr-space-lg">
+<button class="h-7 px-2.5 bg-error text-on-error hover:bg-error/90 rounded-DEFAULT font-label-xs text-label-xs font-semibold transition-colors inline-flex items-center gap-1 shadow-sm">
+<span>Inspect Finding</span>
+<span class="material-symbols-outlined text-[14px]">troubleshoot</span>
+</button>
+</td>
+</tr>
+<!-- Row 4: Godrej Interio (Active Progress) -->
+<tr class="bg-surface-container/40 hover:bg-surface-container/70 transition-colors h-[52px]">
+<td class="py-2 px-space-md">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 bg-primary-container rounded-DEFAULT flex items-center justify-center shrink-0 text-on-primary">
+<span class="material-symbols-outlined text-[18px] animate-spin">autorenew</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-data-mono text-data-mono text-primary font-semibold truncate">INFRA-DESK-104_GodrejInterio.pdf</span>
+<span class="font-label-xs text-label-xs text-on-surface-variant">Capital Asset • Furniture</span>
+</div>
+</div>
+</td>
+<td class="py-2 px-space-sm font-data-mono text-data-mono text-on-surface-variant">3.8 MB</td>
+<td class="py-2 px-space-md">
+<!-- Active Multi-step Progress Bar -->
+<div class="flex flex-col gap-1 w-full max-w-[280px]">
+<div class="flex items-center justify-between font-label-xs text-label-xs text-primary-container font-semibold">
+<span>3. Validating (Running GSTIN &amp; Math check...)</span>
+<span>74%</span>
+</div>
+<div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden relative">
+<div class="h-full bg-primary-container rounded-full w-[74%] transition-all duration-300 relative overflow-hidden">
+<!-- Subtle pulsing gradient shimmer -->
+<div class="absolute inset-0 bg-gradient-to-r from-transparent via-on-primary-container/30 to-transparent animate-pulse"></div>
+</div>
+</div>
+</div>
+</td>
+<td class="py-2 px-space-md text-right">
+<span class="font-data-mono text-data-mono text-on-surface-variant font-semibold">92.5%</span>
+</td>
+<td class="py-2 px-space-md font-data-mono text-data-mono text-primary-container">
+<span class="inline-flex items-center gap-1 font-semibold">
+<span class="h-1.5 w-1.5 rounded-full bg-primary-container animate-ping"></span>
+<span>Active (2.1s)</span>
+</span>
+<span class="text-outline text-label-xs block">Thread #4</span>
+</td>
+<td class="py-2 px-space-md">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-surface-container-high text-primary-container rounded-DEFAULT font-label-xs text-label-xs font-semibold">
+<span class="material-symbols-outlined text-[13px] animate-spin">refresh</span>
+                Validating...
+              </span>
+</td>
+<td class="py-2 px-space-md text-right pr-space-lg">
+<button class="h-7 px-2.5 bg-surface-container text-outline rounded-DEFAULT font-label-xs text-label-xs font-semibold cursor-not-allowed" disabled="">
+                Processing...
+              </button>
+</td>
+</tr>
+<!-- Row 5: Oxford Press (Low OCR Warning) -->
+<tr class="hover:bg-surface-container-low/60 transition-colors h-[52px]">
+<td class="py-2 px-space-md">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 bg-surface-container-high rounded-DEFAULT flex items-center justify-center shrink-0 text-on-tertiary-container">
+<span class="material-symbols-outlined text-[18px]">menu_book</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-data-mono text-data-mono text-primary font-semibold truncate hover:underline cursor-pointer">LIB-BOOK-5520_OxfordPress.pdf</span>
+<span class="font-label-xs text-label-xs text-on-surface-variant">Central Library • Textbooks</span>
+</div>
+</div>
+</td>
+<td class="py-2 px-space-sm font-data-mono text-data-mono text-on-surface-variant">920 KB</td>
+<td class="py-2 px-space-md">
+<!-- 4-Stage Stepper: Completed with note -->
+<div class="flex items-center gap-1.5 w-full">
+<div class="flex items-center gap-1">
+<span class="w-3.5 h-3.5 rounded-full bg-secondary text-on-secondary flex items-center justify-center text-[9px] font-bold">✓</span>
+<span class="font-label-xs text-label-xs text-secondary font-medium hidden xl:inline">Uploaded</span>
+</div>
+<div class="h-0.5 w-3 bg-secondary"></div>
+<div class="flex items-center gap-1">
+<span class="w-3.5 h-3.5 rounded-full bg-secondary text-on-secondary flex items-center justify-center text-[9px] font-bold">✓</span>
+<span class="font-label-xs text-label-xs text-secondary font-medium hidden xl:inline">Extracted</span>
+</div>
+<div class="h-0.5 w-3 bg-secondary"></div>
+<div class="flex items-center gap-1">
+<span class="w-3.5 h-3.5 rounded-full bg-secondary text-on-secondary flex items-center justify-center text-[9px] font-bold">✓</span>
+<span class="font-label-xs text-label-xs text-secondary font-medium hidden xl:inline">Rules</span>
+</div>
+<div class="h-0.5 w-3 bg-secondary"></div>
+<div class="flex items-center gap-1">
+<span class="w-3.5 h-3.5 rounded-full bg-secondary text-on-secondary flex items-center justify-center text-[9px] font-bold">✓</span>
+<span class="font-label-xs text-label-xs text-secondary font-semibold">Done</span>
+</div>
+</div>
+</td>
+<td class="py-2 px-space-md text-right">
+<span class="font-data-mono text-data-mono text-on-tertiary-container font-bold">72.1% (Low)</span>
+</td>
+<td class="py-2 px-space-md font-data-mono text-data-mono text-on-surface-variant">
+<span>2.41s</span>
+<span class="text-outline text-label-xs block">14:22:11</span>
+</td>
+<td class="py-2 px-space-md">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-surface-container-high text-on-tertiary-container rounded-DEFAULT font-label-xs text-label-xs font-semibold">
+<span class="material-symbols-outlined text-[13px]">help_outline</span>
+                Rule V05: Low OCR Confidence on Date
+              </span>
+</td>
+<td class="py-2 px-space-md text-right pr-space-lg">
+<button class="h-7 px-2.5 bg-surface-container-high hover:bg-surface-container-highest text-on-surface rounded-DEFAULT font-label-xs text-label-xs font-semibold transition-colors inline-flex items-center gap-1">
+<span>Queue Manual Review</span>
+<span class="material-symbols-outlined text-[14px]">edit_note</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Inline Diagnostic Bar -->
+<div class="px-space-md py-2.5 bg-surface-container-low flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-label-xs font-label-xs text-on-surface-variant">
+<div class="flex items-center gap-2">
+<span class="h-2 w-2 rounded-full bg-secondary"></span>
+<span>Validation Rules Active: V01 (Summation Consistency), V02 (Tax Invoice GSTIN Registry), V03 (Duplicate Check), V04 (Vendor RCM Status), V05 (Date Period AY 24-25)</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="font-data-mono text-data-mono">Processed payload: 9.04 MB in 6.5s avg</span>
+</div>
+</div>
+</div>
+<!-- Real-Time Rule Diagnostic Pipeline Strip (Bento Section) -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-space-md">
+<!-- Active Step Detail Preview -->
+<div class="bg-surface-container-lowest p-space-md rounded-DEFAULT shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between pb-2">
+<div class="flex items-center gap-1.5 font-title-md text-title-md text-primary">
+<span class="material-symbols-outlined text-secondary text-[18px]">rule_folder</span>
+<span>Deterministic Audit Engine</span>
+</div>
+<span class="font-data-mono text-label-xs text-on-surface-variant bg-surface-container-low px-2 py-0.5 rounded-DEFAULT">Node: 04-B</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant">
+        Each receipt and voucher undergoes deterministic arithmetic cross-referencing and GSTIN verification against the institutional vendor database before ledger ledgerization.
+      </p>
+<div class="mt-3 pt-3 flex items-center justify-between text-body-sm font-body-sm bg-surface-container-low p-2 rounded-DEFAULT">
+<span class="text-on-surface-variant">Arithmetic Match Tolerance:</span>
+<span class="font-data-mono text-data-mono font-bold text-primary">±₹ 0.00 (Strict)</span>
+</div>
+</div>
+<!-- Active Discrepancy Alert Spotlight -->
+<div class="bg-surface-container-lowest p-space-md rounded-DEFAULT shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between pb-2">
+<div class="flex items-center gap-1.5 font-title-md text-title-md text-error">
+<span class="material-symbols-outlined text-error text-[18px]">flag</span>
+<span>Discrepancy Spotlight</span>
+</div>
+<span class="font-label-xs text-label-xs text-error font-semibold bg-error-container/40 px-2 py-0.5 rounded-DEFAULT">LAB-CHEM-992</span>
+</div>
+<div class="text-body-sm font-body-sm text-on-surface">
+<div class="flex items-center justify-between py-0.5">
+<span class="text-on-surface-variant">Subtotal + GST (18%):</span>
+<span class="font-data-mono text-data-mono font-medium">₹ 14,800.00</span>
+</div>
+<div class="flex items-center justify-between py-0.5">
+<span class="text-on-surface-variant">Billed Total:</span>
+<span class="font-data-mono text-data-mono font-semibold text-error">₹ 15,250.00</span>
+</div>
+<div class="text-label-xs font-label-xs text-error mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">arrow_forward</span>
+<span>Variance of +₹450.00 unaccounted packing surcharge</span>
+</div>
+</div>
+<div class="mt-2 pt-2 flex items-center justify-end">
+<a class="font-label-xs text-label-xs text-primary font-semibold hover:underline flex items-center gap-0.5" href="#">
+<span>Read Rule V01 Specification</span>
+<span class="material-symbols-outlined text-[14px]">open_in_new</span>
+</a>
+</div>
+</div>
+<!-- Live OCR Confidence Distribution -->
+<div class="bg-surface-container-lowest p-space-md rounded-DEFAULT shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between pb-2">
+<span class="font-title-md text-title-md text-primary">OCR Quality Distribution</span>
+<span class="font-label-xs text-label-xs text-secondary font-semibold">Mean: 89.5%</span>
+</div>
+<!-- Sparkline / Progress Bar Breakdown -->
+<div class="space-y-2 mt-1">
+<div>
+<div class="flex justify-between font-label-xs text-label-xs mb-1">
+<span class="text-on-surface-variant">High Confidence (&gt;95%)</span>
+<span class="font-data-mono text-data-mono text-secondary font-semibold">2 Files (40%)</span>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+<div class="bg-secondary h-full w-[40%]"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-label-xs text-label-xs mb-1">
+<span class="text-on-surface-variant">Acceptable (85% - 95%)</span>
+<span class="font-data-mono text-data-mono text-primary font-semibold">2 Files (40%)</span>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary-container h-full w-[40%]"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-label-xs text-label-xs mb-1">
+<span class="text-on-surface-variant">Requires Human Verification (&lt;85%)</span>
+<span class="font-data-mono text-data-mono text-on-tertiary-container font-semibold">1 File (20%)</span>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+<div class="bg-tertiary-fixed-dim h-full w-[20%]"></div>
+</div>
+</div>
+</div>
+<div class="mt-3 flex items-center justify-between font-label-xs text-label-xs text-on-surface-variant">
+<span>Tesseract OCR 5.3 + Custom LLM Parser</span>
+<span class="text-secondary font-semibold">All Workers Online</span>
+</div>
+</div>
+</div>
+<!-- Bottom Action & Control Toolbar -->
+<div class="sticky bottom-0 z-20 -mx-space-lg px-space-lg py-3 bg-surface-container-lowest shadow-md flex flex-col sm:flex-row items-center justify-between gap-space-md">
+<div class="flex items-center gap-space-md w-full sm:w-auto justify-between sm:justify-start">
+<button class="h-9 px-3 bg-surface-container-low hover:bg-error-container hover:text-on-error-container text-on-surface-variant rounded-DEFAULT font-label-md text-label-md transition-colors flex items-center gap-1.5 shadow-sm" onclick="confirmCancelBatch()">
+<span class="material-symbols-outlined text-[16px]">cancel</span>
+<span>Cancel Batch Run</span>
+</button>
+<div class="flex items-center gap-2 px-2.5 py-1 bg-surface-container-low rounded-DEFAULT text-body-sm font-body-sm text-on-surface-variant">
+<span class="h-2 w-2 rounded-full bg-secondary animate-pulse"></span>
+<span class="font-label-xs text-label-xs">Auto-refresh: <strong class="text-primary font-semibold">Active (every 2s)</strong></span>
+</div>
+</div>
+<div class="flex items-center gap-space-sm w-full sm:w-auto justify-end">
+<button class="h-9 px-3.5 bg-surface-container-high hover:bg-surface-container-highest text-primary rounded-DEFAULT font-label-md text-label-md transition-colors flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">file_download</span>
+<span>Export Log (.JSON)</span>
+</button>
+<button class="h-9 px-4 bg-primary-container hover:bg-primary text-on-primary rounded-DEFAULT font-title-md text-title-md transition-colors flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">fact_check</span>
+<span>View Extraction Results (4 Ready)</span>
+</button>
+</div>
+</div>
+</div>
+<script>
+  function simulateRefresh(btn) {
+    const icon = btn.querySelector('.material-symbols-outlined');
+    if (icon) {
+      icon.classList.add('animate-spin');
+      setTimeout(() => {
+        icon.classList.remove('animate-spin');
+      }, 750);
+    }
+  }
+
+  function confirmCancelBatch() {
+    if (confirm("Are you sure you wish to abort processing for Batch Run #1094? Partially extracted lines will remain in staging ledger.")) {
+      console.log("Batch cancelled by administrator.");
+    }
+  }
+</script></main></div></body></html>

@@ -1,0 +1,121 @@
+================================================================================
+             P05 — FEE RECEIPT & INVOICE AUDITOR: DATASET VALIDATION REPORT
+================================================================================
+Generated on: 2026-11-07
+Audit Engine: Python Financial Verification Kernel (v1.0.4)
+Dataset Scope: Exactly 6 Documents (INV-001, INV-002, REC-003, INV-004, INV-005, REC-006)
+Configured Academic Term: 2026-08-01 through 2026-12-31 (Inclusive)
+--------------------------------------------------------------------------------
+
+[DOC 1 / 6] INV-001.pdf
+- Type: Vendor Invoice
+- Vendor: Aster Office Supplies Pvt. Ltd.
+- Tax ID: FAKE-GST-000001 (Valid Synthetic Format)
+- Date: 2026-09-12 (Within Term Window)
+- Line Item 1: 10 * 250.00 = 2,500.00 [OK]
+- Line Item 2: 4 * 1,200.00 = 4,800.00 [OK]
+- Line Item 3: 20 * 50.00 = 1,000.00 [OK]
+- Subtotal Check: 2,500.00 + 4,800.00 + 1,000.00 = 8,300.00 [MATCH]
+- Tax Check: 747.00 (CGST) + 747.00 (SGST) = 1,494.00 (18.00%) [MATCH]
+- Mathematical Total: 8,300.00 + 1,494.00 = 9,794.00
+- Printed Document Total: 9,794.00
+- Total Discrepancy: 0.00
+- Audit Verdict: CLEAN (PASS)
+
+--------------------------------------------------------------------------------
+
+[DOC 2 / 6] INV-002.pdf
+- Type: Vendor Invoice
+- Vendor: BluePeak IT Solutions
+- Tax ID: FAKE-GST-000002 (Valid Synthetic Format)
+- Date: 2026-10-20 (Within Term Window)
+- Line Item 1: 5 * 800.00 = 4,000.00 [OK]
+- Line Item 2: 5 * 400.00 = 2,000.00 [OK]
+- Line Item 3: 10 * 150.00 = 1,500.00 [OK]
+- Subtotal Check: 4,000.00 + 2,000.00 + 1,500.00 = 7,500.00 [MATCH]
+- Tax Check: 1,350.00 (IGST 18.00%) [MATCH]
+- Mathematical Total: 7,500.00 + 1,350.00 = 8,850.00
+- Printed Document Total: 8,850.00
+- Total Discrepancy: 0.00
+- Audit Verdict: CLEAN (PASS)
+
+--------------------------------------------------------------------------------
+
+[DOC 3 / 6] REC-003.pdf
+- Type: Educational Fee Receipt
+- Institution: Greenfield Technical Institute
+- Student Reference: STU-TEST-003 (Distinct from Receipt No: REC-2026-003)
+- Date: 2026-11-15 (Within Term Window)
+- Fee Item 1 (Tuition): 25,000.00 [OK]
+- Fee Item 2 (Laboratory): 3,000.00 [OK]
+- Fee Item 3 (Library): 1,000.00 [OK]
+- Subtotal Check: 25,000.00 + 3,000.00 + 1,000.00 = 29,000.00 [MATCH]
+- Tax Check: 0.00 (Exempt Educational Institution) [MATCH]
+- Mathematical Total: 29,000.00
+- Printed Document Total: 29,000.00
+- Total Discrepancy: 0.00
+- Payment Mode: Bank Transfer (Ref: TEST-TXN-000003) [VERIFIED]
+- Audit Verdict: CLEAN (PASS)
+
+--------------------------------------------------------------------------------
+
+[DOC 4 / 6] INV-004.pdf
+- Type: Vendor Invoice (Tampered Total Evaluation)
+- Vendor: Crestline Equipment Traders
+- Tax ID: FAKE-GST-000004 (Valid Synthetic Format)
+- Date: 2026-09-18 (Within Term Window)
+- Line Item 1: 2 * 18,000.00 = 36,000.00 [OK]
+- Line Item 2: 2 * 3,000.00 = 6,000.00 [OK]
+- Line Item 3: 4 * 500.00 = 2,000.00 [OK]
+- Subtotal Check: 36,000.00 + 6,000.00 + 2,000.00 = 44,000.00 [MATCH]
+- Tax Check: 7,920.00 (IGST 18.00%) [MATCH]
+- Mathematical Sum Expected: 44,000.00 + 7,920.00 = 51,920.00
+- Printed Document Total: 55,920.00
+- Calculated Discrepancy: +4,000.00 EXACTLY
+- Audit Verdict: FLAGGED -> [FLAG V01 — TOTAL MISMATCH]
+
+--------------------------------------------------------------------------------
+
+[DOC 5 / 6] INV-005.pdf
+- Type: Vendor Invoice (Tax Compliance Evaluation)
+- Vendor: Meridian Educational Technologies
+- Tax ID: FIELD MISSING / NOT FOUND ON DOCUMENT
+- Date: 2026-10-10 (Within Term Window)
+- Line Item 1: 2 * 5,000.00 = 10,000.00 [OK]
+- Line Item 2: 5 * 400.00 = 2,000.00 [OK]
+- Subtotal Check: 10,000.00 + 2,000.00 = 12,000.00 [MATCH]
+- Tax Check: 2,160.00 (IGST 18.00%) [MATCH]
+- Mathematical Total: 12,000.00 + 2,160.00 = 14,160.00
+- Printed Document Total: 14,160.00
+- Total Discrepancy: 0.00 (Arithmetic is 100% Correct)
+- Audit Verdict: FLAGGED -> [FLAG V02 — MISSING TAX NUMBER]
+
+--------------------------------------------------------------------------------
+
+[DOC 6 / 6] REC-006.pdf
+- Type: Educational Fee Receipt (Temporal Boundary Evaluation)
+- Institution: Greenfield Technical Institute
+- Student Reference: STU-TEST-006 (Receipt No: REC-2027-006)
+- Date: 2027-01-15 (OUTSIDE Academic Term: 2026-08-01 to 2026-12-31)
+- Fee Item 1 (Tuition): 20,000.00 [OK]
+- Fee Item 2 (Examination): 2,000.00 [OK]
+- Fee Item 3 (Library): 500.00 [OK]
+- Subtotal Check: 20,000.00 + 2,000.00 + 500.00 = 22,500.00 [MATCH]
+- Tax Check: 0.00 (Exempt) [MATCH]
+- Mathematical Total: 22,500.00
+- Printed Document Total: 22,500.00
+- Total Discrepancy: 0.00 (Arithmetic is 100% Correct)
+- Days Elapsed Post-Term: 15 Days Past Window
+- Audit Verdict: FLAGGED -> [FLAG V04 — DATE OUTSIDE ACADEMIC TERM]
+
+================================================================================
+FINAL SUMMARY MATRIX
+================================================================================
+Total Analyzed Documents: 6
+Clean Baseline Passes: 3 (INV-001, INV-002, REC-003)
+Seeded Defect Detections: 3 (INV-004, INV-005, REC-006)
+Discrepancy Accuracy: 100% (+4,000.00 on INV-004)
+Tax Identifier Integrity: 100% Synthetic Prefix Verified
+Academic Term Adherence: Correctly Triggered on REC-006
+Test Dataset Status: FULLY VERIFIED & READY FOR AZURE AI PIPELINE
+================================================================================
