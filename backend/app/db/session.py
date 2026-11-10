@@ -11,8 +11,30 @@ DB_FILE = Path(settings.DATABASE_URL.replace("sqlite:///", ""))
 def get_db_path() -> Path:
     raw_path = settings.DATABASE_URL.replace("sqlite:///", "")
     p = Path(raw_path)
+
+    # In Vercel serverless functions, the root filesystem is read-only.
+    # Store the SQLite database in the writable /tmp directory.
+    if os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"):
+        tmp_db = Path("/tmp") / p.name
+        if not tmp_db.exists():
+            # Seed from committed repository database to preserve existing records
+            candidates = [
+                Path(__file__).resolve().parent.parent.parent / p.name,
+                Path(__file__).resolve().parent.parent.parent / "backend" / p.name,
+                Path(__file__).resolve().parent.parent / p.name,
+            ]
+            for candidate in candidates:
+                if candidate.is_file():
+                    try:
+                        import shutil
+                        shutil.copy2(candidate, tmp_db)
+                        break
+                    except Exception:
+                        pass
+        return tmp_db
+
     if not p.is_absolute():
-        # Anchor relative database path to repository root
+        # Anchor relative database path to repository root for local development
         project_root = Path(__file__).resolve().parent.parent.parent
         return project_root / p.name
     return p
@@ -37,7 +59,10 @@ def get_db_connection():
 def init_db():
     """Initialize database tables, foreign keys, and indexes using canonical decimal strings (TEXT) for money."""
     db_path = get_db_path()
-    db_path.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        db_path.parent.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        pass
     with get_db_connection() as conn:
         cursor = conn.cursor()
 

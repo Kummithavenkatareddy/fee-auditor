@@ -128,7 +128,7 @@ ipython_config.py
 
 # PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
 __pypackages__/
-
+T06_P05_AUDITX/*
 # Celery stuff
 celerybeat-schedule*
 celerybeat.pid
@@ -138,6 +138,7 @@ celerybeat.pid
 *.aof
 *.pid
 backend/data*
+T06_P05AUDITX/*
 # RabbitMQ
 mnesia/
 rabbitmq/

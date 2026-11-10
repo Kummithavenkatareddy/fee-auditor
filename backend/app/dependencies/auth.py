@@ -30,6 +30,12 @@ def extract_token_from_request(request: Request, authorization: Optional[str] = 
         if cookie_token:
             return cookie_token.strip()
 
+    # Check query parameter (e.g. for direct file streaming in iframes / download anchors)
+    if request and hasattr(request, "query_params"):
+        token_param = request.query_params.get("token")
+        if token_param:
+            return token_param.strip()
+
     return None
 
 

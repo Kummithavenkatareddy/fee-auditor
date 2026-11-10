@@ -7,8 +7,10 @@ from typing import Optional, Tuple
 
 from app.config import settings
 
-# Base storage directory
-STORAGE_ROOT = Path(__file__).resolve().parent.parent.parent / "data" / "storage"
+def get_default_storage_root() -> Path:
+    if os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"):
+        return Path("/tmp") / "data" / "storage"
+    return Path(__file__).resolve().parent.parent.parent / "data" / "storage"
 
 
 class StorageService:
@@ -19,15 +21,24 @@ class StorageService:
     """
 
     def __init__(self, root_dir: Optional[Path] = None):
-        self.root_dir = root_dir or STORAGE_ROOT
-        self.root_dir.mkdir(parents=True, exist_ok=True)
+        self.root_dir = root_dir or get_default_storage_root()
+        try:
+            self.root_dir.mkdir(parents=True, exist_ok=True)
+        except OSError:
+            self.root_dir = Path("/tmp") / "data" / "storage"
+            self.root_dir.mkdir(parents=True, exist_ok=True)
 
     def _get_user_dir(self, user_id: str) -> Path:
         sanitized_uid = "".join(c for c in user_id if c.isalnum() or c in ("-", "_"))
         if not sanitized_uid:
             sanitized_uid = "system_default"
         user_dir = self.root_dir / sanitized_uid
-        user_dir.mkdir(parents=True, exist_ok=True)
+        try:
+            user_dir.mkdir(parents=True, exist_ok=True)
+        except OSError:
+            self.root_dir = Path("/tmp") / "data" / "storage"
+            user_dir = self.root_dir / sanitized_uid
+            user_dir.mkdir(parents=True, exist_ok=True)
         return user_dir
 
     def save_file(

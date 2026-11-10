@@ -16,6 +16,7 @@ def default_auth_for_legacy_tests(request):
         "test_auth_isolation" in str(filename)
         or "test_production_duplicate_detection" in str(filename)
         or "test_content_safety" in str(filename)
+        or "test_e2e_deployment_simulation" in str(filename)
     ):
         yield
     else:

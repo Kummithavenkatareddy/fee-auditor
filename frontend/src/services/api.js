@@ -4,7 +4,16 @@
  * Manages Bearer session tokens and multi-user requests.
  */
 
-const API_BASE = import.meta.env.VITE_API_BASE || '/api';
+function getApiBase() {
+  const envUrl = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_BASE;
+  if (!envUrl) {
+    return '/api';
+  }
+  const clean = envUrl.trim().replace(/\/+$/, '');
+  return clean.endsWith('/api') ? clean : `${clean}/api`;
+}
+
+export const API_BASE = getApiBase();
 
 export function getAuthToken() {
   return localStorage.getItem('fee_auditor_token');
@@ -28,9 +37,12 @@ function getAuthHeaders(extraHeaders = {}) {
 }
 
 /**
- * Handle API responses with standardized error extraction.
+ * Handle API responses with standardized error extraction and session expiration handling.
  */
 async function handleResponse(res, defaultErrorMsg = 'API request failed') {
+  if (res.status === 401) {
+    setAuthToken(null);
+  }
   if (!res.ok) {
     let errorDetail = defaultErrorMsg;
     try {
@@ -49,7 +61,7 @@ async function handleResponse(res, defaultErrorMsg = 'API request failed') {
  */
 export async function fetchHealth() {
   try {
-    const res = await fetch(`${API_BASE}/health`);
+    const res = await fetch(`${API_BASE}/health`, { credentials: 'include' });
     return await handleResponse(res, 'Health check failed');
   } catch (err) {
     console.warn('Health check unreachable:', err.message);
@@ -63,6 +75,7 @@ export async function fetchHealth() {
 export async function fetchSummary() {
   const res = await fetch(`${API_BASE}/audit/summary`, {
     headers: getAuthHeaders(),
+    credentials: 'include',
   });
   return handleResponse(res, 'Failed to fetch audit summary metrics');
 }
@@ -77,6 +90,7 @@ export async function fetchDocuments(status = null) {
     : `${API_BASE}/audit/documents`;
   const res = await fetch(url, {
     headers: getAuthHeaders(),
+    credentials: 'include',
   });
   return handleResponse(res, 'Failed to fetch document ledger');
 }
@@ -89,15 +103,18 @@ export async function fetchDocument(id) {
   if (!id) throw new Error('Document ID is required');
   const res = await fetch(`${API_BASE}/audit/documents/${encodeURIComponent(id)}`, {
     headers: getAuthHeaders(),
+    credentials: 'include',
   });
   return handleResponse(res, `Failed to fetch document details for ID: ${id}`);
 }
 
 /**
- * Get direct URL to document file preview / download.
+ * Get direct URL to document file preview / download with query token for cross-domain auth.
  */
 export function getDocumentFileUrl(id) {
-  return `${API_BASE}/audit/documents/${encodeURIComponent(id)}/file`;
+  const token = getAuthToken();
+  const base = `${API_BASE}/audit/documents/${encodeURIComponent(id)}/file`;
+  return token ? `${base}?token=${encodeURIComponent(token)}` : base;
 }
 
 /**
@@ -108,6 +125,7 @@ export async function deleteDocument(id) {
   const res = await fetch(`${API_BASE}/audit/documents/${encodeURIComponent(id)}`, {
     method: 'DELETE',
     headers: getAuthHeaders(),
+    credentials: 'include',
   });
   return handleResponse(res, `Failed to delete document: ${id}`);
 }
@@ -123,6 +141,7 @@ export async function bulkDeleteDocuments(documentIds) {
     method: 'POST',
     headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
     body: JSON.stringify({ document_ids: documentIds }),
+    credentials: 'include',
   });
   return handleResponse(res, 'Failed to bulk delete documents');
 }
@@ -150,6 +169,7 @@ export async function uploadBatch(files, preferredModel = null) {
     method: 'POST',
     headers: getAuthHeaders(), // Will only attach Authorization header, not Content-Type!
     body: formData,
+    credentials: 'include',
   });
 
   return handleResponse(res, 'Batch upload processing failed');
@@ -164,6 +184,7 @@ export async function revalidateDocument(id) {
   const res = await fetch(`${API_BASE}/audit/documents/${encodeURIComponent(id)}/revalidate`, {
     method: 'POST',
     headers: getAuthHeaders(),
+    credentials: 'include',
   });
   return handleResponse(res, `Failed to re-validate document: ${id}`);
 }
@@ -180,15 +201,18 @@ export async function updateManualReview(id, status, notes = '') {
     method: 'PATCH',
     headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
     body: JSON.stringify({ manual_review_status: status, notes }),
+    credentials: 'include',
   });
   return handleResponse(res, 'Failed to save manual review update');
 }
 
 /**
- * Direct URL for downloading the audit CSV.
+ * Direct URL for downloading the audit CSV with query token for cross-domain auth.
  */
 export function getExportCsvUrl() {
-  return `${API_BASE}/audit/export/csv`;
+  const token = getAuthToken();
+  const base = `${API_BASE}/audit/export/csv`;
+  return token ? `${base}?token=${encodeURIComponent(token)}` : base;
 }
 
 /**
@@ -197,6 +221,7 @@ export function getExportCsvUrl() {
 export async function downloadAuditCsv() {
   const res = await fetch(`${API_BASE}/audit/export/csv`, {
     headers: getAuthHeaders(),
+    credentials: 'include',
   });
   if (!res.ok) {
     throw new Error(`CSV export failed (HTTP ${res.status})`);
@@ -219,8 +244,20 @@ export async function resetDatabase() {
   const res = await fetch(`${API_BASE}/audit/reset`, {
     method: 'DELETE',
     headers: getAuthHeaders(),
+    credentials: 'include',
   });
   return handleResponse(res, 'Failed to reset audit database');
+}
+
+/**
+ * Retrieve Content Safety screening and rejection events log.
+ */
+export async function fetchContentSafetyEvents() {
+  const res = await fetch(`${API_BASE}/audit/content-safety-events`, {
+    headers: getAuthHeaders(),
+    credentials: 'include',
+  });
+  return handleResponse(res, 'Failed to fetch content safety events');
 }
 
 // =========================================================================
@@ -236,6 +273,7 @@ export async function registerApi(identifier, password, fullName = '') {
       password,
       full_name: fullName,
     }),
+    credentials: 'include',
   });
   return handleResponse(res, 'Registration failed');
 }
@@ -245,6 +283,7 @@ export async function verifyApi(identifier, code) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ identifier, code }),
+    credentials: 'include',
   });
   const data = await handleResponse(res, 'Verification failed');
   if (data?.access_token) {
@@ -258,6 +297,7 @@ export async function loginApi(identifier, password) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ identifier, password }),
+    credentials: 'include',
   });
   const data = await handleResponse(res, 'Login failed');
   if (data?.access_token) {
@@ -271,6 +311,7 @@ export async function logoutApi() {
     await fetch(`${API_BASE}/auth/logout`, {
       method: 'POST',
       headers: getAuthHeaders(),
+      credentials: 'include',
     });
   } catch (err) {
     console.warn('Logout endpoint error:', err);
@@ -284,6 +325,7 @@ export async function fetchMeApi() {
   if (!token) return null;
   const res = await fetch(`${API_BASE}/auth/me`, {
     headers: getAuthHeaders(),
+    credentials: 'include',
   });
   if (!res.ok) {
     setAuthToken(null);
@@ -297,6 +339,7 @@ export async function forgotPasswordApi(identifier) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ identifier }),
+    credentials: 'include',
   });
   return handleResponse(res, 'Password reset request failed');
 }
@@ -306,6 +349,7 @@ export async function resetPasswordApi(identifier, code, newPassword) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ identifier, code, new_password: newPassword }),
+    credentials: 'include',
   });
   return handleResponse(res, 'Password reset failed');
 }
@@ -318,6 +362,7 @@ export async function updateProfileApi(fullName, termPreference) {
       full_name: fullName,
       term_preference: termPreference,
     }),
+    credentials: 'include',
   });
   return handleResponse(res, 'Failed to update profile');
 }
@@ -330,6 +375,7 @@ export async function changePasswordApi(currentPassword, newPassword) {
       current_password: currentPassword,
       new_password: newPassword,
     }),
+    credentials: 'include',
   });
   return handleResponse(res, 'Failed to change password');
 }
@@ -342,6 +388,7 @@ export async function resetMyDataApi(password, confirmationPhrase = 'RESET') {
       password,
       confirmation_phrase: confirmationPhrase,
     }),
+    credentials: 'include',
   });
   return handleResponse(res, 'Reset My Data operation failed');
 }
@@ -354,6 +401,7 @@ export async function deleteAccountApi(password, confirmationPhrase = 'DELETE') 
       password,
       confirmation_phrase: confirmationPhrase,
     }),
+    credentials: 'include',
   });
   const data = await handleResponse(res, 'Delete Account operation failed');
   setAuthToken(null);

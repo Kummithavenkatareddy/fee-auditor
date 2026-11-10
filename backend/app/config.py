@@ -40,7 +40,7 @@ class Settings(BaseSettings):
 
     # Security configuration
     CORS_ORIGINS: str = Field(
-        default="http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://127.0.0.1:3000",
+        default="http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://127.0.0.1:3000,https://fee-auditor-frontend.vercel.app",
         description="Comma-separated list of allowed CORS origins",
     )
     MAX_UPLOAD_SIZE_MB: int = Field(
@@ -91,10 +91,15 @@ class Settings(BaseSettings):
 
     @property
     def cors_origins_list(self) -> List[str]:
-        """Return list of allowed CORS origins stripped of whitespace."""
+        """Return list of allowed CORS origins stripped of whitespace and trailing slashes."""
         if not self.CORS_ORIGINS:
-            return []
-        return [o.strip() for o in self.CORS_ORIGINS.split(",") if o.strip()]
+            origins = []
+        else:
+            origins = [o.strip().rstrip("/") for o in self.CORS_ORIGINS.split(",") if o.strip()]
+        deployed_frontend = "https://fee-auditor-frontend.vercel.app"
+        if deployed_frontend not in origins:
+            origins.append(deployed_frontend)
+        return origins
 
     @property
     def max_upload_size_bytes(self) -> int:

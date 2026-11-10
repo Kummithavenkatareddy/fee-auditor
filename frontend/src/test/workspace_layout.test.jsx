@@ -9,7 +9,7 @@ import { AuthProvider } from '../context/AuthContext';
 vi.mock('../services/api', () => ({
   updateManualReview: vi.fn().mockResolvedValue({ success: true }),
   revalidateDocument: vi.fn().mockResolvedValue({ success: true }),
-  getDocumentFileUrl: vi.fn((id) => `http://localhost:8000/api/audit/documents/${id}/file`),
+  getDocumentFileUrl: vi.fn((id) => `/api/audit/documents/${id}/file`),
 }));
 
 const mockDoc = {
