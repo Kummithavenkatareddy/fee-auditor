@@ -1,20 +1,20 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+import sys
+import traceback
+from pathlib import Path
 
-app = FastAPI()
+backend_dir = Path(__file__).resolve().parent.parent
+if str(backend_dir) not in sys.path:
+    sys.path.insert(0, str(backend_dir))
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["https://fee-auditor-frontend.vercel.app", "http://localhost:5173", "http://127.0.0.1:5173"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+try:
+    from app.main import app
+except Exception as e:
+    err_msg = traceback.format_exc()
+    from fastapi import FastAPI
+    from fastapi.responses import PlainTextResponse
 
-@app.get("/api/health")
-def health():
-    return {"status": "online", "message": "FastAPI is running cleanly on Vercel!"}
+    app = FastAPI(title="Fee Auditor - Error Fallback")
 
-@app.get("/")
-def root():
-    return {"message": "Fee Auditor Backend running on Vercel"}
+    @app.api_route("/{full_path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"])
+    def error_route(full_path: str = ""):
+        return PlainTextResponse(f"FastAPI Startup Error:\n\n{err_msg}", status_code=500)
