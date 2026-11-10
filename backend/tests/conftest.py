@@ -11,12 +11,12 @@ def default_auth_for_legacy_tests(request):
     For legacy test suites that were written prior to strict multi-user authentication enforcement,
     override require_current_user to authenticate as SYSTEM_DEFAULT_USER.
     """
-    filename = getattr(request.node.fspath, "basename", "") or getattr(request.node, "name", "")
+    node_str = f"{getattr(request.node, 'path', '')} {getattr(request.node, 'fspath', '')} {getattr(request.node, 'name', '')}"
     if (
-        "test_auth_isolation" in str(filename)
-        or "test_production_duplicate_detection" in str(filename)
-        or "test_content_safety" in str(filename)
-        or "test_e2e_deployment_simulation" in str(filename)
+        "test_auth_isolation" in node_str
+        or "test_production_duplicate_detection" in node_str
+        or "test_content_safety" in node_str
+        or "test_e2e_deployment_simulation" in node_str
     ):
         yield
     else:

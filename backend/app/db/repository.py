@@ -909,6 +909,8 @@ def update_manual_review(doc_id: str, status: str, notes: Optional[str] = None, 
 
 def delete_document(doc_id: str, owner_user_id: Optional[str] = None) -> bool:
     """Delete a single document, its line items, flags, review actions, and physical file from storage."""
+    storage_key = None
+    effective_owner = None
     with get_db_connection() as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT storage_key, owner_user_id FROM documents WHERE id = ?;", (doc_id,))
@@ -930,11 +932,16 @@ def delete_document(doc_id: str, owner_user_id: Optional[str] = None) -> bool:
         cursor.execute("DELETE FROM audit_flags WHERE document_id = ?;", (doc_id,))
         cursor.execute("DELETE FROM line_items WHERE document_id = ?;", (doc_id,))
         cursor.execute("DELETE FROM documents WHERE id = ?;", (doc_id,))
-
         if storage_key:
-            storage_service.delete_file(effective_owner, storage_key)
+            try:
+                cursor.execute("DELETE FROM document_files WHERE storage_key = ?;", (storage_key,))
+            except Exception:
+                pass
 
-        return True
+    if storage_key:
+        storage_service.delete_file(effective_owner, storage_key)
+
+    return True
 
 
 def bulk_delete_documents(doc_ids: List[str], owner_user_id: Optional[str] = None) -> int:
