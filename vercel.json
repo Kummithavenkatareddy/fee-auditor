@@ -7,11 +7,7 @@
       "config": {
         "includeFiles": [
           "backend/app/**",
-          "backend/synthetic_data/**",
-          "backend/data/**",
-          "backend/fee_auditor.db",
-          "app/**",
-          "data/**"
+          "backend/synthetic_data/**"
         ]
       }
     }
