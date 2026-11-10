@@ -138,15 +138,24 @@ export default function LoginScreen({ onLoginSuccess }) {
           )}
 
           {devOtpHint && (
-            <div className="mb-4 p-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-center justify-between font-mono">
-              <span>Demo OTP: <strong className="text-sm font-bold tracking-wider">{devOtpHint}</strong></span>
-              <button
-                type="button"
-                onClick={() => setOtpCode(devOtpHint)}
-                className="text-amber-700 underline text-[11px] font-sans font-medium hover:text-amber-900"
-              >
-                Auto-fill
-              </button>
+            <div className="mb-4 p-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-xs flex flex-col gap-1.5">
+              <div className="flex items-center justify-between">
+                <span className="font-semibold flex items-center gap-1 text-[11px] uppercase tracking-wider text-amber-800">
+                  <span className="material-symbols-outlined text-[16px]">info</span>
+                  Institutional Demo Mode
+                </span>
+                <span className="text-[10px] text-amber-700 font-sans">Live SMS/Email unconfigured</span>
+              </div>
+              <div className="flex items-center justify-between font-mono bg-white/70 px-2.5 py-1.5 rounded border border-amber-200">
+                <span>Verification OTP: <strong className="text-sm font-bold tracking-widest text-amber-950">{devOtpHint}</strong></span>
+                <button
+                  type="button"
+                  onClick={() => setOtpCode(devOtpHint)}
+                  className="px-2 py-0.5 bg-amber-200 hover:bg-amber-300 text-amber-900 text-[11px] font-sans font-semibold rounded transition-colors"
+                >
+                  Auto-fill Code
+                </button>
+              </div>
             </div>
           )}
 

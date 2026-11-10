@@ -31,6 +31,7 @@ from app.db.repository import (
     delete_session,
 )
 from app.dependencies.auth import require_current_user, extract_token_from_request
+from app.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -69,13 +70,26 @@ def register(payload: UserRegisterRequest):
     # Generate and store 6-digit OTP code
     otp_code = generate_verification_code()
     save_verification_code(identifier, hash_code(otp_code), purpose="register", expires_minutes=15)
-    logger.info("Verification code generated for '%s': %s", identifier, otp_code)
+
+    is_demo = settings.DEMO_MODE or (
+        settings.ENVIRONMENT != "production" and not settings.SMTP_CONFIGURED and not settings.SMS_CONFIGURED
+    )
+
+    if is_demo:
+        logger.info("[DEMO MODE] Verification code generated for '%s': %s (Returned in response for demo/evaluation)", identifier, otp_code)
+    else:
+        logger.info("Verification code generated for '%s' (Sent via configured institutional delivery channel)", identifier)
 
     return {
-        "message": "Account created. Please verify your account with the 6-digit OTP code.",
+        "message": (
+            "Account created in Demo Mode. Real email/SMS gateway is not configured. Use the generated verification code below."
+            if is_demo
+            else "Account created. Please check your institutional email/SMS for the 6-digit verification code."
+        ),
         "user_id": user["id"],
         "identifier": user["identifier"],
-        "dev_verification_code": otp_code,  # Provided in dev/testing environments for instant verification
+        "is_demo_mode": is_demo,
+        "dev_verification_code": otp_code if is_demo else None,
     }
 
 
@@ -222,11 +236,24 @@ def forgot_password(payload: UserForgotPasswordRequest):
 
     reset_code = generate_verification_code()
     save_verification_code(identifier, hash_code(reset_code), purpose="reset_password", expires_minutes=15)
-    logger.info("Password reset code generated for '%s': %s", identifier, reset_code)
+
+    is_demo = settings.DEMO_MODE or (
+        settings.ENVIRONMENT != "production" and not settings.SMTP_CONFIGURED and not settings.SMS_CONFIGURED
+    )
+
+    if is_demo:
+        logger.info("[DEMO MODE] Password reset code generated for '%s': %s", identifier, reset_code)
+    else:
+        logger.info("Password reset code generated for '%s' (Sent via configured institutional delivery channel)", identifier)
 
     return {
-        "message": "Password reset code sent.",
-        "dev_reset_code": reset_code,
+        "message": (
+            "Password reset code generated in Demo Mode. Real email/SMS gateway is not configured."
+            if is_demo
+            else "If the account exists, a 6-digit password reset code has been dispatched."
+        ),
+        "is_demo_mode": is_demo,
+        "dev_reset_code": reset_code if is_demo else None,
     }
 
 

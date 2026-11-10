@@ -34,9 +34,31 @@ class Settings(BaseSettings):
         default=0.85, description="Confidence threshold for low-confidence warnings"
     )
     DATABASE_URL: str = Field(
-        default="sqlite:///./fee_auditor.db", description="SQLite database URL"
+        default="sqlite:///data/fee_auditor.db", description="Database connection URL (sqlite:///data/fee_auditor.db for local dev, or postgresql://... for production)"
     )
     BACKEND_PORT: int = Field(default=8000, description="FastAPI server port")
+
+    # Environment and Demo Mode configuration
+    ENVIRONMENT: str = Field(
+        default="development", description="Environment: 'development', 'staging', or 'production'"
+    )
+    DEMO_MODE: bool = Field(
+        default=True, description="Enable demo verification code generation when live delivery channels are unconfigured"
+    )
+    SMTP_CONFIGURED: bool = Field(
+        default=False, description="Whether live institutional SMTP email delivery is configured"
+    )
+    SMS_CONFIGURED: bool = Field(
+        default=False, description="Whether live SMS gateway delivery is configured"
+    )
+
+    # Azure Blob Storage for persistent document files
+    AZURE_STORAGE_CONNECTION_STRING: str = Field(
+        default="", description="Azure Blob Storage connection string for production document persistence"
+    )
+    AZURE_STORAGE_CONTAINER: str = Field(
+        default="fee-auditor-documents", description="Azure Blob Storage container name"
+    )
 
     # Security configuration
     CORS_ORIGINS: str = Field(
