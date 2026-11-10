@@ -3,7 +3,15 @@
   "builds": [
     {
       "src": "api/index.py",
-      "use": "@vercel/python"
+      "use": "@vercel/python",
+      "config": {
+        "includeFiles": [
+          "app/**",
+          "synthetic_data/**",
+          "data/**",
+          "fee_auditor.db"
+        ]
+      }
     }
   ],
   "routes": [
@@ -13,4 +21,3 @@
     }
   ]
 }
-

@@ -1,15 +1,19 @@
 import sys
+import os
 import traceback
 from pathlib import Path
 
-backend_dir = Path(__file__).resolve().parent.parent
-if str(backend_dir) not in sys.path:
-    sys.path.insert(0, str(backend_dir))
+current_dir = Path(__file__).resolve().parent
+parent_dir = current_dir.parent
+for p in [str(parent_dir), str(current_dir), os.getcwd()]:
+    if p not in sys.path:
+        sys.path.insert(0, p)
 
 try:
     from app.main import app
 except Exception as e:
     err_msg = traceback.format_exc()
+    print("FATAL ERROR IMPORTING APP:\n" + err_msg)
     from fastapi import FastAPI
     from fastapi.responses import PlainTextResponse
 
