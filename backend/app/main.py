@@ -1,6 +1,7 @@
 import logging
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
@@ -50,6 +51,22 @@ app.include_router(health.router)
 app.include_router(audit.router)
 app.include_router(auth.router, prefix="/api")
 app.include_router(users.router, prefix="/api")
+
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    origin = request.headers.get("origin") or "https://fee-auditor-frontend.vercel.app"
+    logger.error("Global unhandled exception on %s %s: %s", request.method, request.url.path, exc, exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={"detail": f"Internal server error: {type(exc).__name__}. Please try again."},
+        headers={
+            "Access-Control-Allow-Origin": origin,
+            "Access-Control-Allow-Credentials": "true",
+            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE, OPTIONS",
+        },
+    )
 
 
 @app.get("/")

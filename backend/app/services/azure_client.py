@@ -109,6 +109,7 @@ def analyze_document_bytes(
             model_id=model_id,
             body=file_bytes,
             content_type=content_type,
+            polling_interval=1.5,
         )
         result: AnalyzeResult = poller.result()
         logger.info(
