@@ -40,9 +40,27 @@ def get_db_path() -> Path:
     return p
 
 
+_db_initialized = False
+_db_initializing = False
+
+
+def ensure_db_initialized():
+    global _db_initialized, _db_initializing
+    if not _db_initialized and not _db_initializing:
+        _db_initializing = True
+        try:
+            init_db()
+            _db_initialized = True
+        except Exception:
+            pass
+        finally:
+            _db_initializing = False
+
+
 @contextmanager
 def get_db_connection():
     """Context manager for SQLite database connection with foreign keys enabled."""
+    ensure_db_initialized()
     conn = sqlite3.connect(get_db_path(), timeout=30.0)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON;")

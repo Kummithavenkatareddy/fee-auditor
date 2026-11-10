@@ -19,8 +19,11 @@ logger = logging.getLogger("fee_auditor")
 async def lifespan(app: FastAPI):
     """Application startup and shutdown events."""
     logger.info("Initializing SQLite database tables and indexes...")
-    init_db()
-    logger.info("Fee Receipt & Invoice Auditor backend started successfully.")
+    try:
+        init_db()
+        logger.info("Fee Receipt & Invoice Auditor backend started successfully.")
+    except Exception as e:
+        logger.warning(f"Database initialization during lifespan encountered non-fatal error: {e}")
     yield
     logger.info("Fee Receipt & Invoice Auditor backend shutting down.")
 
