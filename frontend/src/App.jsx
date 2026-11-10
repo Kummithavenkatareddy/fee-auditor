@@ -16,7 +16,6 @@ import {
   fetchSummary,
   fetchDocuments,
   fetchDocument,
-  loadSyntheticSamples,
   resetDatabase,
 } from './services/api';
 
@@ -30,7 +29,6 @@ function AppContent() {
   const [selectedDoc, setSelectedDoc] = useState(null);
   const [dataLoading, setDataLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [isProcessingSamples, setIsProcessingSamples] = useState(false);
 
   // Load all user documents and summary when authenticated
   const loadData = useCallback(async () => {
@@ -98,19 +96,6 @@ function AppContent() {
       }
     }
     loadData();
-  };
-
-  // Load synthetic samples directly into authenticated user library
-  const handleLoadSamples = async () => {
-    setIsProcessingSamples(true);
-    try {
-      await loadSyntheticSamples();
-      await loadData();
-    } catch (err) {
-      setError(`Failed to load samples: ${err.message}`);
-    } finally {
-      setIsProcessingSamples(false);
-    }
   };
 
   // Reset database with user confirmation
@@ -237,8 +222,6 @@ function AppContent() {
                 documents={displayedDocuments}
                 onSelectDoc={handleSelectDoc}
                 onNavigateTab={setActiveTab}
-                onLoadSamples={handleLoadSamples}
-                isProcessing={isProcessingSamples}
               />
             )}
 

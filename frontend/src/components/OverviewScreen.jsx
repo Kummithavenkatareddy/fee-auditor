@@ -6,8 +6,6 @@ export default function OverviewScreen({
   documents = [],
   onSelectDoc,
   onNavigateTab,
-  onLoadSamples,
-  isProcessing = false,
 }) {
   // Authoritative findings per rule from backend summary
   const ruleCounts = useMemo(() => {
@@ -72,7 +70,7 @@ export default function OverviewScreen({
           <button
             onClick={() => onNavigateTab('upload')}
             className="h-9 px-3.5 bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs rounded-lg shadow-xs transition-colors flex items-center gap-1.5"
-            title="Upload documents or run canonical test samples"
+            title="Upload and process documents"
           >
             <span className="material-symbols-outlined text-[17px]">cloud_upload</span>
             <span>Upload &amp; Process</span>
@@ -242,10 +240,10 @@ export default function OverviewScreen({
                           <span className="material-symbols-outlined text-[32px] text-outline">folder_open</span>
                           <span className="font-medium">No documents processed yet</span>
                           <button
-                            onClick={onLoadSamples}
-                            className="text-xs text-primary underline hover:text-secondary"
+                            onClick={() => onNavigateTab && onNavigateTab('upload')}
+                            className="text-xs text-primary underline hover:text-secondary font-medium"
                           >
-                            Load 6 synthetic samples to begin
+                            Upload documents to begin
                           </button>
                         </div>
                       </td>

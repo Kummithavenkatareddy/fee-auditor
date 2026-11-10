@@ -413,13 +413,17 @@ export default function DocumentDetailModal({ doc, onClose, onUpdated }) {
                     3. Financial Breakdown &amp; V01 Reconciler
                   </h2>
                 </div>
-                {flags.some((f) => f.rule_id === 'V01') ? (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-[#FBEAEA] text-[#ba1a1a] border border-[#ffdad6]">
-                    V01 FLAGGED
+                {doc.reconciliation?.status === 'RECONCILED' || (!flags.some((f) => f.rule_id === 'V01') && doc.reconciliation?.is_reconciled) ? (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-[#EBF5F0] text-[#287A52] border border-[#D1EADE]">
+                    RECONCILED — NO V01 FLAG
+                  </span>
+                ) : doc.reconciliation?.status === 'MANUAL_REVIEW_REQUIRED' ? (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-[#FEF6E7] text-[#B76E00] border border-[#FDE3B5]">
+                    MANUAL REVIEW REQUIRED
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-[#EBF5F0] text-[#287A52] border border-[#D1EADE]">
-                    V01 BALANCED
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-[#FBEAEA] text-[#ba1a1a] border border-[#ffdad6]">
+                    V01 FLAGGED
                   </span>
                 )}
               </div>
@@ -428,11 +432,31 @@ export default function DocumentDetailModal({ doc, onClose, onUpdated }) {
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-2 text-xs">
                 <div className="p-2 bg-surface-container-low rounded border border-surface-container-highest">
                   <span className="text-[10px] uppercase text-on-surface-variant block">Subtotal</span>
-                  <span className="font-mono font-bold text-on-surface tnum">{formattedSubtotal}</span>
+                  <span className="font-mono font-bold text-on-surface tnum">
+                    {doc.reconciliation?.extracted_subtotal ? `₹${parseFloat(doc.reconciliation.extracted_subtotal).toLocaleString('en-IN', { minimumFractionDigits: 2 })}` : formattedSubtotal}
+                  </span>
                 </div>
+                {doc.cgst?.value && (
+                  <div className="p-2 bg-surface-container-low rounded border border-surface-container-highest">
+                    <span className="text-[10px] uppercase text-on-surface-variant block">CGST</span>
+                    <span className="font-mono font-bold text-on-surface tnum">
+                      ₹{parseFloat(doc.cgst.value).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                    </span>
+                  </div>
+                )}
+                {doc.sgst?.value && (
+                  <div className="p-2 bg-surface-container-low rounded border border-surface-container-highest">
+                    <span className="text-[10px] uppercase text-on-surface-variant block">SGST</span>
+                    <span className="font-mono font-bold text-on-surface tnum">
+                      ₹{parseFloat(doc.sgst.value).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                    </span>
+                  </div>
+                )}
                 <div className="p-2 bg-surface-container-low rounded border border-surface-container-highest">
                   <span className="text-[10px] uppercase text-on-surface-variant block">Tax / GST</span>
-                  <span className="font-mono font-bold text-on-surface tnum">{formattedTax}</span>
+                  <span className="font-mono font-bold text-on-surface tnum">
+                    {doc.reconciliation?.total_tax ? `₹${parseFloat(doc.reconciliation.total_tax).toLocaleString('en-IN', { minimumFractionDigits: 2 })}` : formattedTax}
+                  </span>
                 </div>
                 <div className="p-2 bg-primary-container text-on-primary rounded">
                   <span className="text-[10px] uppercase text-primary-fixed block">Total</span>
@@ -441,10 +465,16 @@ export default function DocumentDetailModal({ doc, onClose, onUpdated }) {
                 <div className="p-2 bg-surface-container-low rounded border border-surface-container-highest">
                   <span className="text-[10px] uppercase text-on-surface-variant block">Line Items Sum</span>
                   <span className="font-mono font-bold text-secondary tnum">
-                    ₹{lineItems.reduce((acc, it) => acc + (parseFloat(it.amount || 0) || 0), 0).toFixed(2)}
+                    {doc.reconciliation?.line_items_sum ? `₹${parseFloat(doc.reconciliation.line_items_sum).toLocaleString('en-IN', { minimumFractionDigits: 2 })}` : `₹${lineItems.reduce((acc, it) => acc + (parseFloat(it.amount || 0) || 0), 0).toFixed(2)}`}
                   </span>
                 </div>
               </div>
+
+              {doc.reconciliation?.explanation && (
+                <div className="text-[11px] font-mono text-on-surface-variant mt-1">
+                  Reconciliation: {doc.reconciliation.explanation}
+                </div>
+              )}
             </div>
 
             {/* Card 4: Extracted Line Items */}

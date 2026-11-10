@@ -290,6 +290,18 @@ def test_7_database_persistence():
 @patch("app.services.audit_orchestrator.extract_document")
 def test_8_api_upload_and_retrieval(mock_extract):
     """Verify single and multi-file upload endpoints with graceful partial failures."""
+    import pypdf
+    def _make_pdf(title: str) -> bytes:
+        writer = pypdf.PdfWriter()
+        writer.add_blank_page(width=72, height=72)
+        writer.add_metadata({"/Title": title})
+        buf = io.BytesIO()
+        writer.write(buf)
+        return buf.getvalue()
+
+    pdf_bytes_1 = _make_pdf("Doc1")
+    pdf_bytes_2 = _make_pdf("Doc2")
+
     mock_res = make_mock_invoice_result()
     mock_extract.side_effect = lambda file_bytes, filename, preferred_model=None: analyze_invoice_result(
         mock_res, file_bytes, filename
@@ -298,7 +310,7 @@ def test_8_api_upload_and_retrieval(mock_extract):
     # 1. Single file upload
     response = client.post(
         "/api/audit/upload",
-        files=[("files", ("uploaded_doc.pdf", b"%PDF-1.4 Mocked Binary", "application/pdf"))],
+        files=[("files", ("uploaded_doc.pdf", pdf_bytes_1, "application/pdf"))],
     )
     assert response.status_code == 200
     data = response.json()
@@ -318,7 +330,7 @@ def test_8_api_upload_and_retrieval(mock_extract):
     multi_res = client.post(
         "/api/audit/upload",
         files=[
-            ("files", ("valid.pdf", b"%PDF-1.4", "application/pdf")),
+            ("files", ("valid.pdf", pdf_bytes_2, "application/pdf")),
             ("files", ("invalid.exe", b"executable", "application/octet-stream")),
         ],
     )

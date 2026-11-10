@@ -29,7 +29,7 @@ export default function AppShell({
 
       {/* Sidebar: In standard flex-flow on desktop, overlay drawer on mobile */}
       <div
-        className={`fixed inset-y-0 left-0 z-50 transform md:relative md:translate-x-0 transition-transform duration-200 ease-in-out ${
+        className={`fixed inset-y-0 left-0 z-50 transform md:relative md:translate-x-0 transition-[width,transform] duration-200 ease-in-out ${
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         } ${isSidebarCollapsed ? 'w-[72px]' : 'w-60'} shrink-0 h-full`}
       >
@@ -57,10 +57,11 @@ export default function AppShell({
           academicTerm={academicTerm}
           onAcademicTermChange={onAcademicTermChange}
           onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          isCollapsed={isSidebarCollapsed}
         />
 
-        <main className="flex-1 overflow-y-auto px-6 py-5">
-          <div className="max-w-7xl mx-auto space-y-6">
+        <main className={`flex-1 overflow-y-auto bg-slate-50 ${selectedDoc ? 'p-0' : 'px-6 py-5'}`}>
+          <div className={selectedDoc ? 'w-full' : 'max-w-7xl mx-auto space-y-6'}>
             {children}
           </div>
         </main>

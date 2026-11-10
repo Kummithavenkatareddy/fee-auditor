@@ -6,13 +6,19 @@ from datetime import datetime, timezone, timedelta
 from typing import List, Optional, Set, Dict, Any, Tuple
 
 from app.db.session import get_db_connection
-from app.schemas.common import format_canonical_decimal
+from app.schemas.common import (
+    FieldStatus,
+    format_canonical_decimal,
+    TaxBreakdown,
+    FinancialReconciliation,
+)
 from app.schemas.document import (
     DocumentExtraction,
     ExtractedField,
     ExtractedLineItem,
     ValidationFlag,
     DashboardSummary,
+    ContentSafetyResult,
 )
 from app.services.storage import storage_service
 from app.services.auth_security import hash_token
@@ -73,13 +79,43 @@ def get_existing_hashes_with_filenames(owner_user_id: Optional[str] = None) -> D
         cursor = conn.cursor()
         if owner_user_id:
             cursor.execute(
-                "SELECT file_hash, file_name FROM documents WHERE file_hash IS NOT NULL AND owner_user_id = ?;",
+                "SELECT file_hash, sha256_hash, file_name, original_filename FROM documents WHERE (file_hash IS NOT NULL OR sha256_hash IS NOT NULL) AND owner_user_id = ?;",
                 (owner_user_id,),
             )
         else:
-            cursor.execute("SELECT file_hash, file_name FROM documents WHERE file_hash IS NOT NULL;")
+            cursor.execute("SELECT file_hash, sha256_hash, file_name, original_filename FROM documents WHERE (file_hash IS NOT NULL OR sha256_hash IS NOT NULL);")
         rows = cursor.fetchall()
-        return {r["file_hash"]: r["file_name"] for r in rows if r["file_hash"]}
+        result: Dict[str, str] = {}
+        for r in rows:
+            name = r["original_filename"] or r["file_name"] or "document.pdf"
+            if r["file_hash"]:
+                result[r["file_hash"]] = name
+            if r["sha256_hash"]:
+                result[r["sha256_hash"]] = name
+        return result
+
+
+def get_document_by_hash(file_hash: str, owner_user_id: str) -> Optional[Dict[str, Any]]:
+    """Retrieve an existing document by its SHA-256 binary hash, strictly scoped to owner_user_id."""
+    if not file_hash or not owner_user_id:
+        return None
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            SELECT id, file_name, original_filename, document_type, audit_status,
+                   uploaded_at, created_at, owner_user_id, sha256_hash, file_hash,
+                   manual_review_status, manual_review_notes, audit_history
+            FROM documents
+            WHERE (sha256_hash = ? OR file_hash = ?) AND owner_user_id = ?
+            ORDER BY uploaded_at ASC LIMIT 1;
+            """,
+            (file_hash, file_hash, owner_user_id),
+        )
+        row = cursor.fetchone()
+        if not row:
+            return None
+        return dict(row)
 
 
 def get_existing_hashes(owner_user_id: Optional[str] = None) -> Set[str]:
@@ -88,13 +124,19 @@ def get_existing_hashes(owner_user_id: Optional[str] = None) -> Set[str]:
         cursor = conn.cursor()
         if owner_user_id:
             cursor.execute(
-                "SELECT file_hash FROM documents WHERE owner_user_id = ?;",
+                "SELECT file_hash, sha256_hash FROM documents WHERE owner_user_id = ?;",
                 (owner_user_id,),
             )
         else:
-            cursor.execute("SELECT file_hash FROM documents;")
+            cursor.execute("SELECT file_hash, sha256_hash FROM documents;")
         rows = cursor.fetchall()
-        return {r["file_hash"] for r in rows if r["file_hash"]}
+        hashes: Set[str] = set()
+        for r in rows:
+            if r["file_hash"]:
+                hashes.add(r["file_hash"])
+            if r["sha256_hash"]:
+                hashes.add(r["sha256_hash"])
+        return hashes
 
 
 def get_existing_business_keys(owner_user_id: Optional[str] = None) -> Dict[Tuple[str, str], str]:
@@ -103,17 +145,41 @@ def get_existing_business_keys(owner_user_id: Optional[str] = None) -> Dict[Tupl
         cursor = conn.cursor()
         if owner_user_id:
             cursor.execute(
-                "SELECT vendor_name, invoice_id, file_name FROM documents WHERE vendor_name IS NOT NULL AND invoice_id IS NOT NULL AND owner_user_id = ?;",
+                "SELECT vendor_name, invoice_id, file_name, original_filename FROM documents WHERE vendor_name IS NOT NULL AND invoice_id IS NOT NULL AND owner_user_id = ?;",
                 (owner_user_id,),
             )
         else:
-            cursor.execute("SELECT vendor_name, invoice_id, file_name FROM documents WHERE vendor_name IS NOT NULL AND invoice_id IS NOT NULL;")
+            cursor.execute("SELECT vendor_name, invoice_id, file_name, original_filename FROM documents WHERE vendor_name IS NOT NULL AND invoice_id IS NOT NULL;")
         rows = cursor.fetchall()
         mapping: Dict[Tuple[str, str], str] = {}
         for r in rows:
             key = normalize_business_key(r["vendor_name"], r["invoice_id"])
             if key:
-                mapping[key] = r["file_name"]
+                mapping[key] = r["original_filename"] or r["file_name"]
+        return mapping
+
+
+def get_existing_business_keys_with_docs(owner_user_id: Optional[str] = None) -> Dict[Tuple[str, str], Dict[str, Any]]:
+    """Retrieve mapping of (norm_vendor, norm_invoice_id) -> {id, file_name, document_type} for business duplicate detection and document linking."""
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        if owner_user_id:
+            cursor.execute(
+                "SELECT id, vendor_name, invoice_id, file_name, original_filename, document_type FROM documents WHERE vendor_name IS NOT NULL AND invoice_id IS NOT NULL AND owner_user_id = ?;",
+                (owner_user_id,),
+            )
+        else:
+            cursor.execute("SELECT id, vendor_name, invoice_id, file_name, original_filename, document_type FROM documents WHERE vendor_name IS NOT NULL AND invoice_id IS NOT NULL;")
+        rows = cursor.fetchall()
+        mapping: Dict[Tuple[str, str], Dict[str, Any]] = {}
+        for r in rows:
+            key = normalize_business_key(r["vendor_name"], r["invoice_id"])
+            if key:
+                mapping[key] = {
+                    "id": r["id"],
+                    "file_name": r["original_filename"] or r["file_name"],
+                    "document_type": r["document_type"] or "invoice",
+                }
         return mapping
 
 
@@ -123,17 +189,41 @@ def get_existing_receipt_keys(owner_user_id: Optional[str] = None) -> Dict[Tuple
         cursor = conn.cursor()
         if owner_user_id:
             cursor.execute(
-                "SELECT vendor_name, invoice_date, total, file_name FROM documents WHERE document_type = 'receipt' AND owner_user_id = ?;",
+                "SELECT vendor_name, invoice_date, total, file_name, original_filename FROM documents WHERE document_type = 'receipt' AND owner_user_id = ?;",
                 (owner_user_id,),
             )
         else:
-            cursor.execute("SELECT vendor_name, invoice_date, total, file_name FROM documents WHERE document_type = 'receipt';")
+            cursor.execute("SELECT vendor_name, invoice_date, total, file_name, original_filename FROM documents WHERE document_type = 'receipt';")
         rows = cursor.fetchall()
         mapping: Dict[Tuple[str, str, str], str] = {}
         for r in rows:
             key = normalize_receipt_key(r["vendor_name"], r["invoice_date"], r["total"])
             if key:
-                mapping[key] = r["file_name"]
+                mapping[key] = r["original_filename"] or r["file_name"]
+        return mapping
+
+
+def get_existing_receipt_keys_with_docs(owner_user_id: Optional[str] = None) -> Dict[Tuple[str, str, str], Dict[str, Any]]:
+    """Retrieve mapping of (norm_merchant, date, total) -> {id, file_name, document_type} for receipt duplicate detection and linking."""
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        if owner_user_id:
+            cursor.execute(
+                "SELECT id, vendor_name, invoice_date, total, file_name, original_filename, document_type FROM documents WHERE document_type = 'receipt' AND owner_user_id = ?;",
+                (owner_user_id,),
+            )
+        else:
+            cursor.execute("SELECT id, vendor_name, invoice_date, total, file_name, original_filename, document_type FROM documents WHERE document_type = 'receipt';")
+        rows = cursor.fetchall()
+        mapping: Dict[Tuple[str, str, str], Dict[str, Any]] = {}
+        for r in rows:
+            key = normalize_receipt_key(r["vendor_name"], r["invoice_date"], r["total"])
+            if key:
+                mapping[key] = {
+                    "id": r["id"],
+                    "file_name": r["original_filename"] or r["file_name"],
+                    "document_type": r["document_type"] or "receipt",
+                }
         return mapping
 
 
@@ -142,12 +232,27 @@ def save_document(doc: DocumentExtraction, batch_id: Optional[str] = None, owner
     doc_id = doc.id or str(uuid.uuid4())
     doc.id = doc_id
 
+    now_iso = datetime.now(timezone.utc).isoformat()
+    if not doc.created_at:
+        doc.created_at = now_iso
+    if not doc.uploaded_at:
+        doc.uploaded_at = now_iso
+
     effective_owner = owner_user_id or doc.owner_user_id or "system_default"
     doc.owner_user_id = effective_owner
 
     subtotal_str = format_canonical_decimal(doc.subtotal.value)
     tax_str = format_canonical_decimal(doc.tax.value)
     total_str = format_canonical_decimal(doc.total.value)
+    cgst_str = format_canonical_decimal(doc.cgst.value) if doc.cgst and doc.cgst.value is not None else None
+    sgst_str = format_canonical_decimal(doc.sgst.value) if doc.sgst and doc.sgst.value is not None else None
+    igst_str = format_canonical_decimal(doc.igst.value) if doc.igst and doc.igst.value is not None else None
+    cess_str = format_canonical_decimal(doc.cess.value) if doc.cess and doc.cess.value is not None else None
+    other_tax_str = format_canonical_decimal(doc.other_tax.value) if doc.other_tax and doc.other_tax.value is not None else None
+    discounts_str = format_canonical_decimal(doc.discounts.value) if doc.discounts and doc.discounts.value is not None else None
+    additional_charges_str = format_canonical_decimal(doc.additional_charges.value) if doc.additional_charges and doc.additional_charges.value is not None else None
+    rounding_adjustment_str = format_canonical_decimal(doc.rounding_adjustment.value) if doc.rounding_adjustment and doc.rounding_adjustment.value is not None else None
+    reconciliation_json = json.dumps(doc.reconciliation.model_dump(), default=str) if doc.reconciliation else None
 
     if not doc.raw_azure_json:
         doc.raw_azure_json = "{}"
@@ -173,6 +278,12 @@ def save_document(doc: DocumentExtraction, batch_id: Optional[str] = None, owner
     )
 
     history_json = json.dumps(doc.audit_history, default=str)
+    content_safety_status = doc.content_safety_status or "passed"
+    content_safety_details = (
+        json.dumps(doc.content_safety.model_dump(), default=str)
+        if doc.content_safety
+        else None
+    )
 
     with get_db_connection() as conn:
         cursor = conn.cursor()
@@ -208,7 +319,28 @@ def save_document(doc: DocumentExtraction, batch_id: Optional[str] = None, owner
                     file_size = ?,
                     sha256_hash = ?,
                     uploaded_at = ?,
-                    processing_status = ?
+                    processing_status = ?,
+                    matched_document_id = ?,
+                    matched_document_name = ?,
+                    cgst = ?,
+                    cgst_conf = ?,
+                    sgst = ?,
+                    sgst_conf = ?,
+                    igst = ?,
+                    igst_conf = ?,
+                    cess = ?,
+                    cess_conf = ?,
+                    other_tax = ?,
+                    other_tax_conf = ?,
+                    discounts = ?,
+                    discounts_conf = ?,
+                    additional_charges = ?,
+                    additional_charges_conf = ?,
+                    rounding_adjustment = ?,
+                    rounding_adjustment_conf = ?,
+                    content_safety_status = ?,
+                    content_safety_details = ?,
+                    reconciliation_json = ?
                 WHERE id = ?;
                 """,
                 (
@@ -231,6 +363,27 @@ def save_document(doc: DocumentExtraction, batch_id: Optional[str] = None, owner
                     doc.sha256_hash or doc.file_hash,
                     doc.uploaded_at or doc.created_at,
                     doc.processing_status or "completed",
+                    doc.matched_document_id,
+                    doc.matched_document_name,
+                    cgst_str,
+                    doc.cgst.confidence if doc.cgst else None,
+                    sgst_str,
+                    doc.sgst.confidence if doc.sgst else None,
+                    igst_str,
+                    doc.igst.confidence if doc.igst else None,
+                    cess_str,
+                    doc.cess.confidence if doc.cess else None,
+                    other_tax_str,
+                    doc.other_tax.confidence if doc.other_tax else None,
+                    discounts_str,
+                    doc.discounts.confidence if doc.discounts else None,
+                    additional_charges_str,
+                    doc.additional_charges.confidence if doc.additional_charges else None,
+                    rounding_adjustment_str,
+                    doc.rounding_adjustment.confidence if doc.rounding_adjustment else None,
+                    content_safety_status,
+                    content_safety_details,
+                    reconciliation_json,
                     doc_id,
                 ),
             )
@@ -253,8 +406,19 @@ def save_document(doc: DocumentExtraction, batch_id: Optional[str] = None, owner
                     normalized_vendor_name, normalized_invoice_id, highest_severity,
                     raw_azure_json, normalized_json,
                     owner_user_id, original_filename, storage_key, content_type,
-                    file_size, sha256_hash, uploaded_at, processing_status
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                    file_size, sha256_hash, uploaded_at, processing_status,
+                    matched_document_id, matched_document_name,
+                    cgst, cgst_conf,
+                    sgst, sgst_conf,
+                    igst, igst_conf,
+                    cess, cess_conf,
+                    other_tax, other_tax_conf,
+                    discounts, discounts_conf,
+                    additional_charges, additional_charges_conf,
+                    rounding_adjustment, rounding_adjustment_conf,
+                    content_safety_status, content_safety_details,
+                    reconciliation_json
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
                 """,
                 (
                     doc_id,
@@ -299,6 +463,27 @@ def save_document(doc: DocumentExtraction, batch_id: Optional[str] = None, owner
                     doc.sha256_hash or doc.file_hash,
                     doc.uploaded_at or doc.created_at,
                     doc.processing_status or "completed",
+                    doc.matched_document_id,
+                    doc.matched_document_name,
+                    cgst_str,
+                    doc.cgst.confidence if doc.cgst else None,
+                    sgst_str,
+                    doc.sgst.confidence if doc.sgst else None,
+                    igst_str,
+                    doc.igst.confidence if doc.igst else None,
+                    cess_str,
+                    doc.cess.confidence if doc.cess else None,
+                    other_tax_str,
+                    doc.other_tax.confidence if doc.other_tax else None,
+                    discounts_str,
+                    doc.discounts.confidence if doc.discounts else None,
+                    additional_charges_str,
+                    doc.additional_charges.confidence if doc.additional_charges else None,
+                    rounding_adjustment_str,
+                    doc.rounding_adjustment.confidence if doc.rounding_adjustment else None,
+                    content_safety_status,
+                    content_safety_details,
+                    reconciliation_json,
                 ),
             )
 
@@ -417,6 +602,21 @@ def save_document(doc: DocumentExtraction, batch_id: Optional[str] = None, owner
     return doc_id
 
 
+def _reconstruct_field(
+    value: Optional[Any],
+    confidence: Optional[float],
+    default_status: FieldStatus = FieldStatus.MISSING,
+) -> ExtractedField:
+    """Reconstruct an ExtractedField from SQLite row preserving value, confidence, and calibrated status."""
+    if value is None or (isinstance(value, str) and not value.strip()):
+        status = default_status
+    elif confidence is not None and isinstance(confidence, (int, float)) and confidence < 0.85:
+        status = FieldStatus.LOW_CONFIDENCE
+    else:
+        status = FieldStatus.EXTRACTED
+    return ExtractedField(value=value, confidence=confidence, status=status)
+
+
 def get_document_by_id(doc_id: str, owner_user_id: Optional[str] = None) -> Optional[DocumentExtraction]:
     """Retrieve full document extraction with line items, audit flags, raw JSON, with strict multi-user isolation check."""
     with get_db_connection() as conn:
@@ -472,6 +672,81 @@ def get_document_by_id(doc_id: str, owner_user_id: Optional[str] = None) -> Opti
             except Exception:
                 history = []
 
+        # Parse reconciliation object
+        reconciliation_obj = None
+        if "reconciliation_json" in row_keys and doc_row["reconciliation_json"]:
+            try:
+                reconciliation_obj = FinancialReconciliation(**json.loads(doc_row["reconciliation_json"]))
+            except Exception:
+                reconciliation_obj = None
+
+        cs_result = None
+        if "content_safety_details" in row_keys and doc_row["content_safety_details"]:
+            try:
+                cs_result = ContentSafetyResult(**json.loads(doc_row["content_safety_details"]))
+            except Exception:
+                cs_result = None
+
+        cs_status = (
+            doc_row["content_safety_status"]
+            if "content_safety_status" in row_keys and doc_row["content_safety_status"]
+            else "passed"
+        )
+
+        cgst_field = _reconstruct_field(
+            doc_row["cgst"] if "cgst" in row_keys else None,
+            doc_row["cgst_conf"] if "cgst_conf" in row_keys else None,
+            default_status=FieldStatus.NOT_APPLICABLE,
+        )
+        sgst_field = _reconstruct_field(
+            doc_row["sgst"] if "sgst" in row_keys else None,
+            doc_row["sgst_conf"] if "sgst_conf" in row_keys else None,
+            default_status=FieldStatus.NOT_APPLICABLE,
+        )
+        igst_field = _reconstruct_field(
+            doc_row["igst"] if "igst" in row_keys else None,
+            doc_row["igst_conf"] if "igst_conf" in row_keys else None,
+            default_status=FieldStatus.NOT_APPLICABLE,
+        )
+        cess_field = _reconstruct_field(
+            doc_row["cess"] if "cess" in row_keys else None,
+            doc_row["cess_conf"] if "cess_conf" in row_keys else None,
+            default_status=FieldStatus.NOT_APPLICABLE,
+        )
+        other_tax_field = _reconstruct_field(
+            doc_row["other_tax"] if "other_tax" in row_keys else None,
+            doc_row["other_tax_conf"] if "other_tax_conf" in row_keys else None,
+            default_status=FieldStatus.NOT_APPLICABLE,
+        )
+        discounts_field = _reconstruct_field(
+            doc_row["discounts"] if "discounts" in row_keys else None,
+            doc_row["discounts_conf"] if "discounts_conf" in row_keys else None,
+            default_status=FieldStatus.NOT_APPLICABLE,
+        )
+        additional_charges_field = _reconstruct_field(
+            doc_row["additional_charges"] if "additional_charges" in row_keys else None,
+            doc_row["additional_charges_conf"] if "additional_charges_conf" in row_keys else None,
+            default_status=FieldStatus.NOT_APPLICABLE,
+        )
+        rounding_adjustment_field = _reconstruct_field(
+            doc_row["rounding_adjustment"] if "rounding_adjustment" in row_keys else None,
+            doc_row["rounding_adjustment_conf"] if "rounding_adjustment_conf" in row_keys else None,
+            default_status=FieldStatus.NOT_APPLICABLE,
+        )
+        tax_field = _reconstruct_field(
+            doc_row["tax"],
+            doc_row["tax_conf"],
+            default_status=FieldStatus.NOT_APPLICABLE if doc_row["document_type"] == "receipt" else FieldStatus.MISSING,
+        )
+        tax_bd = TaxBreakdown(
+            cgst=cgst_field,
+            sgst=sgst_field,
+            igst=igst_field,
+            cess=cess_field,
+            other_tax=other_tax_field,
+            total_tax=tax_field,
+        )
+
         return DocumentExtraction(
             id=doc_row["id"],
             file_name=doc_row["file_name"],
@@ -479,34 +754,49 @@ def get_document_by_id(doc_id: str, owner_user_id: Optional[str] = None) -> Opti
             model_used=doc_row["model_used"],
             document_type=doc_row["document_type"],
             extraction_status=doc_row["extraction_status"] or "succeeded",
-            vendor_name=ExtractedField(
-                value=doc_row["vendor_name"],
-                confidence=doc_row["vendor_name_conf"],
+            content_safety=cs_result,
+            content_safety_status=cs_status,
+            vendor_name=_reconstruct_field(
+                doc_row["vendor_name"],
+                doc_row["vendor_name_conf"],
+                default_status=FieldStatus.MISSING,
             ),
-            invoice_id=ExtractedField(
-                value=doc_row["invoice_id"],
-                confidence=doc_row["invoice_id_conf"],
+            invoice_id=_reconstruct_field(
+                doc_row["invoice_id"],
+                doc_row["invoice_id_conf"],
+                default_status=FieldStatus.NOT_APPLICABLE if doc_row["document_type"] == "receipt" else FieldStatus.MISSING,
             ),
-            invoice_date=ExtractedField(
-                value=doc_row["invoice_date"],
-                confidence=doc_row["invoice_date_conf"],
+            invoice_date=_reconstruct_field(
+                doc_row["invoice_date"],
+                doc_row["invoice_date_conf"],
+                default_status=FieldStatus.MISSING,
             ),
-            vendor_tax_id=ExtractedField(
-                value=doc_row["vendor_tax_id"],
-                confidence=doc_row["vendor_tax_id_conf"],
+            vendor_tax_id=_reconstruct_field(
+                doc_row["vendor_tax_id"],
+                doc_row["vendor_tax_id_conf"],
+                default_status=FieldStatus.NOT_APPLICABLE if doc_row["document_type"] == "receipt" else FieldStatus.MISSING,
             ),
-            subtotal=ExtractedField(
-                value=doc_row["subtotal"],
-                confidence=doc_row["subtotal_conf"],
+            subtotal=_reconstruct_field(
+                doc_row["subtotal"],
+                doc_row["subtotal_conf"],
+                default_status=FieldStatus.NOT_APPLICABLE,
             ),
-            tax=ExtractedField(
-                value=doc_row["tax"],
-                confidence=doc_row["tax_conf"],
+            cgst=cgst_field,
+            sgst=sgst_field,
+            igst=igst_field,
+            cess=cess_field,
+            other_tax=other_tax_field,
+            discounts=discounts_field,
+            additional_charges=additional_charges_field,
+            rounding_adjustment=rounding_adjustment_field,
+            tax=tax_field,
+            total=_reconstruct_field(
+                doc_row["total"],
+                doc_row["total_conf"],
+                default_status=FieldStatus.MISSING,
             ),
-            total=ExtractedField(
-                value=doc_row["total"],
-                confidence=doc_row["total_conf"],
-            ),
+            tax_breakdown=tax_bd,
+            reconciliation=reconciliation_obj,
             line_items=line_items,
             validation_flags=flags,
             is_duplicate=bool(doc_row["is_duplicate"]),
@@ -530,6 +820,8 @@ def get_document_by_id(doc_id: str, owner_user_id: Optional[str] = None) -> Opti
             sha256_hash=doc_row["sha256_hash"] if "sha256_hash" in row_keys else doc_row["file_hash"],
             uploaded_at=doc_row["uploaded_at"] if "uploaded_at" in row_keys else doc_row["created_at"],
             processing_status=doc_row["processing_status"] if "processing_status" in row_keys else "completed",
+            matched_document_id=doc_row["matched_document_id"] if "matched_document_id" in row_keys else None,
+            matched_document_name=doc_row["matched_document_name"] if "matched_document_name" in row_keys else None,
         )
 
 
@@ -1084,3 +1376,62 @@ def delete_all_auth_data():
         cursor.execute("DELETE FROM user_sessions;")
         cursor.execute("DELETE FROM sessions;")
         cursor.execute("DELETE FROM users WHERE id != 'system_default';")
+
+
+def save_content_safety_event(
+    file_name: str,
+    sha256_hash: str,
+    status: str,
+    rejection_reason: str,
+    owner_user_id: Optional[str] = None,
+    detected_category: Optional[str] = None,
+    severity: int = 0,
+    action_taken: str = "rejected",
+    details: Optional[Dict[str, Any]] = None,
+) -> str:
+    """Record a content safety screening failure or rejection event in the audit log."""
+    event_id = str(uuid.uuid4())
+    now_iso = datetime.now(timezone.utc).isoformat()
+    effective_owner = owner_user_id or "system_default"
+    details_json = json.dumps(details, default=str) if details else None
+
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            INSERT INTO content_safety_events (
+                id, owner_user_id, file_name, sha256_hash, status,
+                detected_category, severity, action_taken, rejection_reason,
+                details, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+            """,
+            (
+                event_id,
+                effective_owner,
+                file_name,
+                sha256_hash,
+                status,
+                detected_category,
+                severity,
+                action_taken,
+                rejection_reason,
+                details_json,
+                now_iso,
+            ),
+        )
+    return event_id
+
+
+def get_content_safety_events(owner_user_id: Optional[str] = None) -> List[Dict[str, Any]]:
+    """Retrieve content safety events, filtered by user if specified."""
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        if owner_user_id:
+            cursor.execute(
+                "SELECT * FROM content_safety_events WHERE owner_user_id = ? ORDER BY created_at DESC;",
+                (owner_user_id,),
+            )
+        else:
+            cursor.execute("SELECT * FROM content_safety_events ORDER BY created_at DESC;")
+        return [dict(row) for row in cursor.fetchall()]
+

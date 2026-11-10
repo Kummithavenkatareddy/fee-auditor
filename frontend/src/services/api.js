@@ -156,17 +156,6 @@ export async function uploadBatch(files, preferredModel = null) {
 }
 
 /**
- * Load and analyze all 6 synthetic test documents directly on the backend.
- */
-export async function loadSyntheticSamples() {
-  const res = await fetch(`${API_BASE}/audit/load-samples`, {
-    method: 'POST',
-    headers: getAuthHeaders(),
-  });
-  return handleResponse(res, 'Failed to load synthetic test samples');
-}
-
-/**
  * Re-run deterministic validation rules on an existing document.
  * @param {string} id - Document ID
  */

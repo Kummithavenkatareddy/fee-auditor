@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { uploadBatch, loadSyntheticSamples } from '../services/api';
+import { uploadBatch, fetchDocument } from '../services/api';
 
 export default function UploadScreen({ onUploadComplete, onSelectDoc, onNavigateTab }) {
   const [currentStage, setCurrentStage] = useState(1); // 1: Select, 2: Review Staged, 3: Ingestion
@@ -10,7 +10,6 @@ export default function UploadScreen({ onUploadComplete, onSelectDoc, onNavigate
   const [statusMessage, setStatusMessage] = useState('');
   const [uploadResult, setUploadResult] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
-  const [isProcessingSamples, setIsProcessingSamples] = useState(false);
   const fileInputRef = useRef(null);
 
   const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20 MB
@@ -107,25 +106,14 @@ export default function UploadScreen({ onUploadComplete, onSelectDoc, onNavigate
     }
   };
 
-  const handleLoadSamples = async () => {
-    setIsProcessingSamples(true);
-    setErrorMsg(null);
-    setCurrentStage(3);
-    setIsProcessing(true);
-    setProgressPct(30);
-    setStatusMessage('Loading canonical 6 INR synthetic receipts & invoices...');
-
+  const handleOpenExisting = async (docId) => {
     try {
-      const res = await loadSyntheticSamples();
-      setProgressPct(100);
-      setIsProcessing(false);
-      setUploadResult(res);
-      if (onUploadComplete) onUploadComplete();
+      const doc = await fetchDocument(docId);
+      if (doc && onSelectDoc) {
+        onSelectDoc(doc);
+      }
     } catch (err) {
-      setIsProcessing(false);
-      setErrorMsg(`Failed to load samples: ${err.message}`);
-    } finally {
-      setIsProcessingSamples(false);
+      setErrorMsg(`Could not open existing document: ${err.message}`);
     }
   };
 
@@ -139,15 +127,6 @@ export default function UploadScreen({ onUploadComplete, onSelectDoc, onNavigate
             Batch ingest fee receipts and vendor invoices into your persistent library with automated validation.
           </p>
         </div>
-
-        <button
-          onClick={handleLoadSamples}
-          disabled={isProcessingSamples || isProcessing}
-          className="px-3.5 py-2 bg-white hover:bg-slate-50 text-blue-700 border border-blue-200 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors self-start sm:self-auto disabled:opacity-50"
-        >
-          <span className="material-symbols-outlined text-[16px]">folder_special</span>
-          <span>Load 6 Canonical Test Samples</span>
-        </button>
       </div>
 
       {/* Stepper (3 Stages) */}
@@ -358,7 +337,28 @@ export default function UploadScreen({ onUploadComplete, onSelectDoc, onNavigate
                   <div>
                     <h3 className="font-bold text-sm">Batch Ingestion Complete</h3>
                     <p className="text-xs text-emerald-700">
-                      Successfully processed <strong>{uploadResult.successful_extractions}</strong> of {uploadResult.total_files} documents.
+                      Successfully processed <strong>{uploadResult.successful_extractions}</strong> document(s)
+                      {uploadResult.duplicate_files > 0 && (
+                        <span className="text-amber-800 font-semibold ml-1">
+                          • {uploadResult.duplicate_files} exact duplicate(s)
+                        </span>
+                      )}
+                      {uploadResult.rejected_by_content_safety > 0 && (
+                        <span className="text-rose-800 font-semibold ml-1">
+                          • {uploadResult.rejected_by_content_safety} rejected by Content Safety
+                        </span>
+                      )}
+                      {uploadResult.screening_failed > 0 && (
+                        <span className="text-amber-800 font-semibold ml-1">
+                          • {uploadResult.screening_failed} screening failure(s)
+                        </span>
+                      )}
+                      {uploadResult.failed_extractions > 0 && (
+                        <span className="text-rose-700 font-semibold ml-1">
+                          • {uploadResult.failed_extractions} error(s)
+                        </span>
+                      )}
+                      {' '}of {uploadResult.total_files} total.
                     </p>
                   </div>
                 </div>
@@ -384,24 +384,100 @@ export default function UploadScreen({ onUploadComplete, onSelectDoc, onNavigate
                 </div>
               </div>
 
-              {/* Documents table with workspace links */}
-              {uploadResult.documents && uploadResult.documents.length > 0 && (
+              {/* Content Safety Alerts Banner */}
+              {uploadResult.rejected_documents && uploadResult.rejected_documents.length > 0 && (
+                <div className="p-4 bg-rose-50 border border-rose-200 text-rose-900 rounded-xl space-y-3">
+                  <div className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-[20px] text-rose-600">shield_with_heart</span>
+                    <span className="font-bold text-sm">
+                      Azure AI Content Safety Intervention ({uploadResult.rejected_documents.length})
+                    </span>
+                  </div>
+                  <p className="text-xs text-rose-700">
+                    The following document(s) failed pre-screening and were halted before Document Intelligence extraction. Unsafe documents do not enter persistent accounting records.
+                  </p>
+                  <div className="divide-y divide-rose-200/60 bg-white/70 rounded-lg border border-rose-200 overflow-hidden text-xs">
+                    {uploadResult.rejected_documents.map((rej, idx) => (
+                      <div key={idx} className="p-3 flex items-start justify-between gap-3 flex-wrap">
+                        <div className="space-y-1 max-w-xl">
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono font-bold text-rose-950">{rej.file_name}</span>
+                            <span
+                              className={`px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
+                                rej.status === 'rejected'
+                                  ? 'bg-rose-600 text-white'
+                                  : 'bg-amber-600 text-white'
+                              }`}
+                            >
+                              {rej.status === 'rejected' ? 'REJECTED' : 'SCREENING FAILED'}
+                            </span>
+                            {rej.detected_category && (
+                              <span className="px-1.5 py-0.5 bg-rose-100 text-rose-800 rounded text-[10px] font-medium">
+                                Category: {rej.detected_category}
+                              </span>
+                            )}
+                            {rej.severity > 0 && (
+                              <span className="px-1.5 py-0.5 bg-rose-200 text-rose-900 rounded text-[10px] font-semibold">
+                                Severity: {rej.severity} / 6
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-rose-800 font-medium">{rej.reason}</div>
+                          {rej.error_message && (
+                            <div className="text-[11px] text-rose-600 font-mono">{rej.error_message}</div>
+                          )}
+                        </div>
+                        <div className="text-[11px] text-slate-500 italic shrink-0">
+                          Extraction Prevented
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Errors banner if any */}
+              {uploadResult.errors && uploadResult.errors.length > 0 && (
+                <div className="p-3 bg-rose-50 border border-rose-200 text-rose-800 rounded-lg text-xs space-y-1">
+                  <div className="font-bold flex items-center gap-1">
+                    <span className="material-symbols-outlined text-[16px] text-rose-600">error</span>
+                    <span>Upload Issues Detected ({uploadResult.errors.length})</span>
+                  </div>
+                  {uploadResult.errors.map((err, idx) => (
+                    <div key={idx} className="ml-5">
+                      <span className="font-mono font-semibold">{err.file_name}:</span> {err.error}
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Ingestion & Duplicate Results Table */}
+              {((uploadResult.documents && uploadResult.documents.length > 0) || (uploadResult.duplicates && uploadResult.duplicates.length > 0)) && (
                 <div className="border border-slate-200 rounded-lg overflow-hidden">
                   <table className="w-full text-left text-xs border-collapse">
                     <thead>
                       <tr className="bg-slate-100 text-slate-600 font-semibold uppercase text-[10px]">
                         <th className="py-2 px-3">File Name</th>
-                        <th className="py-2 px-3">Vendor / Payee</th>
-                        <th className="py-2 px-3 text-right">Total</th>
+                        <th className="py-2 px-3">Vendor / Payee / Reference</th>
+                        <th className="py-2 px-3 text-right">Total / Status</th>
                         <th className="py-2 px-3 text-center">Audit Status</th>
                         <th className="py-2 px-3 text-right">Action</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {uploadResult.documents.map((d) => (
+                      {/* Newly processed documents */}
+                      {uploadResult.documents && uploadResult.documents.map((d) => (
                         <tr key={d.id} className="h-10 hover:bg-slate-50">
                           <td className="py-2 px-3 font-mono font-medium text-blue-700">
-                            {d.file_name}
+                            <div className="flex items-center gap-1.5">
+                              <span
+                                className="material-symbols-outlined text-[15px] text-emerald-600 shrink-0"
+                                title="Passed Azure AI Content Safety pre-screening"
+                              >
+                                verified_user
+                              </span>
+                              <span className="truncate">{d.file_name}</span>
+                            </div>
                           </td>
                           <td className="py-2 px-3">{d.vendor_name?.value || '—'}</td>
                           <td className="py-2 px-3 text-right font-mono font-bold">
@@ -424,6 +500,39 @@ export default function UploadScreen({ onUploadComplete, onSelectDoc, onNavigate
                               className="text-xs text-blue-600 hover:text-blue-800 font-medium flex items-center gap-0.5 ml-auto"
                             >
                               <span>Open Workspace</span>
+                              <span className="material-symbols-outlined text-[13px]">arrow_forward</span>
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+
+                      {/* Level 1 Exact Duplicates */}
+                      {uploadResult.duplicates && uploadResult.duplicates.map((dup, idx) => (
+                        <tr key={`dup-${idx}`} className="h-10 bg-amber-50/50 hover:bg-amber-50/80 border-t border-amber-100">
+                          <td className="py-2 px-3 font-mono font-medium text-amber-900">
+                            {dup.filename}
+                          </td>
+                          <td className="py-2 px-3 text-slate-600">
+                            <div className="flex items-center gap-1">
+                              <span className="text-[11px] text-amber-700 font-medium">Matches:</span>
+                              <span className="font-mono text-slate-800 font-semibold">{dup.existing_file_name}</span>
+                            </div>
+                          </td>
+                          <td className="py-2 px-3 text-right font-mono text-[11px] text-slate-500">
+                            Original: <span className={`font-bold ${dup.audit_status === 'clean' ? 'text-emerald-700' : 'text-rose-700'}`}>{dup.audit_status.toUpperCase()}</span>
+                          </td>
+                          <td className="py-2 px-3 text-center">
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                              DUPLICATE
+                            </span>
+                          </td>
+                          <td className="py-2 px-3 text-right">
+                            <button
+                              onClick={() => handleOpenExisting(dup.existing_document_id)}
+                              className="text-xs text-amber-900 hover:text-amber-950 font-medium flex items-center gap-0.5 ml-auto px-2 py-1 rounded bg-amber-200/60 hover:bg-amber-200 border border-amber-300 transition-colors"
+                              title="Open existing document in workspace"
+                            >
+                              <span>Open Existing Document</span>
                               <span className="material-symbols-outlined text-[13px]">arrow_forward</span>
                             </button>
                           </td>

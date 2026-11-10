@@ -143,8 +143,8 @@ export default function SettingsScreen({ academicTerm = 'Fall 2026', onAcademicT
             <span className="font-semibold text-slate-800">INR (₹)</span>
           </div>
           <div className="p-2.5 bg-slate-50 rounded border border-slate-200">
-            <span className="text-[10px] text-slate-400 block uppercase">Canonical Samples</span>
-            <span className="font-semibold text-slate-800">6 Documents</span>
+            <span className="text-[10px] text-slate-400 block uppercase">Supported Formats</span>
+            <span className="font-semibold text-slate-800">PDF, PNG, JPEG</span>
           </div>
           <div className="p-2.5 bg-slate-50 rounded border border-slate-200">
             <span className="text-[10px] text-slate-400 block uppercase">Max Upload</span>

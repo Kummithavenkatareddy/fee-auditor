@@ -11,6 +11,7 @@ from app.schemas.common import (
     ExtractedField,
     ExtractedLineItem,
     format_canonical_decimal,
+    TaxBreakdown,
 )
 from app.schemas.invoice import InvoiceData
 from app.schemas.receipt import ReceiptData
@@ -254,6 +255,142 @@ def serialize_azure_result(result: AnalyzeResult) -> str:
         return "{}"
 
 
+def _extract_tax_breakdown_and_adjustments(
+    fields: Dict[str, Any],
+    tax_field_obj: Any,
+    content: Optional[str] = None,
+) -> Tuple[
+    ExtractedField,
+    ExtractedField,
+    ExtractedField,
+    ExtractedField,
+    ExtractedField,
+    ExtractedField,
+    TaxBreakdown,
+    ExtractedField,
+    ExtractedField,
+    ExtractedField,
+]:
+    """Extract itemized taxes (CGST, SGST, IGST, Cess, other tax) and financial adjustments (discounts, additional charges, rounding)."""
+    total_tax = _build_field(tax_field_obj, "currency", FieldStatus.NOT_APPLICABLE)
+    cgst_f = ExtractedField(status=FieldStatus.NOT_APPLICABLE)
+    sgst_f = ExtractedField(status=FieldStatus.NOT_APPLICABLE)
+    igst_f = ExtractedField(status=FieldStatus.NOT_APPLICABLE)
+    cess_f = ExtractedField(status=FieldStatus.NOT_APPLICABLE)
+    other_tax_f = ExtractedField(status=FieldStatus.NOT_APPLICABLE)
+
+    # 1. Parse structured TaxDetails / TaxItems from Azure
+    tax_details_f = fields.get("TaxDetails") or fields.get("TaxItems")
+    val_array = getattr(tax_details_f, "value_array", None)
+    if not val_array and isinstance(tax_details_f, dict):
+        val_array = tax_details_f.get("valueArray") or tax_details_f.get("value_array")
+    if not val_array and isinstance(tax_details_f, list):
+        val_array = tax_details_f
+
+    if val_array:
+        for item in val_array:
+            item_obj = getattr(item, "value_object", None)
+            if item_obj is None and isinstance(item, dict):
+                item_obj = item.get("valueObject") or item.get("value_object") or item
+            item_content = getattr(item, "content", None) or (item.get("content") if isinstance(item, dict) else "")
+
+            amt_f = item_obj.get("Amount") if isinstance(item_obj, dict) else None
+            amt = _extract_canonical_currency(amt_f)
+            conf = _extract_field_confidence(amt_f)
+
+            tax_cat = ""
+            if isinstance(item_obj, dict):
+                cat_f = item_obj.get("TaxCategory") or item_obj.get("Description") or item_obj.get("Rate")
+                tax_cat = str(cat_f.get("valueString", "") if isinstance(cat_f, dict) else (getattr(cat_f, "value_string", "") or cat_f or ""))
+            combined_text = f"{item_content} {tax_cat}".lower()
+
+            if re.search(r"\b(?:cgst|central\s+gst)\b", combined_text) and amt:
+                cgst_f = ExtractedField(value=amt, confidence=conf, raw_text=item_content, status=FieldStatus.EXTRACTED, confidence_source="azure")
+            elif re.search(r"\b(?:sgst|utgst|state\s+gst)\b", combined_text) and amt:
+                sgst_f = ExtractedField(value=amt, confidence=conf, raw_text=item_content, status=FieldStatus.EXTRACTED, confidence_source="azure")
+            elif re.search(r"\b(?:igst|integrated\s+gst)\b", combined_text) and amt:
+                igst_f = ExtractedField(value=amt, confidence=conf, raw_text=item_content, status=FieldStatus.EXTRACTED, confidence_source="azure")
+            elif re.search(r"\b(?:cess|gst\s+cess)\b", combined_text) and amt:
+                cess_f = ExtractedField(value=amt, confidence=conf, raw_text=item_content, status=FieldStatus.EXTRACTED, confidence_source="azure")
+            elif amt:
+                other_tax_f = ExtractedField(value=amt, confidence=conf, raw_text=item_content, status=FieldStatus.EXTRACTED, confidence_source="azure")
+
+    # 2. Content regex fallback for itemized taxes (truthfully represented without fabricated Azure confidence)
+    if content:
+        if not cgst_f.value:
+            m = re.search(r"(?:Central\s+GST|CGST)(?:\s*(?:@\s*\d+(?:\.\d+)?%|\(\s*(?:CGST\s*)?\d+(?:\.\d+)?%\s*\)))?[\s:#₹Rs\.]*([0-9,]+(?:\.[0-9]{1,2})?)", content, re.IGNORECASE)
+            if m:
+                cgst_f = ExtractedField(value=format_canonical_decimal(m.group(1)), confidence=None, raw_text=m.group(0), status=FieldStatus.EXTRACTED, confidence_source="ocr_fallback")
+        if not sgst_f.value:
+            m = re.search(r"(?:State\s+GST|UTGST|SGST)(?:\s*(?:@\s*\d+(?:\.\d+)?%|\(\s*(?:SGST\s*)?\d+(?:\.\d+)?%\s*\)))?[\s:#₹Rs\.]*([0-9,]+(?:\.[0-9]{1,2})?)", content, re.IGNORECASE)
+            if m:
+                sgst_f = ExtractedField(value=format_canonical_decimal(m.group(1)), confidence=None, raw_text=m.group(0), status=FieldStatus.EXTRACTED, confidence_source="ocr_fallback")
+        if not igst_f.value:
+            m = re.search(r"(?:Integrated\s+GST|IGST)(?:\s*(?:@\s*\d+(?:\.\d+)?%|\(\s*(?:IGST\s*)?\d+(?:\.\d+)?%\s*\)))?[\s:#₹Rs\.]*([0-9,]+(?:\.[0-9]{1,2})?)", content, re.IGNORECASE)
+            if m:
+                igst_f = ExtractedField(value=format_canonical_decimal(m.group(1)), confidence=None, raw_text=m.group(0), status=FieldStatus.EXTRACTED, confidence_source="ocr_fallback")
+        if not cess_f.value:
+            m = re.search(r"(?:GST\s+Cess|Cess)(?:\s*(?:@\s*\d+(?:\.\d+)?%|\(\s*\d+(?:\.\d+)?%\s*\)))?[\s:#₹Rs\.]*([0-9,]+(?:\.[0-9]{1,2})?)", content, re.IGNORECASE)
+            if m:
+                cess_f = ExtractedField(value=format_canonical_decimal(m.group(1)), confidence=None, raw_text=m.group(0), status=FieldStatus.EXTRACTED, confidence_source="ocr_fallback")
+
+    # 3. Fallback for total_tax if missing from fields
+    if not total_tax.value and content:
+        m = re.search(r"(?:Total\s+Tax|Total\s+GST)[\s:#₹Rs\.]*([0-9,]+(?:\.[0-9]{1,2})?)", content, re.IGNORECASE)
+        if m:
+            total_tax = ExtractedField(value=format_canonical_decimal(m.group(1)), confidence=None, raw_text=m.group(0), status=FieldStatus.EXTRACTED, confidence_source="ocr_fallback")
+    if not total_tax.value:
+        itemized_dec_list = [f.as_decimal() for f in (cgst_f, sgst_f, igst_f, cess_f, other_tax_f) if f.value]
+        if itemized_dec_list:
+            total_tax = ExtractedField(value=f"{sum(itemized_dec_list):.2f}", confidence=None, raw_text=None, status=FieldStatus.EXTRACTED, confidence_source="ocr_fallback")
+
+    # 4. Discounts
+    disc_f = fields.get("TotalDiscount") or fields.get("Discount")
+    discounts = _build_field(disc_f, "currency", FieldStatus.NOT_APPLICABLE)
+    if not discounts.value and content:
+        m = re.search(r"(?:Total\s+Discount|Trade\s+Discount|Discount)[\s:#₹Rs\.]*([0-9,]+(?:\.[0-9]{1,2})?)", content, re.IGNORECASE)
+        if m:
+            discounts = ExtractedField(value=format_canonical_decimal(m.group(1)), confidence=None, raw_text=m.group(0), status=FieldStatus.EXTRACTED, confidence_source="ocr_fallback")
+
+    # 5. Additional charges (shipping / handling)
+    ship_f = fields.get("ShippingCost") or fields.get("HandlingCost") or fields.get("AdditionalCharges")
+    additional_charges = _build_field(ship_f, "currency", FieldStatus.NOT_APPLICABLE)
+    if not additional_charges.value and content:
+        m = re.search(r"(?:Shipping(?:\s*Charges?)?|Freight|Handling(?:\s*Charges?)?|Delivery(?:\s*Charges?)?|Additional\s+Charges?)[\s:#₹Rs\.]*([0-9,]+(?:\.[0-9]{1,2})?)", content, re.IGNORECASE)
+        if m:
+            additional_charges = ExtractedField(value=format_canonical_decimal(m.group(1)), confidence=None, raw_text=m.group(0), status=FieldStatus.EXTRACTED, confidence_source="ocr_fallback")
+
+    # 6. Rounding adjustment
+    round_f = fields.get("RoundingAdjustment") or fields.get("RoundOff")
+    rounding_adjustment = _build_field(round_f, "currency", FieldStatus.NOT_APPLICABLE)
+    if not rounding_adjustment.value and content:
+        m = re.search(r"(?:Round(?:\s*Off)?|Rounding(?:\s*Adjustment)?)[\s:#₹Rs\.]*([+-]?[0-9,]+(?:\.[0-9]{1,2})?)", content, re.IGNORECASE)
+        if m:
+            rounding_adjustment = ExtractedField(value=format_canonical_decimal(m.group(1)), confidence=None, raw_text=m.group(0), status=FieldStatus.EXTRACTED, confidence_source="ocr_fallback")
+
+    tax_breakdown = TaxBreakdown(
+        cgst=cgst_f,
+        sgst=sgst_f,
+        igst=igst_f,
+        cess=cess_f,
+        other_tax=other_tax_f,
+        total_tax=total_tax,
+    )
+
+    return (
+        cgst_f,
+        sgst_f,
+        igst_f,
+        cess_f,
+        other_tax_f,
+        total_tax,
+        tax_breakdown,
+        discounts,
+        additional_charges,
+        rounding_adjustment,
+    )
+
+
 def analyze_invoice_result(
     result: AnalyzeResult,
     file_bytes: bytes,
@@ -290,28 +427,75 @@ def analyze_invoice_result(
     cust_name_f = fields.get("CustomerName")
 
     vendor_name = _build_field(vendor_f, "string", FieldStatus.MISSING)
+
+    # Deterministic fallback if prebuilt-invoice missed VendorName but OCR text is present
+    if not vendor_name.value and getattr(result, "content", None):
+        content_str = result.content
+        candidate_name = None
+        raw_v_text = None
+        # 1. Look for explicit vendor/supplier/seller prefix
+        v_match = re.search(r"(?:Vendor|Supplier|Seller|Sold\s*By|Merchant)[\s:#]+([^\n\r]+)", content_str, re.IGNORECASE)
+        if v_match:
+            candidate_name = v_match.group(1).strip()
+            raw_v_text = v_match.group(0)
+        else:
+            # 2. Look for top header line before document type or section delimiters
+            lines = [l.strip() for l in content_str.splitlines() if l.strip()]
+            for line in lines[:5]:
+                if re.search(r"\b(?:tax\s+invoice|commercial\s+invoice|invoice|bill\s+to|billed\s+to|customer|purchase\s+order)\b", line, re.IGNORECASE):
+                    continue
+                if re.search(r"^(?:plot|unit|shed|no\.|flat|street|road|floor|building|\d+)\b", line, re.IGNORECASE):
+                    continue
+                if len(line) >= 3 and not re.search(r"^\d+$", line):
+                    candidate_name = line
+                    raw_v_text = line
+                    break
+
+        if candidate_name:
+            vendor_name = ExtractedField(
+                value=candidate_name,
+                confidence=None,  # Truthful representation: No fabricated Azure confidence
+                raw_text=raw_v_text,
+                status=FieldStatus.EXTRACTED,
+                confidence_source="ocr_fallback",
+            )
+
     vendor_tax_id = _build_field(tax_id_f, "string", FieldStatus.MISSING)
 
     # Fallback pattern extraction if prebuilt-invoice missed the tax label
     if not vendor_tax_id.value and getattr(result, "content", None):
-        tax_match = re.search(r"(?:Tax\s*ID|EIN|VAT\s*ID)[\s:#]+([A-Za-z0-9-]+)", result.content, re.IGNORECASE)
+        tax_match = re.search(r"(?:Tax\s*ID|EIN|VAT\s*ID|GSTIN)[\s:#]+([A-Za-z0-9-]+)", result.content, re.IGNORECASE)
         if tax_match:
             found_tax = tax_match.group(1).strip()
             vendor_tax_id = ExtractedField(
                 value=found_tax,
-                confidence=0.90,
+                confidence=None,  # Truthful representation: No fabricated Azure confidence
                 raw_text=tax_match.group(0),
                 status=FieldStatus.EXTRACTED,
+                confidence_source="ocr_fallback",
             )
 
     invoice_id = _build_field(inv_id_f, "string", FieldStatus.MISSING)
     invoice_date = _build_field(date_f, "date", FieldStatus.MISSING)
     due_date = _build_field(due_date_f, "date", FieldStatus.NOT_APPLICABLE)
     subtotal = _build_field(subtotal_f, "currency", FieldStatus.NOT_APPLICABLE)
-    tax = _build_field(tax_f, "currency", FieldStatus.NOT_APPLICABLE)
     total = _build_field(total_f, "currency", FieldStatus.MISSING)
     customer_name = _build_field(cust_name_f, "string", FieldStatus.NOT_APPLICABLE)
     line_items = _extract_line_items(items_f, is_receipt=False)
+
+    # Extract tax breakdown, GST components, discounts and adjustments
+    (
+        cgst,
+        sgst,
+        igst,
+        cess,
+        other_tax,
+        tax,
+        tax_breakdown,
+        discounts,
+        additional_charges,
+        rounding_adjustment,
+    ) = _extract_tax_breakdown_and_adjustments(fields, tax_f, getattr(result, "content", None))
 
     invoice_data = InvoiceData(
         vendor_name=vendor_name,
@@ -322,6 +506,14 @@ def analyze_invoice_result(
         invoice_date=invoice_date,
         due_date=due_date,
         subtotal=subtotal,
+        cgst=cgst,
+        sgst=sgst,
+        igst=igst,
+        cess=cess,
+        other_tax=other_tax,
+        discounts=discounts,
+        additional_charges=additional_charges,
+        rounding_adjustment=rounding_adjustment,
         tax=tax,
         total=total,
         line_items=line_items,
@@ -339,8 +531,18 @@ def analyze_invoice_result(
         invoice_date=invoice_date,
         vendor_tax_id=vendor_tax_id,
         subtotal=subtotal,
+        cgst=cgst,
+        sgst=sgst,
+        igst=igst,
+        cess=cess,
+        other_tax=other_tax,
+        discounts=discounts,
+        adjustments=additional_charges,
+        additional_charges=additional_charges,
+        rounding_adjustment=rounding_adjustment,
         tax=tax,
         total=total,
+        tax_breakdown=tax_breakdown,
         line_items=line_items,
         created_at=now_iso,
         raw_azure_json=raw_azure_json,
@@ -408,9 +610,10 @@ def analyze_receipt_result(
             if parsed_d:
                 trans_date = ExtractedField(
                     value=parsed_d,
-                    confidence=0.88,
+                    confidence=None,
                     raw_text=date_match.group(0),
                     status=FieldStatus.EXTRACTED,
+                    confidence_source="ocr_fallback",
                 )
 
     # Fallback for total: on educational fee receipts, Azure prebuilt-receipt often maps total to Subtotal
@@ -420,7 +623,8 @@ def analyze_receipt_result(
                 value=subtotal.value,
                 confidence=subtotal.confidence,
                 raw_text=subtotal.raw_text,
-                status=FieldStatus.EXTRACTED,
+                status=subtotal.status,
+                confidence_source=subtotal.confidence_source,
             )
         elif hasattr(result, "content") and result.content:
             total_match = re.search(
@@ -433,9 +637,10 @@ def analyze_receipt_result(
                 if total_val:
                     total = ExtractedField(
                         value=total_val,
-                        confidence=0.88,
+                        confidence=None,
                         raw_text=total_match.group(0),
                         status=FieldStatus.EXTRACTED,
+                        confidence_source="ocr_fallback",
                     )
 
     # Tax ID is NOT APPLICABLE on standard retail/educational receipts
@@ -460,15 +665,30 @@ def analyze_receipt_result(
         )
         if rec_match:
             receipt_id_val = rec_match.group(1).strip()
-            receipt_conf = 0.88
+            receipt_conf = None
             raw_receipt_text = rec_match.group(0)
 
     invoice_id = ExtractedField(
         value=receipt_id_val,
-        confidence=receipt_conf or (0.90 if receipt_id_val else None),
+        confidence=receipt_conf,
         raw_text=raw_receipt_text or receipt_id_val,
         status=FieldStatus.EXTRACTED if receipt_id_val else FieldStatus.NOT_APPLICABLE,
+        confidence_source="azure" if receipt_conf is not None else ("ocr_fallback" if receipt_id_val else None),
     )
+
+    # Extract tax breakdown, GST components, discounts and adjustments
+    (
+        cgst,
+        sgst,
+        igst,
+        cess,
+        other_tax,
+        tax,
+        tax_breakdown,
+        discounts,
+        additional_charges,
+        rounding_adjustment,
+    ) = _extract_tax_breakdown_and_adjustments(fields, tax_f, getattr(result, "content", None))
 
     receipt_data = ReceiptData(
         merchant_name=merchant_name,
@@ -494,8 +714,18 @@ def analyze_receipt_result(
         invoice_date=trans_date,
         vendor_tax_id=tax_id,
         subtotal=subtotal,
+        cgst=cgst,
+        sgst=sgst,
+        igst=igst,
+        cess=cess,
+        other_tax=other_tax,
+        discounts=discounts,
+        adjustments=additional_charges,
+        additional_charges=additional_charges,
+        rounding_adjustment=rounding_adjustment,
         tax=tax,
         total=total,
+        tax_breakdown=tax_breakdown,
         line_items=line_items,
         created_at=now_iso,
         raw_azure_json=raw_azure_json,

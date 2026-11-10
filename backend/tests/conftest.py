@@ -12,7 +12,11 @@ def default_auth_for_legacy_tests(request):
     override require_current_user to authenticate as SYSTEM_DEFAULT_USER.
     """
     filename = getattr(request.node.fspath, "basename", "") or getattr(request.node, "name", "")
-    if "test_auth_isolation" in str(filename):
+    if (
+        "test_auth_isolation" in str(filename)
+        or "test_production_duplicate_detection" in str(filename)
+        or "test_content_safety" in str(filename)
+    ):
         yield
     else:
         app.dependency_overrides[require_current_user] = lambda: SYSTEM_DEFAULT_USER

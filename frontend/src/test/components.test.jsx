@@ -26,6 +26,29 @@ describe('ConfidenceBadge Component', () => {
     expect(container.querySelector('.bg-\\[\\#FEF7EC\\]')).toBeInTheDocument();
   });
 
+  it('renders exact vendor name low confidence (0.659) as 66% Low', () => {
+    const { container } = render(<ConfidenceBadge confidence={0.659} status="low_confidence" />);
+    expect(screen.getByText(/66% Low/i)).toBeInTheDocument();
+    expect(container.querySelector('.bg-\\[\\#FEF7EC\\]')).toBeInTheDocument();
+  });
+
+  it('renders exact vendor name high confidence (0.885) as 89%', () => {
+    const { container } = render(<ConfidenceBadge confidence={0.885} status="extracted" />);
+    expect(screen.getByText('89%')).toBeInTheDocument();
+    expect(container.querySelector('.bg-\\[\\#EFF3F8\\]')).toBeInTheDocument();
+  });
+
+  it('renders exact receipt merchant name high confidence (0.955) as 96%', () => {
+    const { container } = render(<ConfidenceBadge confidence={0.955} status="extracted" />);
+    expect(screen.getByText('96%')).toBeInTheDocument();
+    expect(container.querySelector('.bg-\\[\\#EBF5F0\\]')).toBeInTheDocument();
+  });
+
+  it('renders fallback badge when field is extracted via fallback without Azure confidence', () => {
+    render(<ConfidenceBadge confidence={null} status="extracted" />);
+    expect(screen.getByText('Fallback')).toBeInTheDocument();
+  });
+
   it('renders Missing badge when value is missing', () => {
     render(<ConfidenceBadge status="missing" />);
     expect(screen.getByText(/missing/i)).toBeInTheDocument();

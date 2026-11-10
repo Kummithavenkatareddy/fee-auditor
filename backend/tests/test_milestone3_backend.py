@@ -18,7 +18,7 @@ from app.services.validator import (
     apply_all_validation_rules,
 )
 from app.services.audit_orchestrator import orchestrator
-from app.db.session import init_db
+from app.db.session import init_db, get_db_connection
 from app.db.repository import (
     save_document,
     get_document_by_id,
@@ -324,33 +324,32 @@ def test_invoice_a3_exact_duplicate_end_to_end_via_api():
     )
     assert res2.status_code == 200
     data2 = res2.json()
-    assert data2["successful_extractions"] == 1
-    doc2 = data2["documents"][0]
-    doc2_id = doc2["id"]
+    assert data2["duplicate_files"] == 1
+    assert len(data2["duplicates"]) == 1
+    dup2 = data2["duplicates"][0]
 
-    # 3. Confirm identified as exact-file duplicate with approved label
-    assert doc2["is_duplicate"] is True
-    assert doc2["is_exact_duplicate"] is True
-    v03_flag = next((f for f in doc2["validation_flags"] if f["rule_id"] == "V03"), None)
-    assert v03_flag is not None
-    assert v03_flag["rule_name"] == "Duplicate Document (Exact File)"
-    assert v03_flag["severity"] == "CRITICAL"
+    # 3. Confirm identified as exact-file duplicate with structured response
+    assert dup2["is_duplicate"] is True
+    assert dup2["is_exact_duplicate"] is True
+    assert dup2["duplicate_type"] == "exact"
+    assert dup2["existing_document_id"] == doc1_id
+    assert "Exact duplicate document detected" in dup2["message"]
 
     # 4. Confirm original document is identifiable
-    assert "tuition_first.pdf" in v03_flag["reason"] or "tuition_first.pdf" in v03_flag["actual_value"]
+    assert dup2["existing_file_name"] == "tuition_first.pdf"
 
-    # 5. Confirm duplicate metrics update in dashboard summary
-    summary_res = client.get("/api/audit/summary")
-    assert summary_res.status_code == 200
-    summary = summary_res.json()
-    assert summary["duplicate_count"] >= 1
+    # 5. Confirm no second document record was created in SQLite
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT count(*) as cnt FROM documents;")
+        total_docs = cursor.fetchone()["cnt"]
+        assert total_docs == 1, "Level 1 duplicate must NOT create a new document record in SQLite"
 
-    # 6. Confirm result is visible through single document API
-    get_res = client.get(f"/api/audit/documents/{doc2_id}")
+    # 6. Confirm original document is unchanged and visible through single document API
+    get_res = client.get(f"/api/audit/documents/{doc1_id}")
     assert get_res.status_code == 200
     retrieved = get_res.json()
-    assert retrieved["is_exact_duplicate"] is True
-    assert any(f["rule_name"] == "Duplicate Document (Exact File)" for f in retrieved["validation_flags"])
+    assert retrieved["id"] == doc1_id
 
 
 def test_vendor_normalization_false_positive_prevention():

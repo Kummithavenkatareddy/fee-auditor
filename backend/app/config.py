@@ -48,6 +48,47 @@ class Settings(BaseSettings):
         description="Maximum upload size per file in megabytes",
     )
 
+    # Azure AI Content Safety configuration
+    CONTENT_SAFETY_ENDPOINT: str = Field(
+        default="", description="Azure AI Content Safety Endpoint"
+    )
+    CONTENT_SAFETY_KEY: str = Field(
+        default="", description="Azure AI Content Safety Key"
+    )
+    CONTENT_SAFETY_ENABLED: bool = Field(
+        default=True, description="Enable or disable Content Safety screening"
+    )
+    CONTENT_SAFETY_TIMEOUT: float = Field(
+        default=10.0, description="Content Safety API call timeout in seconds"
+    )
+    CONTENT_SAFETY_FAILURE_POLICY: str = Field(
+        default="fail_closed",
+        description="Policy when screening fails: 'fail_closed' (reject) or 'fail_open' (allow)",
+    )
+    CONTENT_SAFETY_DEFAULT_THRESHOLD: int = Field(
+        default=4,
+        description="Default severity threshold (0, 2, 4, 6) for rejection (severity >= threshold)",
+    )
+    CONTENT_SAFETY_THRESHOLD_SEXUAL: int = Field(
+        default=4, description="Severity threshold for Sexual category"
+    )
+    CONTENT_SAFETY_THRESHOLD_HATE: int = Field(
+        default=4, description="Severity threshold for Hate category"
+    )
+    CONTENT_SAFETY_THRESHOLD_VIOLENCE: int = Field(
+        default=4, description="Severity threshold for Violence category"
+    )
+    CONTENT_SAFETY_THRESHOLD_SELF_HARM: int = Field(
+        default=4, description="Severity threshold for SelfHarm category"
+    )
+    CONTENT_SAFETY_BLOCKLIST_NAMES: str = Field(
+        default="", description="Comma-separated Azure AI Content Safety blocklist names"
+    )
+    CONTENT_SAFETY_CUSTOM_TERMS: str = Field(
+        default="",
+        description="Comma-separated custom prohibited terms / profanities",
+    )
+
     @property
     def cors_origins_list(self) -> List[str]:
         """Return list of allowed CORS origins stripped of whitespace."""
@@ -64,6 +105,35 @@ class Settings(BaseSettings):
     def canonical_azure_endpoint(self) -> str:
         """Return normalized Azure Document Intelligence endpoint with trailing slashes removed."""
         return self.AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT.strip().rstrip("/")
+
+    @property
+    def canonical_content_safety_endpoint(self) -> str:
+        """Return normalized Azure Content Safety endpoint with trailing slashes removed."""
+        return self.CONTENT_SAFETY_ENDPOINT.strip().rstrip("/")
+
+    @property
+    def blocklist_names_list(self) -> List[str]:
+        """Return list of Azure blocklist names."""
+        if not self.CONTENT_SAFETY_BLOCKLIST_NAMES:
+            return []
+        return [b.strip() for b in self.CONTENT_SAFETY_BLOCKLIST_NAMES.split(",") if b.strip()]
+
+    @property
+    def custom_terms_list(self) -> List[str]:
+        """Return list of custom prohibited terms (lowercased)."""
+        if not self.CONTENT_SAFETY_CUSTOM_TERMS:
+            return []
+        return [t.strip().lower() for t in self.CONTENT_SAFETY_CUSTOM_TERMS.split(",") if t.strip()]
+
+    @property
+    def category_thresholds(self) -> dict:
+        """Return category to severity threshold mapping."""
+        return {
+            "Sexual": self.CONTENT_SAFETY_THRESHOLD_SEXUAL,
+            "Hate": self.CONTENT_SAFETY_THRESHOLD_HATE,
+            "Violence": self.CONTENT_SAFETY_THRESHOLD_VIOLENCE,
+            "SelfHarm": self.CONTENT_SAFETY_THRESHOLD_SELF_HARM,
+        }
 
 
 settings = Settings()

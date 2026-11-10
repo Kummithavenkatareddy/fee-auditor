@@ -4,7 +4,7 @@ from typing import List, Optional, Set, Dict, Any, Tuple
 import re
 
 from app.config import settings
-from app.schemas.common import FieldStatus, format_canonical_decimal
+from app.schemas.common import FieldStatus, format_canonical_decimal, FinancialReconciliation
 from app.schemas.document import DocumentExtraction, ValidationFlag, ExtractedField
 
 
@@ -51,42 +51,66 @@ def _parse_iso_date(date_str: Optional[str]) -> Optional[date]:
 
 
 def validate_v01_total_mismatch(doc: DocumentExtraction) -> Optional[ValidationFlag]:
-    """V01 — Deterministic Financial Validation Engine:
+    """V01 — GST-Aware Deterministic Financial Reconciliation Engine:
 
-    Reconciles line-item amounts, applicable taxes, discounts, and adjustments against stated totals.
-    Uses Python Decimal arithmetic with currency rounding tolerance ($0.02).
+    Reconciles line-item amounts, itemized GST components (CGST, SGST, IGST, Cess),
+    aggregate taxes, invoice-level discounts, additional charges (shipping/handling),
+    and rounding adjustments against stated totals.
+    Uses Python Decimal arithmetic exclusively with currency rounding tolerance (₹0.02).
 
-    Deterministic Semantics:
-    1. Explicit Tax-Exclusive:
-       Line items sum reconciles to Subtotal (Net base). Expected Total = Subtotal - Discounts + Adjustments + Tax.
-    2. Explicit Tax-Inclusive:
-       Line items sum reconciles directly to Total (Gross charges). Subtotal is gross, or net base, or omitted.
-    3. Partial Line-Item Extraction:
-       If any item lacks an amount, emits V01 (HIGH severity) requiring manual review.
-    4. Ambiguous Semantics:
-       If line items neither sum to subtotal nor equal total, emits V01 (HIGH severity) manual review.
-    Never blindly selects whichever equation happens to match.
+    Deterministic Accounting Principles:
+    1. Line-item validation: When complete line items are present, line_items_sum
+       reconciles against Subtotal (net taxable base), NOT grand total.
+    2. Tax-exclusive grand total = Subtotal - Discounts + Charges + GST/Tax + Rounding.
+       Prevents double-counting aggregate TotalTax when itemized GST components exist.
+    3. Tax-inclusive grand total = Subtotal - Discounts + Charges + Rounding.
+       Supports tax-inclusive structures without adding GST twice.
+    4. Ambiguous structures (e.g. missing grand total, missing tax breakdown, partial lines)
+       are flagged for manual audit review (HIGH severity) rather than false CRITICAL mismatches.
+    5. Discrepancies exceeding ₹0.02 trigger a CRITICAL V01 Total Mismatch flag.
+    Always records an authoritative FinancialReconciliation breakdown on doc.reconciliation.
     """
-    total_dec = _to_decimal(doc.total.value)
-    if total_dec is None:
-        return ValidationFlag(
-            rule_id="V01",
-            rule_name="Total Missing / Invalid",
-            severity="CRITICAL",
-            field_name="total",
-            reason="Document total amount is missing or cannot be parsed as a valid numeric decimal amount.",
-            expected_value="Valid numeric monetary total",
-            actual_value=str(doc.total.raw_text or "Missing"),
-        )
-
-    subtotal_dec = _to_decimal(doc.subtotal.value)
-    tax_dec = _to_decimal(doc.tax.value) or Decimal("0.00")
-    discount_dec = _to_decimal(doc.discounts.value) or Decimal("0.00")
-    adjustment_dec = _to_decimal(doc.adjustments.value) or Decimal("0.00")
-
     tolerance = Decimal("0.02")
 
-    # Check for Partial Line-Item Extraction
+    total_dec = _to_decimal(doc.total.value) if doc.total else None
+    subtotal_dec = _to_decimal(doc.subtotal.value) if doc.subtotal else None
+    total_tax_dec = _to_decimal(doc.tax.value) if doc.tax and doc.tax.value is not None else Decimal("0.00")
+
+    cgst_dec = _to_decimal(doc.cgst.value) if doc.cgst and doc.cgst.value is not None else None
+    sgst_dec = _to_decimal(doc.sgst.value) if doc.sgst and doc.sgst.value is not None else None
+    igst_dec = _to_decimal(doc.igst.value) if doc.igst and doc.igst.value is not None else None
+    cess_dec = _to_decimal(doc.cess.value) if doc.cess and doc.cess.value is not None else None
+    other_tax_dec = _to_decimal(doc.other_tax.value) if doc.other_tax and doc.other_tax.value is not None else None
+
+    discounts_dec = _to_decimal(doc.discounts.value) if doc.discounts and doc.discounts.value is not None else Decimal("0.00")
+    additional_charges_dec = (
+        _to_decimal(doc.additional_charges.value) if doc.additional_charges and doc.additional_charges.value is not None
+        else (_to_decimal(doc.adjustments.value) if doc.adjustments and doc.adjustments.value is not None else Decimal("0.00"))
+    )
+    rounding_dec = _to_decimal(doc.rounding_adjustment.value) if doc.rounding_adjustment and doc.rounding_adjustment.value is not None else Decimal("0.00")
+
+    # Step 1: Missing / Unparsable Grand Total -> Manual Review (HIGH)
+    if total_dec is None:
+        doc.reconciliation = FinancialReconciliation(
+            extracted_subtotal=f"{subtotal_dec:.2f}" if subtotal_dec is not None else None,
+            total_tax=f"{total_tax_dec:.2f}" if total_tax_dec else None,
+            extracted_grand_total=None,
+            calculation_type="ambiguous",
+            is_reconciled=False,
+            status="MANUAL_REVIEW_REQUIRED",
+            explanation="Grand total is missing or cannot be parsed as a valid numeric decimal amount. Requires manual audit review.",
+        )
+        return ValidationFlag(
+            rule_id="V01",
+            rule_name="Grand Total Missing / Invalid",
+            severity="HIGH",
+            field_name="total",
+            reason="Document total amount is missing or cannot be parsed as a valid numeric decimal amount. Requires manual audit review.",
+            expected_value="Valid numeric monetary total",
+            actual_value=str(doc.total.raw_text or "Missing") if doc.total else "Missing",
+        )
+
+    # Step 2: Partial Line-Item Extraction Check
     if doc.line_items:
         missing_amount_items = [
             item for item in doc.line_items
@@ -94,6 +118,15 @@ def validate_v01_total_mismatch(doc: DocumentExtraction) -> Optional[ValidationF
         ]
         if missing_amount_items:
             valid_count = len(doc.line_items) - len(missing_amount_items)
+            doc.reconciliation = FinancialReconciliation(
+                extracted_subtotal=f"{subtotal_dec:.2f}" if subtotal_dec is not None else None,
+                total_tax=f"{total_tax_dec:.2f}" if total_tax_dec else None,
+                extracted_grand_total=f"{total_dec:.2f}",
+                calculation_type="ambiguous",
+                is_reconciled=False,
+                status="MANUAL_REVIEW_REQUIRED",
+                explanation=f"Incomplete line-item extraction ({len(missing_amount_items)} item(s) lack valid amount). Requires manual audit review.",
+            )
             return ValidationFlag(
                 rule_id="V01",
                 rule_name="Partial Line-Item Extraction",
@@ -102,7 +135,7 @@ def validate_v01_total_mismatch(doc: DocumentExtraction) -> Optional[ValidationF
                 reason=(
                     f"Document contains {len(doc.line_items)} line items, but {len(missing_amount_items)} "
                     f"item(s) lack a recognized numeric monetary amount. Line-item sum is incomplete and "
-                    f"cannot be reliably reconciled against subtotal or total. Requires manual audit review."
+                    f"cannot be reliably reconciled against subtotal or grand total. Requires manual audit review."
                 ),
                 expected_value=f"Valid monetary amounts for all {len(doc.line_items)} line items",
                 actual_value=f"{valid_count} of {len(doc.line_items)} items have amounts",
@@ -114,128 +147,225 @@ def validate_v01_total_mismatch(doc: DocumentExtraction) -> Optional[ValidationF
         for item in doc.line_items
         if item.amount is not None and _to_decimal(item.amount) is not None
     ]
+    line_items_sum = sum(line_item_amounts, Decimal("0.00")) if line_item_amounts else None
 
-    # Case A: Complete line items are present
-    if line_item_amounts:
-        line_items_sum = sum(line_item_amounts, Decimal("0.00"))
+    # Step 3: Line Items Sum vs Subtotal Check (Requirement 3A & Scenario 10)
+    # When complete line items and subtotal are available, compare line_items_sum against subtotal, NOT grand total!
+    if line_items_sum is not None and subtotal_dec is not None:
+        line_sub_diff = abs(line_items_sum - subtotal_dec)
+        if line_sub_diff > tolerance:
+            doc.reconciliation = FinancialReconciliation(
+                line_items_sum=f"{line_items_sum:.2f}",
+                extracted_subtotal=f"{subtotal_dec:.2f}",
+                cgst=f"{cgst_dec:.2f}" if cgst_dec is not None else None,
+                sgst=f"{sgst_dec:.2f}" if sgst_dec is not None else None,
+                igst=f"{igst_dec:.2f}" if igst_dec is not None else None,
+                cess=f"{cess_dec:.2f}" if cess_dec is not None else None,
+                other_tax=f"{other_tax_dec:.2f}" if other_tax_dec is not None else None,
+                total_tax=f"{total_tax_dec:.2f}" if total_tax_dec else None,
+                discounts=f"{discounts_dec:.2f}" if discounts_dec else None,
+                additional_charges=f"{additional_charges_dec:.2f}" if additional_charges_dec else None,
+                rounding_adjustment=f"{rounding_dec:.2f}" if rounding_dec else None,
+                expected_grand_total=None,
+                extracted_grand_total=f"{total_dec:.2f}",
+                variance=f"{line_sub_diff:.2f}",
+                calculation_type="tax_exclusive",
+                is_reconciled=False,
+                status="MANUAL_REVIEW_REQUIRED",
+                explanation=f"Line items sum (${line_items_sum:.2f} / ₹{line_items_sum:.2f}) differs from stated subtotal (${subtotal_dec:.2f} / ₹{subtotal_dec:.2f}). Requires manual audit review.",
+            )
+            return ValidationFlag(
+                rule_id="V01",
+                rule_name="Line Items Mismatch",
+                severity="HIGH",
+                field_name="subtotal",
+                reason=(
+                    f"Sum of extracted line items (${line_items_sum:.2f} / ₹{line_items_sum:.2f}) does not match "
+                    f"the declared subtotal (${subtotal_dec:.2f} / ₹{subtotal_dec:.2f}). Discrepancy: ${line_sub_diff:.2f} (₹{line_sub_diff:.2f}). Requires manual audit review."
+                ),
+                expected_value=f"₹{subtotal_dec:.2f}",
+                actual_value=f"₹{line_items_sum:.2f}",
+            )
 
-        # 1. Deterministic Tax-Exclusive Check:
-        # Line items sum matches subtotal (net base before discount/adjustment)
-        expected_exclusive_total = (
-            (subtotal_dec if subtotal_dec is not None else line_items_sum)
-            - discount_dec
-            + adjustment_dec
-            + tax_dec
+    # Step 4: Determine Effective Tax (Prevent double-counting aggregate TotalTax if itemized GST exists)
+    itemized_components = [c for c in (cgst_dec, sgst_dec, igst_dec, cess_dec, other_tax_dec) if c is not None]
+    has_itemized_gst = any(c is not None for c in (cgst_dec, sgst_dec, igst_dec, cess_dec))
+
+    if itemized_components:
+        itemized_tax_sum = sum(itemized_components, Decimal("0.00"))
+        if total_tax_dec > Decimal("0.00"):
+            if abs(itemized_tax_sum - total_tax_dec) <= tolerance:
+                effective_tax = total_tax_dec
+            elif total_tax_dec > itemized_tax_sum:
+                # Aggregate tax includes additional unspecified taxes
+                unitemized_diff = total_tax_dec - itemized_tax_sum
+                if other_tax_dec is None:
+                    other_tax_dec = unitemized_diff
+                effective_tax = total_tax_dec
+            else:
+                effective_tax = itemized_tax_sum
+        else:
+            effective_tax = itemized_tax_sum
+    else:
+        effective_tax = total_tax_dec
+
+    # Step 5: Base taxable amount for reconciliation
+    base_amount = subtotal_dec if subtotal_dec is not None else line_items_sum
+
+    if base_amount is None:
+        # Neither subtotal nor line items are available
+        doc.reconciliation = FinancialReconciliation(
+            extracted_subtotal=None,
+            total_tax=f"{total_tax_dec:.2f}" if total_tax_dec else None,
+            extracted_grand_total=f"{total_dec:.2f}",
+            calculation_type="ambiguous",
+            is_reconciled=False,
+            status="MANUAL_REVIEW_REQUIRED",
+            explanation="Missing subtotal and itemized line items. Requires manual audit review.",
         )
-
-        if subtotal_dec is not None and abs(line_items_sum - subtotal_dec) <= tolerance:
-            if abs(expected_exclusive_total - total_dec) <= tolerance:
-                return None  # Unambiguously clean Tax-Exclusive
-        elif subtotal_dec is None and abs(line_items_sum - discount_dec + adjustment_dec + tax_dec - total_dec) <= tolerance:
-            return None  # Unambiguously clean Tax-Exclusive (subtotal omitted)
-
-        # 2. Deterministic Tax-Inclusive Check:
-        # Line items sum directly equals Total (gross items incorporating tax)
-        gross_reconciled = line_items_sum - discount_dec + adjustment_dec
-        if abs(gross_reconciled - total_dec) <= tolerance:
-            # Document evidence of tax-inclusive reporting:
-            # Subtotal is omitted, OR subtotal equals gross total, OR subtotal + tax = total (net base printed)
-            if (
-                subtotal_dec is None
-                or abs(subtotal_dec - total_dec) <= tolerance
-                or abs(subtotal_dec + tax_dec - total_dec) <= tolerance
-            ):
-                return None  # Unambiguously clean Tax-Inclusive
-
-        # 3. Discrepancy Resolution:
-        # If line items sum equals subtotal, net base is verified, but total does not reconcile
-        if subtotal_dec is not None and abs(line_items_sum - subtotal_dec) <= tolerance:
-            diff = abs(total_dec - expected_exclusive_total)
-            discounts_str = f" - Disc ${discount_dec:.2f}" if discount_dec else ""
-            adj_str = f" + Adj ${adjustment_dec:.2f}" if adjustment_dec else ""
-            return ValidationFlag(
-                rule_id="V01",
-                rule_name="Total Mismatch (Tax-Exclusive)",
-                severity="CRITICAL",
-                field_name="total",
-                reason=(
-                    f"Line items represent tax-exclusive charges (Sum: ${line_items_sum:.2f}, Subtotal: ${subtotal_dec:.2f}). "
-                    f"Expected total (${expected_exclusive_total:.2f} = Base ${subtotal_dec:.2f}{discounts_str}{adj_str} + Tax ${tax_dec:.2f}) "
-                    f"does not match stated total (${total_dec:.2f}). Discrepancy: ${diff:.2f}."
-                ),
-                expected_value=f"${expected_exclusive_total:.2f}",
-                actual_value=f"${total_dec:.2f}",
-            )
-
-        # If subtotal was omitted but lines don't reconcile with total
-        if subtotal_dec is None:
-            expected_total = line_items_sum - discount_dec + adjustment_dec + tax_dec
-            diff = abs(total_dec - expected_total)
-            return ValidationFlag(
-                rule_id="V01",
-                rule_name="Total Mismatch",
-                severity="CRITICAL",
-                field_name="total",
-                reason=(
-                    f"Line items sum (${line_items_sum:.2f}) + Tax (${tax_dec:.2f}) = ${expected_total:.2f}, "
-                    f"which does not match stated total (${total_dec:.2f}). Discrepancy: ${diff:.2f}."
-                ),
-                expected_value=f"${expected_total:.2f}",
-                actual_value=f"${total_dec:.2f}",
-            )
-
-        # Otherwise: Line items do not sum to Subtotal AND do not equal Total -> Ambiguous / Reconciliation Failed
-        sub_str = f"${subtotal_dec:.2f}" if subtotal_dec is not None else "None"
         return ValidationFlag(
             rule_id="V01",
-            rule_name="Ambiguous Tax & Total Semantics",
+            rule_name="Ambiguous Financial Structure",
             severity="HIGH",
             field_name="total",
             reason=(
-                f"Financial reconciliation failed: The sum of {len(line_item_amounts)} line items "
-                f"(${line_items_sum:.2f}) does not reconcile with either the extracted subtotal "
-                f"({sub_str}) or stated total (${total_dec:.2f}) with tax (${tax_dec:.2f}). "
-                f"Requires manual audit review."
-            ),
-            expected_value=f"Reconciled line sum (Subtotal: ${subtotal_dec or 'N/A'}, Total: ${total_dec:.2f})",
-            actual_value=f"Line sum: ${line_items_sum:.2f}",
-        )
-
-    # Case B: No line items extracted, but Subtotal and Tax are present
-    if subtotal_dec is not None:
-        expected_total = subtotal_dec - discount_dec + adjustment_dec + tax_dec
-        diff = abs(total_dec - expected_total)
-        if diff > tolerance:
-            return ValidationFlag(
-                rule_id="V01",
-                rule_name="Total Mismatch",
-                severity="CRITICAL",
-                field_name="total",
-                reason=(
-                    f"Subtotal (${subtotal_dec:.2f}) + Tax (${tax_dec:.2f}) = ${expected_total:.2f}, "
-                    f"which does not match stated total (${total_dec:.2f}). Discrepancy: ${diff:.2f}."
-                ),
-                expected_value=f"${expected_total:.2f}",
-                actual_value=f"${total_dec:.2f}",
-            )
-        return None
-
-    # Case C: Neither line items nor subtotal available — Ambiguous calculation
-    if tax_dec > Decimal("0.00"):
-        return ValidationFlag(
-            rule_id="V01",
-            rule_name="Ambiguous Tax & Total Semantics",
-            severity="HIGH",
-            field_name="total",
-            reason=(
-                f"Document states tax of ${tax_dec:.2f} and total of ${total_dec:.2f}, but lacks "
-                f"subtotal and itemized lines to verify if tax was added or included. Requires manual audit review."
+                f"Document states grand total of ₹{total_dec:.2f} with tax ₹{effective_tax:.2f}, "
+                f"but lacks subtotal and itemized lines to establish reconciliation. Requires manual audit review."
             ),
             expected_value="Subtotal or line-item breakdown",
-            actual_value=f"Total: ${total_dec:.2f}, Tax: ${tax_dec:.2f}",
+            actual_value=f"Total: ₹{total_dec:.2f}, Tax: ₹{effective_tax:.2f}",
         )
 
-    return None
+    # Step 6: Evaluate Tax-Exclusive and Tax-Inclusive Reconciliation Formulas
+    # Formula 1: Tax-Exclusive
+    # Expected Grand Total = Subtotal - Discounts + Additional Charges + Effective Tax + Rounding
+    expected_exclusive = base_amount - discounts_dec + additional_charges_dec + effective_tax + rounding_dec
+    variance_exclusive = abs(total_dec - expected_exclusive)
+
+    # Formula 2: Tax-Inclusive
+    # Expected Grand Total = Subtotal - Discounts + Additional Charges + Rounding
+    expected_inclusive = base_amount - discounts_dec + additional_charges_dec + rounding_dec
+    variance_inclusive = abs(total_dec - expected_inclusive)
+
+    # Case A: Tax-Exclusive Reconciled!
+    if variance_exclusive <= tolerance:
+        doc.reconciliation = FinancialReconciliation(
+            line_items_sum=f"{line_items_sum:.2f}" if line_items_sum is not None else None,
+            extracted_subtotal=f"{subtotal_dec:.2f}" if subtotal_dec is not None else None,
+            cgst=f"{cgst_dec:.2f}" if cgst_dec is not None else None,
+            sgst=f"{sgst_dec:.2f}" if sgst_dec is not None else None,
+            igst=f"{igst_dec:.2f}" if igst_dec is not None else None,
+            cess=f"{cess_dec:.2f}" if cess_dec is not None else None,
+            other_tax=f"{other_tax_dec:.2f}" if other_tax_dec is not None else None,
+            total_tax=f"{total_tax_dec:.2f}" if total_tax_dec > Decimal("0.00") or has_itemized_gst else None,
+            effective_tax=f"{effective_tax:.2f}" if effective_tax > Decimal("0.00") else None,
+            discounts=f"{discounts_dec:.2f}" if discounts_dec > Decimal("0.00") else None,
+            additional_charges=f"{additional_charges_dec:.2f}" if additional_charges_dec > Decimal("0.00") else None,
+            rounding_adjustment=f"{rounding_dec:.2f}" if rounding_dec != Decimal("0.00") else None,
+            expected_grand_total=f"{expected_exclusive:.2f}",
+            extracted_grand_total=f"{total_dec:.2f}",
+            variance=f"{variance_exclusive:.2f}",
+            calculation_type="tax_exclusive",
+            is_reconciled=True,
+            status="RECONCILED",
+            explanation="Tax-exclusive financial reconciliation verified within ₹0.02 tolerance.",
+        )
+        return None
+
+    # Case B: Tax-Inclusive Reconciled!
+    if variance_inclusive <= tolerance:
+        doc.reconciliation = FinancialReconciliation(
+            line_items_sum=f"{line_items_sum:.2f}" if line_items_sum is not None else None,
+            extracted_subtotal=f"{subtotal_dec:.2f}" if subtotal_dec is not None else None,
+            cgst=f"{cgst_dec:.2f}" if cgst_dec is not None else None,
+            sgst=f"{sgst_dec:.2f}" if sgst_dec is not None else None,
+            igst=f"{igst_dec:.2f}" if igst_dec is not None else None,
+            cess=f"{cess_dec:.2f}" if cess_dec is not None else None,
+            other_tax=f"{other_tax_dec:.2f}" if other_tax_dec is not None else None,
+            total_tax=f"{total_tax_dec:.2f}" if total_tax_dec > Decimal("0.00") or has_itemized_gst else None,
+            effective_tax=f"{effective_tax:.2f}" if effective_tax > Decimal("0.00") else None,
+            discounts=f"{discounts_dec:.2f}" if discounts_dec > Decimal("0.00") else None,
+            additional_charges=f"{additional_charges_dec:.2f}" if additional_charges_dec > Decimal("0.00") else None,
+            rounding_adjustment=f"{rounding_dec:.2f}" if rounding_dec != Decimal("0.00") else None,
+            expected_grand_total=f"{expected_inclusive:.2f}",
+            extracted_grand_total=f"{total_dec:.2f}",
+            variance=f"{variance_inclusive:.2f}",
+            calculation_type="tax_inclusive",
+            is_reconciled=True,
+            status="RECONCILED",
+            explanation="Tax-inclusive financial reconciliation verified without double-counting tax.",
+        )
+        return None
+
+    # Case C: Missing Tax Information -> Manual Review (HIGH severity, Scenario 11)
+    # When tax was not provided / missing, and subtotal doesn't equal total
+    if effective_tax == Decimal("0.00") and (doc.tax.value is None or doc.tax.status == FieldStatus.MISSING):
+        doc.reconciliation = FinancialReconciliation(
+            line_items_sum=f"{line_items_sum:.2f}" if line_items_sum is not None else None,
+            extracted_subtotal=f"{subtotal_dec:.2f}" if subtotal_dec is not None else None,
+            total_tax=None,
+            expected_grand_total=f"{expected_exclusive:.2f}",
+            extracted_grand_total=f"{total_dec:.2f}",
+            variance=f"{variance_exclusive:.2f}",
+            calculation_type="ambiguous",
+            is_reconciled=False,
+            status="MANUAL_REVIEW_REQUIRED",
+            explanation="Tax information is missing and reconciliation cannot be established without guessing. Requires manual audit review.",
+        )
+        return ValidationFlag(
+            rule_id="V01",
+            rule_name="Missing Tax Information",
+            severity="HIGH",
+            field_name="tax",
+            reason=(
+                f"Subtotal (₹{base_amount:.2f}) does not reconcile with stated grand total (₹{total_dec:.2f}), "
+                f"and applicable tax breakdown is missing. Reconciliation cannot be established without guessing. Requires manual audit review."
+            ),
+            expected_value=f"Applicable tax breakdown covering discrepancy of ₹{abs(total_dec - base_amount):.2f}",
+            actual_value="Missing",
+        )
+
+    # Case D: Genuine Financial Mismatch (CRITICAL severity, Scenario 4 & 15)
+    doc.reconciliation = FinancialReconciliation(
+        line_items_sum=f"{line_items_sum:.2f}" if line_items_sum is not None else None,
+        extracted_subtotal=f"{subtotal_dec:.2f}" if subtotal_dec is not None else None,
+        cgst=f"{cgst_dec:.2f}" if cgst_dec is not None else None,
+        sgst=f"{sgst_dec:.2f}" if sgst_dec is not None else None,
+        igst=f"{igst_dec:.2f}" if igst_dec is not None else None,
+        cess=f"{cess_dec:.2f}" if cess_dec is not None else None,
+        other_tax=f"{other_tax_dec:.2f}" if other_tax_dec is not None else None,
+        total_tax=f"{total_tax_dec:.2f}" if total_tax_dec > Decimal("0.00") or has_itemized_gst else None,
+        effective_tax=f"{effective_tax:.2f}" if effective_tax > Decimal("0.00") else None,
+        discounts=f"{discounts_dec:.2f}" if discounts_dec > Decimal("0.00") else None,
+        additional_charges=f"{additional_charges_dec:.2f}" if additional_charges_dec > Decimal("0.00") else None,
+        rounding_adjustment=f"{rounding_dec:.2f}" if rounding_dec != Decimal("0.00") else None,
+        expected_grand_total=f"{expected_exclusive:.2f}",
+        extracted_grand_total=f"{total_dec:.2f}",
+        variance=f"{variance_exclusive:.2f}",
+        calculation_type="tax_exclusive",
+        is_reconciled=False,
+        status="MISMATCH",
+        explanation=f"Expected total of ₹{expected_exclusive:.2f} does not match stated total of ₹{total_dec:.2f}. Discrepancy: ₹{variance_exclusive:.2f}.",
+    )
+
+    discounts_str = f" - Disc ₹{discounts_dec:.2f}" if discounts_dec else ""
+    charges_str = f" + Charges ₹{additional_charges_dec:.2f}" if additional_charges_dec else ""
+    tax_str = f" + Tax ₹{effective_tax:.2f}" if effective_tax else ""
+    round_str = f" + Rounding ₹{rounding_dec:.2f}" if rounding_dec else ""
+
+    return ValidationFlag(
+        rule_id="V01",
+        rule_name="Total Mismatch",
+        severity="CRITICAL",
+        field_name="total",
+        reason=(
+            f"Expected total (${expected_exclusive:.2f} / ₹{expected_exclusive:.2f} = Base ${base_amount:.2f} / ₹{base_amount:.2f}"
+            f"{discounts_str}{charges_str}{tax_str}{round_str}) "
+            f"does not match stated total (${total_dec:.2f} / ₹{total_dec:.2f}). Discrepancy: ${variance_exclusive:.2f} (₹{variance_exclusive:.2f})."
+        ),
+        expected_value=f"${expected_exclusive:.2f}",
+        actual_value=f"${total_dec:.2f}",
+    )
 
 
 def validate_v02_missing_tax_number(doc: DocumentExtraction) -> Optional[ValidationFlag]:
@@ -311,22 +441,39 @@ def validate_v03_duplicate_invoice(
 
             b_key = normalize_business_key(v_val, inv_val)
             if b_key and b_key in existing_business_keys:
-                prior_file = existing_business_keys[b_key]
-                doc.is_business_duplicate = True
-                doc.is_duplicate = True
-                return ValidationFlag(
-                    rule_id="V03",
-                    rule_name="Duplicate Invoice (Business Identifier)",
-                    severity="CRITICAL",
-                    field_name="invoice_id",
-                    reason=(
-                        f"Business duplicate detected: Normalized vendor '{b_key[0]}' and invoice number "
-                        f"'{b_key[1]}' match a previously registered document ('{prior_file}'). "
-                        f"Potential duplicate billing claim across distinct file uploads."
-                    ),
-                    expected_value="Unique vendor invoice identifier",
-                    actual_value=f"Duplicate invoice ID '{b_key[1]}' for vendor '{b_key[0]}'",
-                )
+                entry = existing_business_keys[b_key]
+                if isinstance(entry, dict):
+                    prior_file = entry.get("file_name", "prior upload")
+                    prior_id = entry.get("id")
+                    prior_type = entry.get("document_type", "invoice")
+                else:
+                    prior_file = str(entry)
+                    prior_id = None
+                    prior_type = "invoice"
+
+                # Check document type matches
+                if prior_type == "invoice":
+                    doc.is_business_duplicate = True
+                    doc.is_duplicate = True
+                    if prior_id:
+                        doc.matched_document_id = prior_id
+                    doc.matched_document_name = prior_file
+
+                    id_ref = f" (Document ID: {prior_id})" if prior_id else ""
+                    return ValidationFlag(
+                        rule_id="V03",
+                        rule_name="Duplicate Invoice (Business Identifier)",
+                        severity="CRITICAL",
+                        field_name="invoice_id",
+                        matched_document_id=prior_id,
+                        reason=(
+                            f"Business duplicate detected: Normalized vendor '{b_key[0]}' and invoice number "
+                            f"'{b_key[1]}' match a previously registered document ('{prior_file}'{id_ref}). "
+                            f"Potential duplicate billing claim across distinct file uploads."
+                        ),
+                        expected_value="Unique vendor invoice identifier",
+                        actual_value=f"Duplicate invoice ID '{b_key[1]}' for vendor '{b_key[0]}'",
+                    )
 
     # 3. Receipt Heuristic (Merchant, Date, Total) — Non-definitive warning only
     if doc.document_type == "receipt" and existing_receipt_keys:
@@ -334,22 +481,38 @@ def validate_v03_duplicate_invoice(
 
         r_key = normalize_receipt_key(doc.vendor_name.value, doc.invoice_date.value, doc.total.value)
         if r_key and r_key in existing_receipt_keys:
-            prior_file = existing_receipt_keys[r_key]
-            # Crucial: Treat as heuristic, not definitive proof. Do NOT set is_duplicate = True
-            return ValidationFlag(
-                rule_id="V03",
-                rule_name="Potential Duplicate Receipt (Heuristic Match)",
-                severity="WARNING",
-                field_name="total",
-                reason=(
-                    f"Heuristic receipt match: Merchant '{r_key[0]}', date '{r_key[1]}', and total "
-                    f"'${r_key[2]}' match previously uploaded document '{prior_file}'. "
-                    f"This indicates a possible duplicate submission or legitimate identical recurring charge; "
-                    f"manual review is recommended."
-                ),
-                expected_value="Unique transaction",
-                actual_value=f"Matches '{prior_file}' (Merchant: {r_key[0]}, Date: {r_key[1]}, Total: ${r_key[2]})",
-            )
+            entry = existing_receipt_keys[r_key]
+            if isinstance(entry, dict):
+                prior_file = entry.get("file_name", "prior upload")
+                prior_id = entry.get("id")
+                prior_type = entry.get("document_type", "receipt")
+            else:
+                prior_file = str(entry)
+                prior_id = None
+                prior_type = "receipt"
+
+            if prior_type == "receipt":
+                if prior_id:
+                    doc.matched_document_id = prior_id
+                doc.matched_document_name = prior_file
+
+                id_ref = f" (Document ID: {prior_id})" if prior_id else ""
+                # Crucial: Treat as heuristic, not definitive proof. Do NOT set is_duplicate = True
+                return ValidationFlag(
+                    rule_id="V03",
+                    rule_name="Potential Duplicate Receipt (Heuristic Match)",
+                    severity="WARNING",
+                    field_name="total",
+                    matched_document_id=prior_id,
+                    reason=(
+                        f"Heuristic receipt match: Merchant '{r_key[0]}', date '{r_key[1]}', and total "
+                        f"'₹{r_key[2]}' match previously uploaded document '{prior_file}'{id_ref}. "
+                        f"This indicates a possible duplicate submission or legitimate identical recurring charge; "
+                        f"manual review is recommended."
+                    ),
+                    expected_value="Unique transaction",
+                    actual_value=f"Matches '{prior_file}' (Merchant: {r_key[0]}, Date: {r_key[1]}, Total: ₹{r_key[2]})",
+                )
 
     return None
 

@@ -329,8 +329,8 @@ def test_unauthenticated_requests_strictly_rejected_401():
     res2 = client.get("/api/audit/summary")
     assert res2.status_code == 401
 
-    # 3. /api/audit/load-samples
-    res3 = client.post("/api/audit/load-samples")
+    # 3. /api/audit/documents/bulk-delete
+    res3 = client.post("/api/audit/documents/bulk-delete", json={"document_ids": []})
     assert res3.status_code == 401
 
     # 4. Bad/expired token

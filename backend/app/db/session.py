@@ -138,6 +138,25 @@ def init_db():
                 vendor_tax_id_conf REAL,
                 subtotal TEXT,
                 subtotal_conf REAL,
+                cgst TEXT,
+                cgst_conf REAL,
+                sgst TEXT,
+                sgst_conf REAL,
+                igst TEXT,
+                igst_conf REAL,
+                cess TEXT,
+                cess_conf REAL,
+                other_tax TEXT,
+                other_tax_conf REAL,
+                discounts TEXT,
+                discounts_conf REAL,
+                additional_charges TEXT,
+                additional_charges_conf REAL,
+                rounding_adjustment TEXT,
+                rounding_adjustment_conf REAL,
+                reconciliation_json TEXT,
+                content_safety_status TEXT DEFAULT 'passed',
+                content_safety_details TEXT,
                 tax TEXT,
                 tax_conf REAL,
                 total TEXT,
@@ -155,6 +174,8 @@ def init_db():
                 highest_severity TEXT,
                 raw_azure_json TEXT,
                 normalized_json TEXT,
+                matched_document_id TEXT,
+                matched_document_name TEXT,
                 FOREIGN KEY (owner_user_id) REFERENCES users (id) ON DELETE CASCADE
             );
             """
@@ -277,6 +298,26 @@ def init_db():
             """
         )
 
+        # 10. Content Safety Events table (audit trail for screened documents)
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS content_safety_events (
+                id TEXT PRIMARY KEY,
+                owner_user_id TEXT NOT NULL,
+                file_name TEXT NOT NULL,
+                sha256_hash TEXT NOT NULL,
+                status TEXT NOT NULL,
+                detected_category TEXT,
+                severity INTEGER DEFAULT 0,
+                action_taken TEXT NOT NULL,
+                rejection_reason TEXT NOT NULL,
+                details TEXT,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY (owner_user_id) REFERENCES users (id) ON DELETE CASCADE
+            );
+            """
+        )
+
         # Safe Column Migrations for Users Table
         cursor.execute("PRAGMA table_info(users);")
         user_cols = {row[1] for row in cursor.fetchall()}
@@ -324,6 +365,48 @@ def init_db():
             cursor.execute("ALTER TABLE documents ADD COLUMN normalized_invoice_id TEXT;")
         if "highest_severity" not in doc_cols:
             cursor.execute("ALTER TABLE documents ADD COLUMN highest_severity TEXT;")
+        if "matched_document_id" not in doc_cols:
+            cursor.execute("ALTER TABLE documents ADD COLUMN matched_document_id TEXT;")
+        if "matched_document_name" not in doc_cols:
+            cursor.execute("ALTER TABLE documents ADD COLUMN matched_document_name TEXT;")
+        if "cgst" not in doc_cols:
+            cursor.execute("ALTER TABLE documents ADD COLUMN cgst TEXT;")
+        if "cgst_conf" not in doc_cols:
+            cursor.execute("ALTER TABLE documents ADD COLUMN cgst_conf REAL;")
+        if "sgst" not in doc_cols:
+            cursor.execute("ALTER TABLE documents ADD COLUMN sgst TEXT;")
+        if "sgst_conf" not in doc_cols:
+            cursor.execute("ALTER TABLE documents ADD COLUMN sgst_conf REAL;")
+        if "igst" not in doc_cols:
+            cursor.execute("ALTER TABLE documents ADD COLUMN igst TEXT;")
+        if "igst_conf" not in doc_cols:
+            cursor.execute("ALTER TABLE documents ADD COLUMN igst_conf REAL;")
+        if "cess" not in doc_cols:
+            cursor.execute("ALTER TABLE documents ADD COLUMN cess TEXT;")
+        if "cess_conf" not in doc_cols:
+            cursor.execute("ALTER TABLE documents ADD COLUMN cess_conf REAL;")
+        if "other_tax" not in doc_cols:
+            cursor.execute("ALTER TABLE documents ADD COLUMN other_tax TEXT;")
+        if "other_tax_conf" not in doc_cols:
+            cursor.execute("ALTER TABLE documents ADD COLUMN other_tax_conf REAL;")
+        if "discounts" not in doc_cols:
+            cursor.execute("ALTER TABLE documents ADD COLUMN discounts TEXT;")
+        if "discounts_conf" not in doc_cols:
+            cursor.execute("ALTER TABLE documents ADD COLUMN discounts_conf REAL;")
+        if "additional_charges" not in doc_cols:
+            cursor.execute("ALTER TABLE documents ADD COLUMN additional_charges TEXT;")
+        if "additional_charges_conf" not in doc_cols:
+            cursor.execute("ALTER TABLE documents ADD COLUMN additional_charges_conf REAL;")
+        if "rounding_adjustment" not in doc_cols:
+            cursor.execute("ALTER TABLE documents ADD COLUMN rounding_adjustment TEXT;")
+        if "rounding_adjustment_conf" not in doc_cols:
+            cursor.execute("ALTER TABLE documents ADD COLUMN rounding_adjustment_conf REAL;")
+        if "reconciliation_json" not in doc_cols:
+            cursor.execute("ALTER TABLE documents ADD COLUMN reconciliation_json TEXT;")
+        if "content_safety_status" not in doc_cols:
+            cursor.execute("ALTER TABLE documents ADD COLUMN content_safety_status TEXT DEFAULT 'passed';")
+        if "content_safety_details" not in doc_cols:
+            cursor.execute("ALTER TABLE documents ADD COLUMN content_safety_details TEXT;")
 
         cursor.execute("PRAGMA table_info(audit_flags);")
         existing_flag_cols = {row[1] for row in cursor.fetchall()}
@@ -338,6 +421,7 @@ def init_db():
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_user_sessions_user ON user_sessions (user_id);")
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_doc_owner ON documents (owner_user_id);")
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_doc_hash ON documents (sha256_hash);")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_doc_owner_hash ON documents (owner_user_id, sha256_hash);")
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_doc_business ON documents (vendor_name, invoice_id);")
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_doc_status ON documents (audit_status);")
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_extractions_doc ON extractions (document_id);")
@@ -348,3 +432,6 @@ def init_db():
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_items_doc ON line_items (document_id);")
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_legacy_flags_doc ON audit_flags (document_id);")
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_legacy_session_token ON sessions (token);")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_cs_owner ON content_safety_events (owner_user_id);")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_cs_hash ON content_safety_events (sha256_hash);")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_cs_status ON content_safety_events (status);")

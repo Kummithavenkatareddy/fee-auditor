@@ -1,8 +1,43 @@
 from typing import Optional, List, Any, Dict
 from pydantic import BaseModel, Field
-from app.schemas.common import FieldStatus, ExtractedField, ExtractedLineItem, ValidationFlag
+from app.schemas.common import (
+    FieldStatus,
+    ExtractedField,
+    ExtractedLineItem,
+    ValidationFlag,
+    TaxBreakdown,
+    FinancialReconciliation,
+)
 from app.schemas.invoice import InvoiceData
 from app.schemas.receipt import ReceiptData
+
+
+class ContentSafetyCategoryResult(BaseModel):
+    category: str
+    severity: int = 0
+    threshold: int = 4
+    flagged: bool = False
+
+
+class ContentSafetyResult(BaseModel):
+    is_safe: bool = True
+    status: str = "passed"  # "passed", "rejected", "failed", "skipped"
+    highest_severity: int = 0
+    categories: List[ContentSafetyCategoryResult] = Field(default_factory=list)
+    matched_custom_terms: List[str] = Field(default_factory=list)
+    matched_blocklists: List[str] = Field(default_factory=list)
+    action_taken: str = "accepted"  # "accepted", "rejected", "error"
+    rejection_reason: Optional[str] = None
+    details: Optional[str] = None
+
+
+class ContentScreeningRejection(BaseModel):
+    file_name: str
+    status: str = "rejected"  # "rejected" or "failed"
+    detected_category: Optional[str] = None
+    severity: int = 0
+    reason: str
+    error_message: Optional[str] = None
 
 
 class DocumentExtraction(BaseModel):
@@ -17,6 +52,10 @@ class DocumentExtraction(BaseModel):
     invoice_data: Optional[InvoiceData] = None
     receipt_data: Optional[ReceiptData] = None
 
+    # Content Safety Screening metadata
+    content_safety: Optional[ContentSafetyResult] = None
+    content_safety_status: Optional[str] = "passed"
+
     # Common normalized view for UI and table rendering
     vendor_name: ExtractedField = Field(default_factory=ExtractedField)
     normalized_vendor_name: Optional[str] = None
@@ -25,10 +64,19 @@ class DocumentExtraction(BaseModel):
     invoice_date: ExtractedField = Field(default_factory=ExtractedField)
     vendor_tax_id: ExtractedField = Field(default_factory=ExtractedField)
     subtotal: ExtractedField = Field(default_factory=ExtractedField)
+    cgst: ExtractedField = Field(default_factory=ExtractedField)
+    sgst: ExtractedField = Field(default_factory=ExtractedField)
+    igst: ExtractedField = Field(default_factory=ExtractedField)
+    cess: ExtractedField = Field(default_factory=ExtractedField)
+    other_tax: ExtractedField = Field(default_factory=ExtractedField)
     discounts: ExtractedField = Field(default_factory=ExtractedField)
     adjustments: ExtractedField = Field(default_factory=ExtractedField)
+    additional_charges: ExtractedField = Field(default_factory=ExtractedField)
+    rounding_adjustment: ExtractedField = Field(default_factory=ExtractedField)
     tax: ExtractedField = Field(default_factory=ExtractedField)
     total: ExtractedField = Field(default_factory=ExtractedField)
+    tax_breakdown: Optional[TaxBreakdown] = None
+    reconciliation: Optional[FinancialReconciliation] = None
     line_items: List[ExtractedLineItem] = Field(default_factory=list)
 
     # Validation flags and compliance status
@@ -51,6 +99,8 @@ class DocumentExtraction(BaseModel):
     sha256_hash: Optional[str] = None
     uploaded_at: Optional[str] = None
     processing_status: Optional[str] = "completed"
+    matched_document_id: Optional[str] = None
+    matched_document_name: Optional[str] = None
 
     # Audit history & traceability
     audit_history: List[Dict[str, Any]] = Field(default_factory=list)
@@ -58,12 +108,31 @@ class DocumentExtraction(BaseModel):
     normalized_json: Optional[str] = None
 
 
+class DuplicateResponse(BaseModel):
+    existing_document_id: str
+    filename: str
+    existing_file_name: Optional[str] = None
+    document_type: str = "invoice"
+    audit_status: str = "clean"
+    upload_date: Optional[str] = None
+    is_duplicate: bool = True
+    is_exact_duplicate: bool = True
+    duplicate_type: str = "exact"  # "exact" or "logical"
+    message: str = "Exact file duplicate detected. Re-processing skipped to preserve original audit record."
+    document_url: Optional[str] = None
+
+
 class BatchUploadResponse(BaseModel):
     batch_id: str
     total_files: int
     successful_extractions: int
+    duplicate_files: int = 0
+    rejected_by_content_safety: int = 0
+    screening_failed: int = 0
     failed_extractions: int
-    documents: List[DocumentExtraction]
+    documents: List[DocumentExtraction] = Field(default_factory=list)
+    duplicates: List[DuplicateResponse] = Field(default_factory=list)
+    rejected_documents: List[ContentScreeningRejection] = Field(default_factory=list)
     errors: List[dict] = Field(default_factory=list)
 
 

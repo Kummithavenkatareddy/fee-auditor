@@ -23,6 +23,7 @@ from app.db.repository import (
     delete_document,
     bulk_delete_documents,
     reset_user_data,
+    get_content_safety_events,
 )
 from app.dependencies.auth import require_current_user
 
@@ -134,25 +135,6 @@ async def batch_upload_documents(
     return result
 
 
-@router.post("/load-samples", response_model=BatchUploadResponse)
-def load_synthetic_samples(current_user: dict = Depends(require_current_user)):
-    """Load and process all 6 synthetic test documents directly into user's document library."""
-    samples_dir = Path(__file__).resolve().parent.parent.parent / "synthetic_data" / "samples"
-    if not samples_dir.exists():
-        raise HTTPException(status_code=404, detail="Synthetic samples directory not found.")
-
-    pdf_files = sorted(list(samples_dir.glob("*.pdf")))
-    if not pdf_files:
-        raise HTTPException(status_code=404, detail="No synthetic PDF samples found.")
-
-    files_data: List[Tuple[str, bytes]] = []
-    for f in pdf_files:
-        files_data.append((f.name, f.read_bytes()))
-
-    user_id = current_user["id"]
-    return orchestrator.process_batch(files_data=files_data, owner_user_id=user_id)
-
-
 @router.post("/documents/{document_id}/revalidate", response_model=DocumentExtraction)
 def revalidate_document_endpoint(
     document_id: str,
@@ -207,14 +189,6 @@ def get_document_file(
         result = storage_service.get_file(user_id=doc.owner_user_id or user_id, storage_key=doc.storage_key)
         if result:
             file_bytes, content_type = result
-
-    # Fallback to synthetic samples directory if file was not ingested into storage directory
-    if not file_bytes:
-        samples_dir = Path(__file__).resolve().parent.parent.parent / "synthetic_data" / "samples"
-        sample_path = samples_dir / doc.file_name
-        if sample_path.is_file():
-            file_bytes = sample_path.read_bytes()
-            content_type = "application/pdf"
 
     if not file_bytes:
         raise HTTPException(status_code=404, detail="Original document file binary not found in storage.")
@@ -305,3 +279,11 @@ def reset_database(current_user: dict = Depends(require_current_user)):
     else:
         delete_all_documents()
     return {"message": "Database reset completed successfully."}
+
+
+@router.get("/content-safety-events")
+def list_content_safety_events(current_user: dict = Depends(require_current_user)):
+    """Retrieve Content Safety screening and rejection events for the current user."""
+    user_id = current_user["id"]
+    return get_content_safety_events(owner_user_id=user_id)
+

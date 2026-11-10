@@ -100,7 +100,7 @@ export default function DocumentsTable({ documents, onSelectDoc }) {
                     <td>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                         <span style={{ fontWeight: 500 }}>{doc.vendor_name?.value || '—'}</span>
-                        <ConfidenceBadge confidence={doc.vendor_name?.confidence} />
+                        <ConfidenceBadge confidence={doc.vendor_name?.confidence} status={doc.vendor_name?.status} />
                       </div>
                     </td>
 
@@ -119,7 +119,7 @@ export default function DocumentsTable({ documents, onSelectDoc }) {
                       <div style={{ fontWeight: 700, color: '#1e293b' }}>
                         {doc.total?.value != null ? `₹${Number(doc.total.value).toLocaleString('en-IN', { minimumFractionDigits: 2 })}` : '—'}
                       </div>
-                      <ConfidenceBadge confidence={doc.total?.confidence} />
+                      <ConfidenceBadge confidence={doc.total?.confidence} status={doc.total?.status} />
                     </td>
 
                     <td>

@@ -7,7 +7,6 @@ export default function BatchUploader({ onBatchComplete }) {
   const [modelType, setModelType] = useState('auto');
   const [isDragging, setIsDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [loadingSamples, setLoadingSamples] = useState(false);
   const [uploadStatus, setUploadStatus] = useState(null);
   const fileInputRef = useRef(null);
 
@@ -63,31 +62,6 @@ export default function BatchUploader({ onBatchComplete }) {
     }
   };
 
-  const handleLoadSyntheticSamples = async () => {
-    setLoadingSamples(true);
-    setUploadStatus(null);
-    try {
-      const res = await fetch('/api/audit/load-samples', { method: 'POST' });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.detail || 'Failed to load synthetic samples');
-      }
-      const data = await res.json();
-      setUploadStatus({
-        type: 'success',
-        message: `Loaded & audited all 6 synthetic invoices (${data.successful_extractions} processed, ${data.failed_extractions} errors).`,
-      });
-      if (onBatchComplete) onBatchComplete();
-    } catch (err) {
-      setUploadStatus({
-        type: 'error',
-        message: err.message || 'Could not load synthetic samples.',
-      });
-    } finally {
-      setLoadingSamples(false);
-    }
-  };
-
   return (
     <div className="upload-card">
       <div className="upload-header">
@@ -118,18 +92,6 @@ export default function BatchUploader({ onBatchComplete }) {
             <option value="prebuilt-invoice">Force: prebuilt-invoice</option>
             <option value="prebuilt-receipt">Force: prebuilt-receipt</option>
           </select>
-
-          <button
-            type="button"
-            className="btn btn-secondary btn-sm"
-            onClick={handleLoadSyntheticSamples}
-            disabled={uploading || loadingSamples}
-            title="Automatically run the 6 generated synthetic test documents through Azure"
-            style={{ background: '#f8fafc', borderColor: '#94a3b8' }}
-          >
-            {loadingSamples ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} color="#7c3aed" />}
-            Run 6 Synthetic Samples
-          </button>
         </div>
       </div>
 

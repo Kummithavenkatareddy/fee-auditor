@@ -9,10 +9,18 @@ export default function ConfidenceBadge({ confidence, status }) {
     );
   }
 
-  if (status === 'missing' || confidence === null || confidence === undefined) {
+  if (status === 'missing' || (status === undefined && (confidence === null || confidence === undefined))) {
     return (
       <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-[#FBEAEA] text-[#B54747] font-mono">
         Missing
+      </span>
+    );
+  }
+
+  if (confidence === null || confidence === undefined) {
+    return (
+      <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-surface-container text-on-surface-variant font-mono" title="Derived via text fallback (no Azure confidence)">
+        Fallback
       </span>
     );
   }

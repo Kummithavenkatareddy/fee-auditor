@@ -167,12 +167,14 @@ def test_a3_duplicate_upload_and_low_confidence():
         )
     assert res2.status_code == 200
     data2 = res2.json()
-    doc2 = data2["documents"][0]
-    assert doc2["is_duplicate"] is True
-    assert doc2["is_exact_duplicate"] is True
-    v03_flag = next((flag for flag in doc2["validation_flags"] if flag["rule_id"] == "V03"), None)
-    assert v03_flag is not None
-    assert "Exact duplicate document detected" in v03_flag["reason"]
+    assert data2["duplicate_files"] == 1
+    assert len(data2["duplicates"]) == 1
+    dup2 = data2["duplicates"][0]
+    assert dup2["is_duplicate"] is True
+    assert dup2["is_exact_duplicate"] is True
+    assert dup2["duplicate_type"] == "exact"
+    assert dup2["existing_document_id"] == doc1["id"]
+    assert "Exact duplicate document detected" in dup2["message"]
 
     # Test Low-Confidence Flagging (V05)
     doc_low_conf = DocumentExtraction(
