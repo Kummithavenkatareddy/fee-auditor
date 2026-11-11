@@ -23,6 +23,7 @@ export default function AuthModal() {
   const [error, setError] = useState(null);
   const [successMsg, setSuccessMsg] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [devCodeHint, setDevCodeHint] = useState(null);
 
   if (!authModalOpen) return null;
 
@@ -50,7 +51,10 @@ export default function AuthModal() {
     setError(null);
     setLoading(true);
     try {
-      await register(identifier, password, fullName);
+      const res = await register(identifier, password, fullName);
+      if (res?.dev_verification_code) {
+        setDevCodeHint(res.dev_verification_code);
+      }
       setSuccessMsg('Account created. Enter the 6-digit code sent to complete verification.');
     } catch (err) {
       setError(err.message || 'Registration failed.');
@@ -77,7 +81,10 @@ export default function AuthModal() {
     setError(null);
     setLoading(true);
     try {
-      await forgotPasswordApi(identifier);
+      const res = await forgotPasswordApi(identifier);
+      if (res?.dev_reset_code) {
+        setDevCodeHint(res.dev_reset_code);
+      }
       setSuccessMsg('Password reset code generated. Enter code and new password.');
       setAuthModalMode('reset_pwd');
     } catch (err) {
@@ -145,6 +152,24 @@ export default function AuthModal() {
             <div className="mb-4 p-3 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2">
               <span className="material-symbols-outlined text-[16px] text-emerald-600">check_circle</span>
               <span>{successMsg}</span>
+            </div>
+          )}
+
+          {devCodeHint && (
+            <div className="mb-4 p-3 rounded-md bg-blue-50 border border-blue-200 text-blue-800 text-xs flex items-center justify-between">
+              <div>
+                <span className="font-semibold">Verification Code: </span>
+                <span className="font-mono bg-white px-2 py-0.5 rounded border border-blue-200 font-bold tracking-widest">
+                  {devCodeHint}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setOtpCode(devCodeHint)}
+                className="text-xs font-semibold text-blue-700 underline hover:text-blue-900"
+              >
+                Auto-fill
+              </button>
             </div>
           )}
 

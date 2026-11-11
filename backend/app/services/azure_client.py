@@ -11,10 +11,7 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     ServiceResponseError,
 )
-try:
-    from reportlab.pdfgen import canvas
-except Exception:
-    canvas = None
+from reportlab.pdfgen import canvas
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
 from app.config import settings
@@ -63,28 +60,16 @@ def get_azure_client() -> DocumentIntelligenceClient:
 
 def _generate_minimal_probe_pdf() -> bytes:
     """Generate an in-memory 1-page PDF for live connectivity verification."""
-    if canvas is not None:
-        try:
-            buf = io.BytesIO()
-            c = canvas.Canvas(buf)
-            c.setFont("Helvetica", 10)
-            c.drawString(100, 750, "Azure Document Intelligence Probe")
-            c.drawString(100, 730, "Invoice #: PROBE-001")
-            c.drawString(100, 710, "Total: $1.00")
-            c.showPage()
-            c.save()
-            buf.seek(0)
-            return buf.getvalue()
-        except Exception:
-            pass
-    return (
-        b"%PDF-1.4\n"
-        b"1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n"
-        b"2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n"
-        b"3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R/Resources<<>>>>endobj\n"
-        b"xref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000052 00000 n \n0000000101 00000 n \n"
-        b"trailer<</Size 4/Root 1 0 R>>\nstartxref\n178\n%%EOF\n"
-    )
+    buf = io.BytesIO()
+    c = canvas.Canvas(buf)
+    c.setFont("Helvetica", 10)
+    c.drawString(100, 750, "Azure Document Intelligence Probe")
+    c.drawString(100, 730, "Invoice #: PROBE-001")
+    c.drawString(100, 710, "Total: $1.00")
+    c.showPage()
+    c.save()
+    buf.seek(0)
+    return buf.getvalue()
 
 
 @retry(
@@ -109,7 +94,6 @@ def analyze_document_bytes(
             model_id=model_id,
             body=file_bytes,
             content_type=content_type,
-            polling_interval=1.5,
         )
         result: AnalyzeResult = poller.result()
         logger.info(

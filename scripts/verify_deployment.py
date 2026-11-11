@@ -184,8 +184,7 @@ class TestSuite:
                 self.record("User Registration", False, f"HTTP {res.status_code}: {res.text[:100]}")
                 return None
             data = res.json()
-            # Fixed institutional demo code 927824 (never exposed in API response)
-            code = data.get("dev_verification_code") or "927824"
+            code = data.get("dev_verification_code", "000000")
 
             # Verify
             ver_url = f"{self.base_url}/api/auth/verify"

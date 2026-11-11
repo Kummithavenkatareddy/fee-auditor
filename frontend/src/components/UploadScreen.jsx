@@ -12,7 +12,7 @@ export default function UploadScreen({ onUploadComplete, onSelectDoc, onNavigate
   const [errorMsg, setErrorMsg] = useState(null);
   const fileInputRef = useRef(null);
 
-  const MAX_FILE_SIZE = 4.5 * 1024 * 1024; // 4.5 MB serverless upload limit
+  const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20 MB
   const validExtensions = ['.pdf', '.png', '.jpg', '.jpeg'];
 
   const addFiles = (files) => {
@@ -37,7 +37,7 @@ export default function UploadScreen({ onUploadComplete, onSelectDoc, onNavigate
     });
 
     if (oversized.length > 0) {
-      setErrorMsg(`Files exceed 4.5 MB serverless limit: ${oversized.join(', ')}. Please use files under 4.5 MB.`);
+      setErrorMsg(`Files exceed 20 MB limit: ${oversized.join(', ')}`);
     } else if (invalidType.length > 0) {
       setErrorMsg(`Unsupported files skipped: ${invalidType.join(', ')}. Use PDF, PNG, or JPEG.`);
     }

@@ -19,7 +19,6 @@ def get_db_path() -> Path:
         if not tmp_db.exists():
             # Seed from committed repository database to preserve existing records
             candidates = [
-                Path(__file__).resolve().parent.parent.parent / "data" / p.name,
                 Path(__file__).resolve().parent.parent.parent / p.name,
                 Path(__file__).resolve().parent.parent.parent / "backend" / p.name,
                 Path(__file__).resolve().parent.parent / p.name,
@@ -35,45 +34,15 @@ def get_db_path() -> Path:
         return tmp_db
 
     if not p.is_absolute():
-        # Anchor relative database path to persistent local project data directory
+        # Anchor relative database path to repository root for local development
         project_root = Path(__file__).resolve().parent.parent.parent
-        resolved = project_root / raw_path
-        try:
-            resolved.parent.mkdir(parents=True, exist_ok=True)
-            # If migrating from old root fee_auditor.db to data/fee_auditor.db, preserve records
-            if not resolved.exists():
-                for old_candidate in [project_root / "fee_auditor.db", project_root / "backend" / "fee_auditor.db"]:
-                    if old_candidate.is_file():
-                        import shutil
-                        shutil.copy2(old_candidate, resolved)
-                        break
-        except OSError:
-            pass
-        return resolved
+        return project_root / p.name
     return p
-
-
-_db_initialized = False
-_db_initializing = False
-
-
-def ensure_db_initialized():
-    global _db_initialized, _db_initializing
-    if not _db_initialized and not _db_initializing:
-        _db_initializing = True
-        try:
-            init_db()
-            _db_initialized = True
-        except Exception:
-            pass
-        finally:
-            _db_initializing = False
 
 
 @contextmanager
 def get_db_connection():
     """Context manager for SQLite database connection with foreign keys enabled."""
-    ensure_db_initialized()
     conn = sqlite3.connect(get_db_path(), timeout=30.0)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON;")
@@ -374,22 +343,6 @@ def init_db():
             """
         )
 
-        # 9. Document binary files storage table (persistent database backup for serverless environments)
-        cursor.execute(
-            """
-            CREATE TABLE IF NOT EXISTS document_files (
-                storage_key TEXT PRIMARY KEY,
-                user_id TEXT NOT NULL,
-                filename TEXT NOT NULL,
-                content_type TEXT NOT NULL,
-                file_bytes BLOB NOT NULL,
-                file_size INTEGER NOT NULL,
-                created_at TEXT NOT NULL,
-                FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
-            );
-            """
-        )
-
         # Safe Column Migrations for Users Table
         cursor.execute("PRAGMA table_info(users);")
         user_cols = {row[1] for row in cursor.fetchall()}
@@ -507,4 +460,3 @@ def init_db():
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_cs_owner ON content_safety_events (owner_user_id);")
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_cs_hash ON content_safety_events (sha256_hash);")
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_cs_status ON content_safety_events (status);")
-        cursor.execute("CREATE INDEX IF NOT EXISTS idx_doc_files_user ON document_files (user_id);")

@@ -120,43 +120,17 @@ async def batch_upload_documents(
         except Exception as exc:
             errors.append({"file_name": filename, "error": f"Read error: {str(exc)}"})
 
-    logger.info(
-        "Audit upload initiated: %d file(s) for user %s (preferred_model: %s)",
-        len(files),
-        user_id,
-        preferred_model or "auto",
-    )
-    for f in files:
-        logger.info("  - Ingesting: '%s' (content_type: %s, size: %s)", f.filename, f.content_type, f.size)
-
     # Process through central audit orchestrator
-    try:
-        result = orchestrator.process_batch(
-            files_data=files_data,
-            preferred_model=preferred_model,
-            owner_user_id=user_id,
-        )
-    except Exception as exc:
-        logger.error("Audit batch orchestrator failure for user %s: %s", user_id, exc, exc_info=True)
-        raise HTTPException(
-            status_code=500,
-            detail=f"Document processing failed: {type(exc).__name__}. Please verify file format and retry.",
-        )
+    result = orchestrator.process_batch(
+        files_data=files_data,
+        preferred_model=preferred_model,
+        owner_user_id=user_id,
+    )
 
     # Append any pre-validation file errors
     result.errors.extend(errors)
     result.total_files = len(files)
     result.failed_extractions += len(errors)
-
-    logger.info(
-        "Audit upload completed for user %s: batch %s -> %d succeeded, %d duplicate(s), %d rejected, %d failed",
-        user_id,
-        result.batch_id,
-        result.successful_extractions,
-        result.duplicate_files,
-        result.rejected_by_content_safety,
-        result.failed_extractions,
-    )
 
     return result
 
