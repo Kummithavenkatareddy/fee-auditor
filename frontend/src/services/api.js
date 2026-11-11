@@ -157,14 +157,6 @@ export async function uploadBatch(files, preferredModel = null) {
     throw new Error('Please select at least one document to upload.');
   }
 
-  // Pre-flight validation: check serverless payload constraint (4.5 MB)
-  const totalSizeBytes = Array.from(files).reduce((acc, f) => acc + (f.size || 0), 0);
-  if (totalSizeBytes > 4.5 * 1024 * 1024) {
-    throw new Error(
-      `Total batch payload size (${(totalSizeBytes / (1024 * 1024)).toFixed(1)} MB) exceeds the 4.5 MB serverless limit. Please upload documents in smaller batches or individually.`
-    );
-  }
-
   const formData = new FormData();
   for (const file of files) {
     formData.append('files', file);
@@ -173,24 +165,14 @@ export async function uploadBatch(files, preferredModel = null) {
     formData.append('preferred_model', preferredModel);
   }
 
-  try {
-    const res = await fetch(`${API_BASE}/audit/upload`, {
-      method: 'POST',
-      headers: getAuthHeaders(), // Will only attach Authorization header, not Content-Type!
-      body: formData,
-      credentials: 'include',
-    });
+  const res = await fetch(`${API_BASE}/audit/upload`, {
+    method: 'POST',
+    headers: getAuthHeaders(), // Will only attach Authorization header, not Content-Type!
+    body: formData,
+    credentials: 'include',
+  });
 
-    return await handleResponse(res, 'Batch upload processing failed');
-  } catch (err) {
-    console.error('[UploadService] Batch upload network/processing failure:', err);
-    if (err.name === 'TypeError' && err.message.toLowerCase().includes('failed to fetch')) {
-      throw new Error(
-        'Server connection error or timeout (Failed to fetch). Document processing with Azure AI Content Safety and Document Intelligence may have exceeded the execution limit, or the network was interrupted. Please retry with a single document.'
-      );
-    }
-    throw err;
-  }
+  return handleResponse(res, 'Batch upload processing failed');
 }
 
 /**

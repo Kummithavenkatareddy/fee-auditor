@@ -1,81 +1,13 @@
 import sys
-import os
-import logging
 from pathlib import Path
-from contextlib import asynccontextmanager
 
-# Add backend directory to sys.path
+# Add backend root to sys.path
 backend_dir = Path(__file__).resolve().parent.parent
-if (backend_dir / "backend").exists() and str(backend_dir / "backend") not in sys.path:
-    sys.path.insert(0, str(backend_dir / "backend"))
 if str(backend_dir) not in sys.path:
     sys.path.insert(0, str(backend_dir))
 
-from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
-from fastapi.middleware.cors import CORSMiddleware
+from app.main import app
 
-from app.config import settings
-from app.db.session import init_db
-from app.routers import health, audit, auth, users
+# Vercel serverless function entrypoint
+handler = app
 
-logger = logging.getLogger("fee_auditor")
-
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    try:
-        init_db()
-    except Exception as e:
-        logger.warning(f"Database initialization during lifespan: {e}")
-    yield
-
-
-app = FastAPI(
-    title="Fee Receipt & Invoice Auditor API",
-    description="Azure AI Document Intelligence powered auditor for fee receipts and invoices.",
-    version="1.0.0",
-    lifespan=lifespan,
-)
-
-# Strict production CORS matching deployed frontend
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=settings.cors_origins_list,
-    allow_origin_regex=r"https:\/\/fee-auditor-frontend.*\.vercel\.app",
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
-    allow_headers=["*"],
-    expose_headers=["Content-Disposition", "Authorization"],
-)
-
-app.include_router(health.router)
-app.include_router(audit.router)
-app.include_router(auth.router, prefix="/api")
-app.include_router(users.router, prefix="/api")
-
-
-@app.exception_handler(Exception)
-async def global_exception_handler(request: Request, exc: Exception):
-    origin = request.headers.get("origin") or "https://fee-auditor-frontend.vercel.app"
-    logger.error("Global unhandled exception on %s %s: %s", request.method, request.url.path, exc, exc_info=True)
-    return JSONResponse(
-        status_code=500,
-        content={"detail": f"Internal server error: {type(exc).__name__}. Please try again."},
-        headers={
-            "Access-Control-Allow-Origin": origin,
-            "Access-Control-Allow-Credentials": "true",
-            "Access-Control-Allow-Headers": "*",
-            "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE, OPTIONS",
-        },
-    )
-
-
-@app.get("/")
-def root():
-    return {
-        "message": "Fee Receipt & Invoice Auditor API is running.",
-        "docs_url": "/docs",
-        "health_url": "/api/health",
-        "status": "online",
-    }

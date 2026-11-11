@@ -16,10 +16,7 @@ from azure.core.exceptions import AzureError, HttpResponseError
 
 import pypdf
 from pypdf.errors import PdfReadError, PdfStreamError
-try:
-    import pypdfium2
-except Exception:
-    pypdfium2 = None
+import pypdfium2
 
 from app.config import settings
 from app.schemas.document import (
@@ -108,36 +105,24 @@ class ContentSafetyService:
     def _render_pdf_pages_to_images(
         self, file_bytes: bytes, max_pages: int = 10
     ) -> Tuple[List[bytes], Optional[str]]:
-        """Render PDF pages to JPEG bytes using pypdfium2, or fallback to embedded images if pypdfium2 is unavailable.
+        """Render PDF pages to JPEG bytes using pypdfium2.
 
         Returns (list_of_image_bytes, error_message).
         """
-        if pypdfium2 is not None:
-            try:
-                pdf = pypdfium2.PdfDocument(file_bytes)
-                num_pages = len(pdf)
-                pages_to_render = min(num_pages, max_pages)
-                image_bytes_list: List[bytes] = []
-
-                for i in range(pages_to_render):
-                    page = pdf[i]
-                    pil_image = page.render(scale=1.0).to_pil()
-                    if pil_image.mode != "RGB":
-                        pil_image = pil_image.convert("RGB")
-                    buf = io.BytesIO()
-                    pil_image.save(buf, format="JPEG", quality=85)
-                    image_bytes_list.append(buf.getvalue())
-                return image_bytes_list, None
-            except Exception as e:
-                logger.warning(f"pypdfium2 page rendering error: {e}")
-
-        # Fallback to pure-Python pypdf embedded image extraction
         try:
-            reader = pypdf.PdfReader(io.BytesIO(file_bytes))
+            pdf = pypdfium2.PdfDocument(file_bytes)
+            num_pages = len(pdf)
+            pages_to_render = min(num_pages, max_pages)
             image_bytes_list: List[bytes] = []
-            for page in reader.pages[:max_pages]:
-                for img in getattr(page, "images", []):
-                    image_bytes_list.append(img.data)
+
+            for i in range(pages_to_render):
+                page = pdf[i]
+                pil_image = page.render(scale=1.0).to_pil()
+                if pil_image.mode != "RGB":
+                    pil_image = pil_image.convert("RGB")
+                buf = io.BytesIO()
+                pil_image.save(buf, format="JPEG", quality=85)
+                image_bytes_list.append(buf.getvalue())
             return image_bytes_list, None
         except Exception as e:
             return [], f"Failed to render PDF pages to images: {e}"

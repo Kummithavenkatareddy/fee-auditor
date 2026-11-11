@@ -68,7 +68,7 @@ def test_e2e_complete_deployed_workflow():
         headers={"Origin": DEPLOYED_FRONTEND},
     )
     assert reg_a.status_code == 201
-    code_a = reg_a.json().get("dev_verification_code") or "927824"
+    code_a = reg_a.json().get("dev_verification_code", "000000")
 
     # 2. Verify User A
     ver_a = client.post(
@@ -156,7 +156,7 @@ def test_e2e_complete_deployed_workflow():
     )
     ver_b = client.post(
         "/api/auth/verify",
-        json={"identifier": user_b_email, "code": reg_b.json().get("dev_verification_code") or "927824"},
+        json={"identifier": user_b_email, "code": reg_b.json().get("dev_verification_code", "000000")},
         headers={"Origin": DEPLOYED_FRONTEND},
     )
     headers_b = {

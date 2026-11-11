@@ -1,41 +1,15 @@
 import io
-import csv
 from typing import List, Optional
+import pandas as pd
 
 from app.schemas.document import DocumentExtraction
 from app.db.repository import get_all_documents
 
 
 def generate_audit_csv(documents: Optional[List[DocumentExtraction]] = None) -> bytes:
-    """Generate a formatted CSV export of audit results."""
+    """Generate a formatted CSV export of audit results using Pandas."""
     if documents is None:
         documents = get_all_documents()
-
-    fieldnames = [
-        "Document ID",
-        "File Name",
-        "Document Type",
-        "Vendor Name",
-        "Vendor Confidence",
-        "Invoice ID",
-        "Invoice ID Confidence",
-        "Invoice Date",
-        "Date Confidence",
-        "Vendor Tax ID",
-        "Tax ID Confidence",
-        "Subtotal",
-        "Tax",
-        "Total Amount",
-        "Total Confidence",
-        "Line Items Count",
-        "Audit Status",
-        "Validation Flags Count",
-        "Flagged Rules",
-        "Flag Details",
-        "Manual Review Status",
-        "Manual Review Notes",
-        "Processed Date",
-    ]
 
     rows = []
     for doc in documents:
@@ -73,9 +47,8 @@ def generate_audit_csv(documents: Optional[List[DocumentExtraction]] = None) -> 
             }
         )
 
-    buf = io.StringIO()
-    writer = csv.DictWriter(buf, fieldnames=fieldnames)
-    writer.writeheader()
-    if rows:
-        writer.writerows(rows)
-    return buf.getvalue().encode("utf-8")
+    df = pd.DataFrame(rows)
+    csv_buffer = io.StringIO()
+    df.to_csv(csv_buffer, index=False)
+    return csv_buffer.getvalue().encode("utf-8")
+

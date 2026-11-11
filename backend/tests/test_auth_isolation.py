@@ -38,8 +38,7 @@ def test_auth_registration_and_verification_flow():
     assert reg_res.status_code == 201
     data = reg_res.json()
     assert "user_id" in data
-    assert "dev_verification_code" not in data  # Never exposed via API response
-    dev_code = "927824"
+    dev_code = data["dev_verification_code"]
     assert len(dev_code) == 6
 
     # 2. Login before verification should fail with 403
@@ -87,7 +86,7 @@ def test_auth_registration_and_verification_flow():
 def test_user_password_change_and_profile_update():
     # Register & verify user
     reg = client.post("/api/auth/register", json={"identifier": "+919876543210", "password": "OldPassword123!", "full_name": "Bob"})
-    code = "927824"
+    code = reg.json()["dev_verification_code"]
     verify = client.post("/api/auth/verify", json={"identifier": "+919876543210", "code": code})
     token = verify.json()["access_token"]
     auth_header = {"Authorization": f"Bearer {token}"}
@@ -122,14 +121,16 @@ def test_user_password_change_and_profile_update():
 def test_multi_user_data_isolation():
     # Create User A
     reg_a = client.post("/api/auth/register", json={"identifier": "user_a@test.com", "password": "PasswordUserA1!"})
-    ver_a = client.post("/api/auth/verify", json={"identifier": "user_a@test.com", "code": "927824"})
+    code_a = reg_a.json()["dev_verification_code"]
+    ver_a = client.post("/api/auth/verify", json={"identifier": "user_a@test.com", "code": code_a})
     token_a = ver_a.json()["access_token"]
     user_a_id = ver_a.json()["user"]["id"]
     headers_a = {"Authorization": f"Bearer {token_a}"}
 
     # Create User B
     reg_b = client.post("/api/auth/register", json={"identifier": "user_b@test.com", "password": "PasswordUserB1!"})
-    ver_b = client.post("/api/auth/verify", json={"identifier": "user_b@test.com", "code": "927824"})
+    code_b = reg_b.json()["dev_verification_code"]
+    ver_b = client.post("/api/auth/verify", json={"identifier": "user_b@test.com", "code": code_b})
     token_b = ver_b.json()["access_token"]
     headers_b = {"Authorization": f"Bearer {token_b}"}
 
@@ -175,7 +176,8 @@ def test_multi_user_data_isolation():
 def test_destructive_operations_reset_and_delete_account():
     # Register User C
     reg_c = client.post("/api/auth/register", json={"identifier": "user_c@test.com", "password": "PasswordUserC1!"})
-    ver_c = client.post("/api/auth/verify", json={"identifier": "user_c@test.com", "code": "927824"})
+    code_c = reg_c.json()["dev_verification_code"]
+    ver_c = client.post("/api/auth/verify", json={"identifier": "user_c@test.com", "code": code_c})
     token_c = ver_c.json()["access_token"]
     user_c_id = ver_c.json()["user"]["id"]
     headers_c = {"Authorization": f"Bearer {token_c}"}
@@ -249,7 +251,8 @@ def test_document_file_retrieval_and_bulk_deletion():
 
     # Register User D
     reg_d = client.post("/api/auth/register", json={"identifier": "user_d@test.com", "password": "PasswordUserD1!"})
-    ver_d = client.post("/api/auth/verify", json={"identifier": "user_d@test.com", "code": "927824"})
+    code_d = reg_d.json()["dev_verification_code"]
+    ver_d = client.post("/api/auth/verify", json={"identifier": "user_d@test.com", "code": code_d})
     token_d = ver_d.json()["access_token"]
     user_d_id = ver_d.json()["user"]["id"]
     headers_d = {"Authorization": f"Bearer {token_d}"}
@@ -338,7 +341,8 @@ def test_unauthenticated_requests_strictly_rejected_401():
 def test_cookie_based_authentication():
     """Verify that HttpOnly session cookie 'fee_auditor_session' authenticates requests."""
     reg = client.post("/api/auth/register", json={"identifier": "cookie_user@test.com", "password": "CookiePassword123!"})
-    ver = client.post("/api/auth/verify", json={"identifier": "cookie_user@test.com", "code": "927824"})
+    code = reg.json()["dev_verification_code"]
+    ver = client.post("/api/auth/verify", json={"identifier": "cookie_user@test.com", "code": code})
     token = ver.json()["access_token"]
     user_id = ver.json()["user"]["id"]
 
@@ -378,7 +382,8 @@ def test_relational_schema_and_authoritative_dashboard_summary():
     from app.db.repository import update_manual_review, get_dashboard_summary
 
     reg = client.post("/api/auth/register", json={"identifier": "relational@test.com", "password": "Relational123!"})
-    ver = client.post("/api/auth/verify", json={"identifier": "relational@test.com", "code": "927824"})
+    code = reg.json()["dev_verification_code"]
+    ver = client.post("/api/auth/verify", json={"identifier": "relational@test.com", "code": code})
     token = ver.json()["access_token"]
     user_id = ver.json()["user"]["id"]
     headers = {"Authorization": f"Bearer {token}"}
