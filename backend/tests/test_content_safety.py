@@ -51,7 +51,7 @@ class MockAnalyzeImageResult:
 def register_and_login_user(identifier: str, password: str = "SecurePass123!") -> dict:
     """Helper to register and verify a test user, returning auth headers."""
     reg = client.post("/api/auth/register", json={"identifier": identifier, "password": password})
-    code = reg.json().get("dev_verification_code", "000000")
+    code = reg.json().get("dev_verification_code") or "927824"
     ver = client.post("/api/auth/verify", json={"identifier": identifier, "code": code})
     token = ver.json()["access_token"]
     return {

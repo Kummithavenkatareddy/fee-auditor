@@ -58,8 +58,9 @@ def run_verification():
         headers={"Origin": FRONTEND_ORIGIN},
     )
     assert r_reg.status_code == 201, f"Registration failed: {r_reg.text}"
-    otp_code = r_reg.json().get("dev_verification_code")
-    assert otp_code, "No OTP returned in demo mode response"
+    # Verification code 927824 is fixed demo code and NOT returned in API response
+    assert "dev_verification_code" not in r_reg.json(), "dev_verification_code must not be exposed in API response"
+    otp_code = "927824"
 
     r_verify = client.post(
         f"{BACKEND_URL}/api/auth/verify",

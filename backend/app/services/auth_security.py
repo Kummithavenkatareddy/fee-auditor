@@ -42,8 +42,19 @@ def hash_token(token: str) -> str:
     return hashlib.sha256(token.strip().encode("utf-8")).hexdigest()
 
 
-def generate_verification_code() -> str:
-    """Generate 6-digit numeric verification OTP."""
+# Fixed demo verification code — used in demo/evaluation mode instead of random OTP.
+# This code is NEVER returned in API responses or logged at INFO level in production.
+DEMO_VERIFICATION_CODE = "927824"
+
+
+def generate_verification_code(demo_mode: bool = False) -> str:
+    """
+    Generate 6-digit numeric verification OTP.
+    In demo mode, returns the fixed institutional demo code instead of a random one.
+    The fixed code is stored hashed in the database and never sent in API responses.
+    """
+    if demo_mode:
+        return DEMO_VERIFICATION_CODE
     return f"{secrets.randbelow(900000) + 100000}"
 
 

@@ -13,7 +13,6 @@ export default function LoginScreen({ onLoginSuccess }) {
   const [error, setError] = useState(null);
   const [successMsg, setSuccessMsg] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [devOtpHint, setDevOtpHint] = useState(null);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -39,12 +38,8 @@ export default function LoginScreen({ onLoginSuccess }) {
     setError(null);
     setLoading(true);
     try {
-      const res = await register(identifier, password, fullName);
-      if (res?.dev_verification_code) {
-        setDevOtpHint(res.dev_verification_code);
-        setOtpCode(res.dev_verification_code);
-      }
-      setSuccessMsg('Account registered. Please enter the 6-digit OTP to verify.');
+      await register(identifier, password, fullName);
+      setSuccessMsg('Account registered. Please enter the 6-digit verification code to verify.');
       setMode('verify');
     } catch (err) {
       setError(err.message || 'Registration failed.');
@@ -72,11 +67,7 @@ export default function LoginScreen({ onLoginSuccess }) {
     setError(null);
     setLoading(true);
     try {
-      const res = await forgotPasswordApi(identifier);
-      if (res?.dev_reset_code) {
-        setDevOtpHint(res.dev_reset_code);
-        setOtpCode(res.dev_reset_code);
-      }
+      await forgotPasswordApi(identifier);
       setSuccessMsg('Reset code sent. Please enter the code and your new password.');
       setMode('reset_pwd');
     } catch (err) {
@@ -134,28 +125,6 @@ export default function LoginScreen({ onLoginSuccess }) {
             <div className="mb-4 p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2">
               <span className="material-symbols-outlined text-[18px] text-emerald-600 shrink-0">check_circle</span>
               <span>{successMsg}</span>
-            </div>
-          )}
-
-          {devOtpHint && (
-            <div className="mb-4 p-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-xs flex flex-col gap-1.5">
-              <div className="flex items-center justify-between">
-                <span className="font-semibold flex items-center gap-1 text-[11px] uppercase tracking-wider text-amber-800">
-                  <span className="material-symbols-outlined text-[16px]">info</span>
-                  Institutional Demo Mode
-                </span>
-                <span className="text-[10px] text-amber-700 font-sans">Live SMS/Email unconfigured</span>
-              </div>
-              <div className="flex items-center justify-between font-mono bg-white/70 px-2.5 py-1.5 rounded border border-amber-200">
-                <span>Verification OTP: <strong className="text-sm font-bold tracking-widest text-amber-950">{devOtpHint}</strong></span>
-                <button
-                  type="button"
-                  onClick={() => setOtpCode(devOtpHint)}
-                  className="px-2 py-0.5 bg-amber-200 hover:bg-amber-300 text-amber-900 text-[11px] font-sans font-semibold rounded transition-colors"
-                >
-                  Auto-fill Code
-                </button>
-              </div>
             </div>
           )}
 

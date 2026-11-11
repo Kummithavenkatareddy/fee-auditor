@@ -6,6 +6,8 @@ from contextlib import asynccontextmanager
 
 # Add backend directory to sys.path
 backend_dir = Path(__file__).resolve().parent.parent
+if (backend_dir / "backend").exists() and str(backend_dir / "backend") not in sys.path:
+    sys.path.insert(0, str(backend_dir / "backend"))
 if str(backend_dir) not in sys.path:
     sys.path.insert(0, str(backend_dir))
 
